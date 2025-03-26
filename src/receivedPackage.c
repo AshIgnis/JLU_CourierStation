@@ -232,14 +232,29 @@ void package_r_original_start(){
 			}printf("5.请输入包裹状态 (1-正常, 2-损坏, 3-违禁品): \n");
 			scanf("%d", &(*now).package_status);
 			
-			char jdg[20];
+			char jdg[22];
 			for(; ;){
 				
 				printf("\n包裹信息展示如下: \n\n");
 				show_package_r(now,0);
 				printf("\n请仔细核对包裹信息录入是否正确 Y/N\n");
-				scanf("%s",jdg);
-				jdg[20]='\0';
+				for(int i=0; ;){
+					scanf("%c",&jdg[i]);
+					if(i==0&&jdg[i]=='\n'){
+						continue;
+					}if(jdg[i]=='\n'&&i<=20){
+						jdg[i]='\0';
+						break;
+					}if(i==20){
+						for(; ;){
+							scanf("%c",&jdg[i]);
+							if(jdg[i]=='\n'){
+								jdg[i]='\0';
+								break;
+							}
+						}break;
+					}i++;
+				}
 				
 				if(strlen(jdg)==1&&(*jdg)=='Y'){
 					break;
@@ -288,8 +303,23 @@ void package_r_original_start(){
 			
 			printf("请输入希望查询的包裹序列号: \n");
 			char p[22];
-			scanf("%s",p);
-			p[20]='\0';
+			for(int i=0; ;){
+				scanf("%c",&p[i]);
+				if(i==0&&p[i]=='\n'){
+					continue;
+				}if(p[i]=='\n'&&i<=20){
+					p[i]='\0';
+					break;
+				}if(i==20){
+					for(; ;){
+						scanf("%c",&p[i]);
+						if(p[i]=='\n'){
+							p[i]='\0';
+							break;
+						}
+					}break;
+				}i++;
+			}
 			
 			struct package_r *lstfin,*fin;
 			find_package_r(&lstfin,&fin,p,head);
@@ -312,8 +342,23 @@ void package_r_original_start(){
 			
 			printf("请输入希望查询的包裹序列号: \n");
 			char p[22];
-			scanf("%s",p);
-			p[20]='\0';
+			for(int i=0; ;){
+				scanf("%c",&p[i]);
+				if(i==0&&p[i]=='\n'){
+					continue;
+				}if(p[i]=='\n'&&i<=20){
+					p[i]='\0';
+					break;
+				}if(i==20){
+					for(; ;){
+						scanf("%c",&p[i]);
+						if(p[i]=='\n'){
+							p[i]='\0';
+							break;
+						}
+					}break;
+				}i++;
+			}
 			
 			struct package_r *lstfin,*fin;
 			find_package_r(&lstfin,&fin,p,head);
@@ -326,7 +371,25 @@ void package_r_original_start(){
 			printf("请慎重选择, 确认删除此包裹吗? Y/N\n");
 			
 			for(; ;){
-				scanf("%s",p);
+				
+				for(int i=0; ;){
+					scanf("%c",&p[i]);
+					if(i==0&&p[i]=='\n'){
+						continue;
+					}if(p[i]=='\n'&&i<=20){
+						p[i]='\0';
+						break;
+					}if(i==20){
+						for(; ;){
+							scanf("%c",&p[i]);
+							if(p[i]=='\n'){
+								p[i]='\0';
+								break;
+							}
+						}break;
+					}i++;
+				}
+				
 				if(strlen(p)==1&&(*p)=='Y'){
 					return_package_r_id(fin);
 					(*lstfin).next=(*fin).next;
