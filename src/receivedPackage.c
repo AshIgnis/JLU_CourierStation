@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "receivedPackage.h"
+#include "structure.h"
 
 void get_package_r_id(struct package_r* x){
 	struct node{
@@ -193,7 +194,7 @@ void save_package_r(struct package_r* head){
 
 void package_r_original_start(){
 	
-	package_r *head=load_package_r();
+	struct package_r *head=load_package_r();
 	
 	int op;
 	
