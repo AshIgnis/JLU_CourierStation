@@ -46,7 +46,7 @@ int main() {
                             customerList = customersCreating(customerList);
                         }
                         case 2:{ //收取包裹管理
-                            
+                            package_r_original_start();
                         }
                         case 3:{ //邮寄包裹管理
 
@@ -58,7 +58,7 @@ int main() {
                             printf("无效的选择，请重试。\n");
                             break;
                     }
-                }while(adminChoice != 0);
+                } while (adminChoice != 0);
             }
 
             case 0:

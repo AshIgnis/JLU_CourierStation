@@ -159,9 +159,8 @@ struct package_r* load_package_r(){
 	while(!feof(file)){
 		struct package_r* now=(struct package_r*)malloc(sizeof(struct package_r));
 		fscanf(file,"%s%lf%d%d",(*now).phone_number,&(*now).volume,&(*now).package_type,&(*now).ifCollection);
-		if((*now).ifCollection==1){
-			fscanf(file,"%lf",&(*now).shipping_fee);
-		}fscanf(file,"%d",&(*now).package_status);
+		fscanf(file,"%lf",&(*now).shipping_fee);
+		fscanf(file,"%d",&(*now).package_status);
 		fscanf(file,"%s",(*now).package_id);
 		
 		(*lst).next=now;
