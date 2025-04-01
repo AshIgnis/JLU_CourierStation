@@ -17,6 +17,7 @@ struct package_r {
     int package_status; // 包裹状态
     int user_id; // 用户ID
     struct package_r *next; // 下一个包裹
+    char phone_number[MAX_LEN]; // 电话号码
 };
 
 // 寄件包裹结构体
@@ -34,6 +35,7 @@ struct package_s {
     char description[MAX_LEN]; // 包裹描述
     int user_id; // 用户ID
     struct package_s *next; // 下一个包裹
+    char phone_number[MAX_LEN]; // 电话号码
 };
 
 // 用户结构体
