@@ -3,6 +3,19 @@
 #include <string.h>
 #include "receivedPackage.h"
 #include "structure.h"
+#include "warehouse_explosion_warning.h"
+
+void free_package_r(struct package_r* head){
+	struct package_r *lst,*now;
+	lst=head;
+	for(; ;){
+		now=(*lst).next;
+		free(lst);
+		if(now==NULL){
+			break;
+		}
+	}return;
+}
 
 void get_package_r_id(struct package_r* x){
 	struct node{
@@ -65,7 +78,7 @@ void get_package_r_id(struct package_r* x){
 	}return;
 }
 
-void return_package_r_id(struct package_r* x){
+void return_package_r_id(struct package_r x){
 	FILE *file = fopen("id_box.txt", "a");
 	
 	int tmp;
@@ -85,6 +98,8 @@ void return_package_r_id(struct package_r* x){
 	fclose(file);
 	return;
 }
+
+strcut 
 
 void show_package_r(struct package_r* now,int if_id){
 	
@@ -133,7 +148,7 @@ void find_package_r(struct package_r **lstfind,struct package_r **find,char* p,s
 
 struct package_r* load_package_r(){
 	
-	FILE *file = fopen("packagelist.txt", "r");
+	FILE *file = fopen("received_packages.txt", "r");
 	if (!file) {
 		perror("No package file found");
 		return NULL;
@@ -163,7 +178,7 @@ struct package_r* load_package_r(){
 }
 
 void save_package_r(struct package_r* head){
-	FILE *file = fopen("packagelist.txt", "w");
+	FILE *file = fopen("received_packages.txt", "w");
 	if (!file) {
 		perror("Failed to open file for saving packages");
 		return;
@@ -179,6 +194,8 @@ void save_package_r(struct package_r* head){
 		}fprintf(file,"%s %lf %d %d",(*now).phone_number,(*now).volume,(*now).package_type,(*now).ifCollection);
 		if((*now).ifCollection==1){
 			fprintf(file," %lf",(*now).shipping_fee);
+		}else{
+			fprintf(file," 0");
 		}fprintf(file," %d",(*now).package_status);
 		fprintf(file," %s",(*now).package_id);
 		
@@ -212,6 +229,7 @@ void package_r_original_start(){
 		scanf("%d",&op);
 		
 		if(op==0){
+			free_package_r(head);
 			save_package_r(head);
 			break;
 		}
