@@ -11,13 +11,15 @@ void userOperating(struct customer *head) {
     char phone_number[MAX_LEN]; // 电话号码
     char password[MAX_LEN]; // 密码
 
-    printf("请输入用户ID: ");
-    scanf("%s", phone_number);
-    printf("请输入密码: ");
-    scanf("%s", password);
+    printf("请输入电话号码: ");
+    fgets(phone_number, MAX_LEN, stdin);
+    phone_number[strcspn(phone_number, "\n")] = '\0'; // 去除换行符
 
-    int flag;
-    flag = userLanding(head, phone_number, password);
+    printf("请输入密码: ");
+    fgets(password, MAX_LEN, stdin);
+    password[strcspn(password, "\n")] = '\0'; // 去除换行符
+
+    int flag = userLanding(head, phone_number, password);
     while (!flag) {
         int choice;
         printf("1. 注册\n");
@@ -67,15 +69,13 @@ void userOperating(struct customer *head) {
                 break;
             case 0:
                 // 退出
-                printf("退出系统...\n");
+                printf("退出系统\n");
                 system("cls");
                 return; // 直接返回，退出函数
             default:
                 printf("无效的选择，请重试。\n");
         }
     }
-
-    // 用户登录后续操作
     userAction(head, phone_number);
 }
 
@@ -85,8 +85,8 @@ bool userLanding(struct customer *head,const char *phone_number, const char *pas
     while (current) {
         if (strcmp(current->phone_number, phone_number) == 0 && strcmp(current->password, password) == 0) {
             printf("登陆成功！\n");
-            printf("您的用户信息如下:");
-            printf("\n用户信息:\n");
+            printf("您的用户信息如下:\n");
+            printf("用户信息:\n");
             printf("用户名: %s\n", current->username);
             printf("电话号码: %s\n", current->phone_number);
             switch(current->customer_type){
@@ -114,7 +114,7 @@ bool userLanding(struct customer *head,const char *phone_number, const char *pas
         current = current->next;
     }
 
-    printf("用户ID或密码错误!\n");
+    printf("电话号码或密码错误!\n");
     return false;
 }
 
@@ -131,15 +131,16 @@ void userAction(struct customer *head,const char *phone_number){
     int choice;
     do {
         displayMenu_user();
-        printf("请输入您的选择: ");
+        printf("请输入您的选择:\n ");
         scanf("%d", &choice);
 
         switch (choice) {
             case 1: {// 查看用户信息
                 struct customer *current = head;
+                int found = 0;
                 while (current) {
                     if (strcmp(current->phone_number, phone_number) == 0) {
-                        printf("\n用户信息:\n");
+                        printf("用户信息:\n");
                         printf("用户名: %s\n", current->username);
                         printf("电话号码: %s\n", current->phone_number);
                         switch (current->customer_type) {
@@ -162,38 +163,44 @@ void userAction(struct customer *head,const char *phone_number){
                                 printf("用户类型: 非法用户\n");
                                 break;
                         }
+                        found = 1;
                         break;
                     }
                     current = current->next;
                 }
-                if (!current) {
+                if (!found) {
                     printf("未找到用户信息。\n");
                 }
                 break;
             }
             case 2: {// 查询收件包裹信息
+                printf("您的包裹信息如下:\n");
                 userReceivedPackagesSearching(head, phone_number);
+
                 int choice_package;
                 printf("1. 取件\n");
                 printf("0. 退出\n");
+                printf("请输入您的选择: ");
                 scanf("%d", &choice_package);
+
                 switch (choice_package) {
                     case 1: // 取件
-
+                        userTakePackage(phone_number);
+                        break;
                     case 0: // 退出
-                        printf("返回主菜单...\n");
+                        printf("返回主菜单\n");
                         system("cls");
                         return; // 直接返回，退出函数
                     default:
                         printf("无效的选择，请重试。\n");
+                }
                 break;
             }
-                break;
             case 3: // 邮寄包裹
 
                 break;
             case 0:
-                printf("返回主菜单...\n");
+                printf("返回主菜单\n");
                 break;
             default:
                 printf("无效的选择，请重试。\n");
@@ -204,25 +211,79 @@ void userAction(struct customer *head,const char *phone_number){
 
 }
 
-void userReceivedPackagesSearching(struct package_r *head,const char *phone_number){
-    struct package_r *current = head;
-    while (current) {
-        if (strcmp(current->phone_number, phone_number) == 0) {
-            struct package_r *received_packages = current->received_packages;
-            struct package_s *send_packages = current->send_packages;
+void userReceivedPackagesSearching(const char *phone_number) {
+    FILE *file = fopen("receivedPackage.txt", "r");
+    if (!file) {
+        perror("无法打开文件");
+        return;
+    }
 
-            printf("\n收件包裹信息:\n");
-            while (received_packages) {
-                printf("包裹ID: %s\n", received_packages->package_id);
-                printf("体积: %.2lf\n", received_packages->volume);
-                printf("包裹类型: %d\n", received_packages->package_type);
-                printf("是否代收: %d\n", received_packages->ifCollection);
-                printf("运费: %.2lf\n", received_packages->shipping_fee);
-                printf("包裹状态: %d\n", received_packages->package_status);
-                printf("用户ID: %d\n", received_packages->user_id);
-                received_packages = received_packages->next;
-            }
+    char package_id[MAX_LEN];
+    char package_phone[MAX_LEN];
+    int found = 0;
+
+    while (fscanf(file, "%s %s", package_id, package_phone) != EOF) {
+        if (strcmp(package_phone, phone_number) == 0) {
+            printf("包裹取件码: %s\n", package_id);
+            found = 1;
         }
-        if (!current) {
-            printf("未找到用户信息。\n");
+    }
+
+    if (!found) {
+        printf("未找到与您相关的包裹。\n");
+    }
+
+    fclose(file);
+}
+
+
+void userTakePackage(const char *phone_number) {
+    char package_id[MAX_LEN];
+    printf("请输入取件码: ");
+    scanf("%s", package_id);
+
+    FILE *file = fopen("receivedPackage.txt", "r");
+    if (!file) {
+        perror("无法打开 receivedPackage.txt 文件");
+        return;
+    }
+
+    FILE *temp = fopen("temp.txt", "w");
+    if (!temp) {
+        perror("无法创建临时文件 temp.txt");
+        fclose(file);
+        return;
+    }
+
+
+    char current_package_id[MAX_LEN];
+    char current_phone[MAX_LEN];
+    int found = 0;
+
+    while (fscanf(file, "%s %s", current_package_id, current_phone) != EOF) {
+        if (strcmp(current_package_id, package_id) == 0 && strcmp(current_phone, phone_number) == 0) {
+            found = 1; // 找到包裹，跳过写入
+        } else {
+            fprintf(temp, "%s %s\n", current_package_id, current_phone);
         }
+    }
+
+    fclose(file);
+    fclose(temp);
+
+    if (remove("receivedPackage.txt") != 0) {
+        perror("删除 receivedPackage.txt 文件失败");
+        return;
+    }
+
+    if (rename("temp.txt", "receivedPackage.txt") != 0) {
+        perror("重命名 temp.txt 文件失败");
+        return;
+    }
+
+    if (found) {
+        printf("包裹取走成功！\n");
+    } else {
+        printf("未找到对应的包裹。\n");
+    }
+}

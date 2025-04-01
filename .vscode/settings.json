@@ -5,6 +5,7 @@
         "fileoperaions.h": "c",
         "receivedpackage.h": "c",
         "fileoperations.h": "c",
-        "xutility": "c"
+        "xutility": "c",
+        "user.h": "c"
     }
 }
