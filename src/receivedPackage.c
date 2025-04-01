@@ -3,7 +3,6 @@
 #include <string.h>
 #include "receivedPackage.h"
 #include "structure.h"
-#include "warehouse_explosion_warning.h"
 
 void free_package_r(struct package_r* head){
 	struct package_r *lst,*now;
@@ -78,7 +77,7 @@ void get_package_r_id(struct package_r* x){
 	}return;
 }
 
-void return_package_r_id(struct package_r x){
+void return_package_r_id(struct package_r *x){
 	FILE *file = fopen("id_box.txt", "a");
 	
 	int tmp;
@@ -98,8 +97,6 @@ void return_package_r_id(struct package_r x){
 	fclose(file);
 	return;
 }
-
-strcut 
 
 void show_package_r(struct package_r* now,int if_id){
 	

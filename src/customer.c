@@ -5,6 +5,7 @@
 #include "fileOperations.h"
 #include "receivedPackage.h"
 #include "structure.h"
+
 // 添加用户
 struct customer *addCustomer(struct customer *head, const char *username, const char *phone_number, const char *password, int customer_type) {
     struct customer *newCustomer = (struct customer *)malloc(sizeof(struct customer));
@@ -20,6 +21,7 @@ struct customer *addCustomer(struct customer *head, const char *username, const 
     newCustomer->received_packages = NULL;
     newCustomer->send_packages = NULL;
     newCustomer->next = head;
+    newCustomer->ticket = 3;
 
     printf("用户添加成功！\n");
     return newCustomer;

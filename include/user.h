@@ -9,5 +9,6 @@ void userAction(struct customer *head,const char *phone_number);
 void displayMenu_user();
 bool userLanding(struct customer *head,const char *phone_number, const char *password);
 void userTakePackage(const char *phone_number);
+int convertStringToInt(const char *input);
 
 #endif
