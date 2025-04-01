@@ -3,6 +3,8 @@
         "structure.h": "c",
         "stdio.h": "c",
         "fileoperaions.h": "c",
-        "receivedpackage.h": "c"
+        "receivedpackage.h": "c",
+        "fileoperations.h": "c",
+        "xutility": "c"
     }
 }

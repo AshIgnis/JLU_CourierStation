@@ -6,14 +6,13 @@
 #include "receivedPackage.h"
 #include "structure.h"
 // 添加用户
-struct customer *addCustomer(struct customer *head, int user_id, const char *username, const char *phone_number, const char *password, int customer_type) {
+struct customer *addCustomer(struct customer *head, const char *username, const char *phone_number, const char *password, int customer_type) {
     struct customer *newCustomer = (struct customer *)malloc(sizeof(struct customer));
     if (!newCustomer) {
         perror("Failed to allocate memory for new customer");
         return head;
     }
 
-    newCustomer->user_id = user_id;
     strcpy(newCustomer->username, username);
     strcpy(newCustomer->phone_number, phone_number);
     strcpy(newCustomer->password, password);
@@ -32,16 +31,14 @@ void queryCustomer(struct customer *head) {
         printf("当前没有用户数据。\n");
         return;
     }
-
-    int user_id;
-    printf("请输入要查询的用户ID: ");
-    scanf("%d", &user_id);
+    char phone_number[MAX_LEN];
+    printf("请输入要查询的用户电话号码: ");
+    scanf("%s", phone_number);
 
     struct customer *current = head;
     while (current) {
-        if (current->user_id == user_id) {
+        if (strcmp(current->phone_number , phone_number) == 0){
             printf("\n用户信息:\n");
-            printf("用户ID: %d\n", current->user_id);
             printf("用户名: %s\n", current->username);
             printf("电话号码: %s\n", current->phone_number);
             switch(current->customer_type){
@@ -69,7 +66,7 @@ void queryCustomer(struct customer *head) {
         current = current->next;
     }
 
-    printf("未找到用户ID为 %d 的用户。\n", user_id);
+    printf("未找到电话号码为 %s 的用户。\n", phone_number);
 }
 
 // 删除用户
@@ -79,27 +76,27 @@ struct customer *deleteCustomer(struct customer *head) {
         return head;
     }
 
-    int user_id;
-    printf("请输入要删除的用户ID: ");
-    scanf("%d", &user_id);
+    char phone_number[MAX_LEN];
+    printf("请输入要删除用户的电话号码: ");
+    scanf("%s", phone_number);
 
     struct customer *current = head, *prev = NULL;
     while (current) {
-        if (current->user_id == user_id) {
+        if (strcmp(current->phone_number , phone_number) == 0) {
             if (prev) {
                 prev->next = current->next;
             } else {
                 head = current->next;
             }
             freeCustomers(current);
-            printf("用户ID为 %d 的用户已删除。\n", user_id);
+            printf("电话号码为 %s 的用户已删除。\n", phone_number);
             return head;
         }
         prev = current;
         current = current->next;
     }
 
-    printf("未找到用户ID为 %d 的用户。\n", user_id);
+    printf("未找到电话号码为 %s 的用户。\n", phone_number);
     return head;
 }
 
@@ -112,15 +109,15 @@ void freeCustomers(struct customer *head) {
     }
 }
 
-int isUserIdDuplicate(struct customer *head, int user_id) {
+int isPhoneNumberDuplicate(struct customer *head, const char *phone_number) {
     struct customer *current = head;
     while (current) {
-        if (current->user_id == user_id) {
-            return 1; // 用户 ID 已存在
+        if (strcmp(current->phone_number, phone_number) == 0) {
+            return 1; // 电话号码已存在
         }
         current = current->next;
     }
-    return 0; // 用户 ID 不存在
+    return 0; // 电话号码不存在
 }
 
 void displayMenu_customer() {
@@ -143,32 +140,31 @@ struct customer *customersCreating(struct customer *customerList) {
 
         switch (choice) {
             case 1: {
-                int user_id, customer_type;
                 char username[100], phone_number[100], password[100];
+                int customer_type;
 
-                // 输入用户 ID 并检查是否重复
+                // 输入电话号码并检查是否重复
                 do {
-                    printf("请输入用户ID: ");
-                    scanf("%d", &user_id);
-                    if (isUserIdDuplicate(customerList, user_id)) {
-                        printf("用户ID已存在，请重新输入！\n");
+                    printf("请输入电话号码: ");
+                    scanf("%s", phone_number);
+                    if (isPhoneNumberDuplicate(customerList, phone_number)) {
+                        printf("电话号码已存在，请重新输入！\n");
                     }
-                } while (isUserIdDuplicate(customerList, user_id));
+                } while (isPhoneNumberDuplicate(customerList, phone_number));
 
                 printf("请输入用户名: ");
                 scanf("%s", username);
-                printf("请输入电话号码: ");
-                scanf("%s", phone_number);
                 printf("请输入密码: ");
                 scanf("%s", password);
-                printf("请输入用户类型 (1-普通用户, 2-VIP用户，3-企业用户，4-学生用户,5-老年用户): ");
+                printf("请输入用户类型 (1-普通用户, 2-VIP用户, 3-企业用户, 4-学生用户, 5-老年用户): ");
                 scanf("%d", &customer_type);
                 while (customer_type < 1 || customer_type > 5) {
                     printf("输入数据非法，请重新输入！\n");
-                    printf("请输入用户类型 (1-普通用户, 2-VIP用户，3-企业用户，4-学生用户,5-老年用户): ");
+                    printf("请输入用户类型 (1-普通用户, 2-VIP用户, 3-企业用户, 4-学生用户, 5-老年用户): ");
                     scanf("%d", &customer_type);
                 }
-                customerList = addCustomer(customerList, user_id, username, phone_number, password, customer_type);
+
+                customerList = addCustomer(customerList, username, phone_number, password, customer_type);
                 printf("用户添加成功！\n");
                 break;
             }

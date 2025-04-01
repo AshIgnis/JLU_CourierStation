@@ -15,6 +15,7 @@ struct package_r {
     int ifCollection; // 是否代收
     double shipping_fee; // 运费
     int package_status; // 包裹状态
+    int user_id; // 用户ID
     struct package_r *next; // 下一个包裹
 };
 
@@ -31,12 +32,12 @@ struct package_s {
     double shipping_fee; // 运费
     int package_status; // 包裹状态
     char description[MAX_LEN]; // 包裹描述
+    int user_id; // 用户ID
     struct package_s *next; // 下一个包裹
 };
 
 // 用户结构体
 struct customer {
-    int user_id; // 用户ID
     char username[MAX_LEN]; // 用户名
     char phone_number[MAX_LEN]; // 电话号码
     char password[MAX_LEN]; // 密码
