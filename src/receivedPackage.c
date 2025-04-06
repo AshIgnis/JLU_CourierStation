@@ -12,7 +12,7 @@ void free_package_r(struct package_r* head){
 		free(lst);
 		if(now==NULL){
 			break;
-		}
+		}lst=now;
 	}return;
 }
 
