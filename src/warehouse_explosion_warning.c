@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "warehouse_explosion_warning.h"
 
 void warning(){
     const char *filePath = "../output/receivedPackage.txt";
