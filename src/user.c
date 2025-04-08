@@ -238,7 +238,7 @@ void userAction(struct customer *head,const char *phone_number){
                         printf("返回主菜单\n");
                         system("pause");
                         system("cls");
-                        return; // 直接返回，退出函数
+                        break; // 直接返回，退出函数
                     default:
                         printf("无效的选择，请重试。\n");
                         system("pause");
