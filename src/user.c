@@ -27,6 +27,7 @@ void userOperating(struct customer *head) {
     password[strcspn(password, "\n")] = '\0'; // 去除换行符
 
     int flag = userLanding(head, phone_number, password);
+    system("pause");
     system("cls");
     while (!flag) {
         int choice;
@@ -250,15 +251,18 @@ void userAction(struct customer *head,const char *phone_number){
             case 3: {// 邮寄包裹
                 printf("进入寄件包裹管理系统...\n");
                 package_s_original_start((char *)phone_number);
+                system("pause");
                 system("cls");
                 break;
             }
             case 0:
                 printf("返回主菜单\n");
+                system("pause");
                 system("cls");
                 break;
             default:
                 printf("无效的选择，请重试。\n");
+                system("pause");
                 system("cls");
         }
     } while (choice != 0);
