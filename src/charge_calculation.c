@@ -43,7 +43,7 @@ double get_customer_discount(int customer_type) {
 void calculate_shipping_fees(struct customer *customers) {
     struct customer *current_customer = customers;
     const double BASE_RATE = 10.0; // 基础运费率，10元/单位体积
-
+    //体积*基础费率*包裹系数*用户折扣 = 运费
     while (current_customer != NULL) {
         // 处理寄件包裹
         struct package_s *send_pkg = current_customer->send_packages;
