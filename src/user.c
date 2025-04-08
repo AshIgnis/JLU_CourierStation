@@ -49,6 +49,7 @@ void userOperating(struct customer *head) {
                 // 注册新用户
                 char username[MAX_LEN];
                 int customer_type;
+                char newpassword[MAX_LEN];
 
                 do {
                     printf("请输入电话号码: \n");
@@ -71,9 +72,11 @@ void userOperating(struct customer *head) {
                     system("pause");
                     system("cls");
                 }
+                printf("新输入密码: \n");
+                scanf("%s", newpassword);
                 
                 // 添加新用户到链表
-                head = addCustomer(head, username, phone_number, password, customer_type);
+                head = addCustomer(head, username, phone_number, newpassword, customer_type);
 
                 // 保存用户到文件
                 saveCustomers(head);
@@ -220,7 +223,6 @@ void userAction(struct customer *head,const char *phone_number){
                 printf("1. 取件\n");
                 printf("0. 退出\n");
                 printf("请输入您的选择: ");
-                scanf("%d", &choice_package);
 
                 if (scanf("%d", &choice_package) != 1) {
                     printf("输入无效，请输入数字。\n");
@@ -238,7 +240,7 @@ void userAction(struct customer *head,const char *phone_number){
                         printf("返回主菜单\n");
                         system("pause");
                         system("cls");
-                        break; // 直接返回，退出函数
+                        return; // 直接返回，退出函数
                     default:
                         printf("无效的选择，请重试。\n");
                         system("pause");
@@ -257,7 +259,7 @@ void userAction(struct customer *head,const char *phone_number){
                 printf("返回主菜单\n");
                 system("pause");
                 system("cls");
-                break;
+                return;
             default:
                 printf("无效的选择，请重试。\n");
                 system("pause");
@@ -300,7 +302,7 @@ void userTakePackage(const char *phone_number) {
 
     FILE *file = fopen(RECEIVED_FILE, "r");
     if (!file) {
-        perror("无法打开 receivedPackage.txt 文件");
+        perror("无法打开 received_packages.txt 文件");
         return;
     }
 
