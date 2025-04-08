@@ -6,9 +6,9 @@
 
 /*
 
-1.寄件
-2.查询以往包裹
-0.退出
+1.¼Ä¼þ
+2.²éÑ¯ÒÔÍù°ü¹ü
+0.ÍË³ö
 
 */
 
@@ -26,20 +26,20 @@ void free_package_s(struct package_s* head){
 
 void show_package_s(struct package_s* now){
 	
-	printf("1.收件人姓名: \n");
+	printf("1.ÊÕ¼þÈËÐÕÃû: \n");
 	printf("%s\n",(*now).receiver_name);
-	printf("2.收件人地址: \n");
+	printf("2.ÊÕ¼þÈËµØÖ·: \n");
 	printf("%s\n",(*now).receiver_address);	
-	printf("3.包裹体积 (立方厘米): ");
+	printf("3.°ü¹üÌå»ý (Á¢·½ÀåÃ×): ");
 	printf("%.3lf\n",(*now).volume);
-	printf("4.包裹类型 (1-文件, 2-生鲜, 3-易碎品, 4-家电, 5-危险品): ");
+	printf("4.°ü¹üÀàÐÍ (1-ÎÄ¼þ, 2-ÉúÏÊ, 3-Ò×ËéÆ·, 4-¼Òµç, 5-Î£ÏÕÆ·): ");
 	printf("%d\n",(*now).package_type);
-	printf("5.是否需要到付 (0-不需要, 1-需要): ");
+	printf("5.ÊÇ·ñÐèÒªµ½¸¶ (0-²»ÐèÒª, 1-ÐèÒª): ");
 	printf("%d\n",(*now).ifCollection);
 	if((*now).ifCollection){
-		printf("运输费用: ");
+		printf("ÔËÊä·ÑÓÃ: ");
 		printf("%.2lf\n",(*now).shipping_fee);
-	}printf("6.包裹状态 (1-正常, 2-损坏, 3-违禁品): ");
+	}printf("6.°ü¹ü×´Ì¬ (1-Õý³£, 2-Ëð»µ, 3-Î¥½ûÆ·): ");
 	printf("%d\n",(*now).package_status);
 	
 	return;
@@ -58,16 +58,16 @@ void find_package_s(char* p,struct package_s* head){
 			break;
 		}if(strcmp((*now).phone_number,p)==0){
 			jd+=1;
-			printf("包裹%3d: \n",jd);
+			printf("°ü¹ü%3d: \n",jd);
 			show_package_s(now);
 			printf("\n");
 		}lst=now;
 	}
 	
 	if(jd!=0){
-		printf("您的寄件信息展示如上.\n");
+		printf("ÄúµÄ¼Ä¼þÐÅÏ¢Õ¹Ê¾ÈçÉÏ.\n");
 	}else{
-		printf("您还未曾进行寄件.\n");
+		printf("Äú»¹Î´Ôø½øÐÐ¼Ä¼þ.\n");
 	}
 	
 	return;
@@ -124,9 +124,9 @@ void save_package_s(struct package_s* head){
 			fprintf(file," 0");
 		}fprintf(file," %d",(*now).package_status);
 		
-		if((*now).next!=NULL){
-			fprintf(file,"\n");
-		}
+		if((*now).receiver_name[0]=='D'){
+			break;
+		}fprintf(file,"\n");
 		
 		lst=now;
 	}
@@ -146,13 +146,13 @@ void package_s_original_start(char* t){
 	
 	for(; ;){
 		
-		printf("\n========== 寄件包裹管理系统 ==========\n");
-		printf("1. 添加寄件包裹\n");
-		printf("2. 查询寄件包裹\n");
-		printf("3. 保存寄件包裹\n");
-		printf("0. 返回主菜单\n");
+		printf("\n========== ¼Ä¼þ°ü¹ü¹ÜÀíÏµÍ³ ==========\n");
+		printf("1. Ìí¼Ó¼Ä¼þ°ü¹ü\n");
+		printf("2. ²éÑ¯¼Ä¼þ°ü¹ü\n");
+		printf("3. ±£´æ¼Ä¼þ°ü¹ü\n");
+		printf("0. ·µ»ØÖ÷²Ëµ¥\n");
 		printf("=====================================\n");	
-		printf("请输入您的选择: ");
+		printf("ÇëÊäÈëÄúµÄÑ¡Ôñ: ");
 		
 		scanf("%d",&op);
 		
@@ -169,25 +169,25 @@ void package_s_original_start(char* t){
 			struct package_s* now=(struct package_s*)malloc(sizeof(struct package_s));
 			for(int i=0;i<=13;i++){
 				(*now).phone_number[i]=nm[i];
-			}printf("1.请输入收件人姓名: \n");
+			}printf("1.ÇëÊäÈëÊÕ¼þÈËÐÕÃû: \n");
 			scanf("%s",(*now).receiver_name);
-			printf("2.请输入收件人地址: \n");
+			printf("2.ÇëÊäÈëÊÕ¼þÈËµØÖ·: \n");
 			scanf("%s",(*now).receiver_address);
-			printf("3.请输入包裹体积 (立方厘米): \n");
+			printf("3.ÇëÊäÈë°ü¹üÌå»ý (Á¢·½ÀåÃ×): \n");
 			scanf("%lf",&(*now).volume);
-			printf("4.请输入包裹类型 (1-文件, 2-生鲜, 3-易碎品, 4-家电, 5-危险品): \n");
+			printf("4.ÇëÊäÈë°ü¹üÀàÐÍ (1-ÎÄ¼þ, 2-ÉúÏÊ, 3-Ò×ËéÆ·, 4-¼Òµç, 5-Î£ÏÕÆ·): \n");
 			scanf("%d",&(*now).package_type);
-			printf("5.是否需要到付 (0-不需要, 1-需要): \n");
+			printf("5.ÊÇ·ñÐèÒªµ½¸¶ (0-²»ÐèÒª, 1-ÐèÒª): \n");
 			scanf("%d",&(*now).ifCollection);
-			printf("6.请输入包裹状态 (1-正常, 2-损坏, 3-违禁品): \n");
+			printf("6.ÇëÊäÈë°ü¹ü×´Ì¬ (1-Õý³£, 2-Ëð»µ, 3-Î¥½ûÆ·): \n");
 			scanf("%d", &(*now).package_status);
 			
 			char jdg[22];
 			for(; ;){
 				
-				printf("\n包裹信息展示如下: \n\n");
+				printf("\n°ü¹üÐÅÏ¢Õ¹Ê¾ÈçÏÂ: \n\n");
 				show_package_s(now);
-				printf("\n请仔细核对包裹信息录入是否正确 Y/N\n");
+				printf("\nÇë×ÐÏ¸ºË¶Ô°ü¹üÐÅÏ¢Â¼ÈëÊÇ·ñÕýÈ· Y/N\n");
 				for(int i=0; ;){
 					scanf("%c",&jdg[i]);
 					if(i==0&&jdg[i]=='\n'){
@@ -210,30 +210,30 @@ void package_s_original_start(char* t){
 					break;
 				}else{
 					if(strlen(jdg)==1&&(*jdg)=='N'){
-						printf("请输入希望更改项的序号 (输入\"0\"以放弃本次修改):\n");	
+						printf("ÇëÊäÈëÏ£Íû¸ü¸ÄÏîµÄÐòºÅ (ÊäÈë\"0\"ÒÔ·ÅÆú±¾´ÎÐÞ¸Ä):\n");	
 						int lsl;
 						scanf("%d",&lsl);
 						if(lsl==1){
-							printf("请重新输入收件人姓名: \n");
+							printf("ÇëÖØÐÂÊäÈëÊÕ¼þÈËÐÕÃû: \n");
 							scanf("%s",(*now).receiver_name);
 						}if(lsl==2){ 
-							printf("请重新输入收件人地址: \n");
+							printf("ÇëÖØÐÂÊäÈëÊÕ¼þÈËµØÖ·: \n");
 							scanf("%s",(*now).receiver_address);
 						}if(lsl==3){
-							printf("请重新输入包裹体积 (立方厘米): \n");
+							printf("ÇëÖØÐÂÊäÈë°ü¹üÌå»ý (Á¢·½ÀåÃ×): \n");
 							scanf("%lf",&(*now).volume);
 						}if(lsl==4){
-							printf("请重新输入包裹类型 (1-文件, 2-生鲜, 3-易碎品, 4-家电, 5-危险品): \n");
+							printf("ÇëÖØÐÂÊäÈë°ü¹üÀàÐÍ (1-ÎÄ¼þ, 2-ÉúÏÊ, 3-Ò×ËéÆ·, 4-¼Òµç, 5-Î£ÏÕÆ·): \n");
 							scanf("%d",&(*now).package_type);
 						}if(lsl==5){
-							printf("请重新输入是否需要到付 (0-不需要, 1-需要): \n");
+							printf("ÇëÖØÐÂÊäÈëÊÇ·ñÐèÒªµ½¸¶ (0-²»ÐèÒª, 1-ÐèÒª): \n");
 							scanf("%d",&(*now).ifCollection);
 						}if(lsl==6){
-							printf("请重新输入包裹状态 (1-正常, 2-损坏, 3-违禁品): \n");
+							printf("ÇëÖØÐÂÊäÈë°ü¹ü×´Ì¬ (1-Õý³£, 2-Ëð»µ, 3-Î¥½ûÆ·): \n");
 							scanf("%d", &(*now).package_status);
 						}
 					}else{
-						printf("输入\"Y\"以表示确认, \"N\"以表示需要修改包裹信息. \n");
+						printf("ÊäÈë\"Y\"ÒÔ±íÊ¾È·ÈÏ, \"N\"ÒÔ±íÊ¾ÐèÒªÐÞ¸Ä°ü¹üÐÅÏ¢. \n");
 					}
 				}
 			}
@@ -241,7 +241,7 @@ void package_s_original_start(char* t){
 			(*now).next=(*head).next;
 			(*head).next=now;
 			
-			printf("寄件包裹添加成功！\n");
+			printf("¼Ä¼þ°ü¹üÌí¼Ó³É¹¦£¡\n");
 			save_package_s(head);
 		}
 		
@@ -253,7 +253,7 @@ void package_s_original_start(char* t){
 		
 		if(op==3){
 			save_package_s(head);
-			printf("收件包裹保存成功！\n");
+			printf("ÊÕ¼þ°ü¹ü±£´æ³É¹¦£¡\n");
 		}
 	}
 	
