@@ -355,7 +355,7 @@ void package_r_original_start(){
 		
 		if(op==4){
 			
-			printf("请输入希望查询的包裹序列号: \n");
+			printf("请输入希望删除的包裹序列号: \n");
 			char p[22];
 			for(int i=0; ;){
 				scanf("%c",&p[i]);
