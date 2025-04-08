@@ -346,12 +346,12 @@ void userTakePackage(const char *phone_number) {
     fclose(box);
 
     // 删除原文件并重命名临时文件
-    if (remove("RECEIVED_FILE") != 0) {
+    if (remove(RECEIVED_FILE) != 0) {
         perror("删除 receivedPackage.txt 文件失败");
         return;
     }
 
-    if (rename("temp.txt", "RECEIVED_FILE") != 0) {
+    if (rename("temp.txt", RECEIVED_FILE) != 0) {
         perror("重命名 temp.txt 文件失败");
         return;
     }
