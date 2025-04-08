@@ -168,6 +168,7 @@ struct customer *customersCreating(struct customer *customerList) {
 
                 customerList = addCustomer(customerList, username, phone_number, password, customer_type);
                 printf("用户添加成功！\n");
+                saveCustomers(customerList);
                 break;
             }
             case 2:

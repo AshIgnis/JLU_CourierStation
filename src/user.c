@@ -278,9 +278,12 @@ void userReceivedPackagesSearching(const char *phone_number) {
 
     char package_id[MAX_LEN];
     char package_phone[MAX_LEN];
+    double volume;
+    int package_type, ifCollection, package_status;
+    double shipping_fee;
     int found = 0;
 
-    while (fscanf(file, "%s %s", package_id, package_phone) != EOF) {
+    while (fscanf(file, "%s %lf %d %d %lf %d %s", package_phone, &volume, &package_type, &ifCollection, &shipping_fee, &package_status, package_id) != EOF) {
         if (strcmp(package_phone, phone_number) == 0) {
             printf("包裹取件码: %s\n", package_id);
             found = 1;
@@ -313,7 +316,7 @@ void userTakePackage(const char *phone_number) {
         return;
     }
 
-    FILE *box = fopen("id_box.txt", "w");
+    FILE *box = fopen("id_box.txt", "a");
     if (!box) {
         perror("无法打开 id_box.txt 文件");
         return;
@@ -337,7 +340,7 @@ void userTakePackage(const char *phone_number) {
             return_num = convertStringToInt(current_package_id);
             fprintf(box, " %d", return_num);
         } else {
-            fprintf(temp, "%s %s\n", current_package_id, current_phone);
+            fprintf(temp, "%s %lf %d %d %lf %d %s\n", current_phone, current_volume, current_package_type, current_ifCollection, current_shipping_fee, current_package_status, current_package_id);
         }
     }
 
