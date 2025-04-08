@@ -23,10 +23,7 @@ struct package_r {
 
 // 寄件包裹结构体
 struct package_s {
-    char package_id[MAX_LEN]; // 包裹ID
-    char sender_name[MAX_LEN]; // 寄件人姓名
     char receiver_name[MAX_LEN]; // 收件人姓名
-    char sender_address[MAX_LEN]; // 寄件人地址
     char receiver_address[MAX_LEN]; // 收件人地址
     int ifCollection; // 是否到付
     double volume; // 体积
