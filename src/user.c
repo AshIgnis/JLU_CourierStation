@@ -58,8 +58,6 @@ void userOperating(struct customer *head) {
                     if (isPhoneNumberDuplicate(head, phone_number)) {
                         printf("电话号码已存在，请重新输入！\n");
                     }
-                    system("pause");
-                    system("cls");
                 } while (isPhoneNumberDuplicate(head, phone_number));
 
                 printf("请输入用户名: \n");
