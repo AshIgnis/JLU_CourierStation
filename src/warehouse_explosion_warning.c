@@ -11,12 +11,12 @@ void warning(){
 
     if (!file) {
         perror("无法打开 receivedPackage.txt");
-        return 0;
+        return ;
     }
     if (!tempFile) {
         perror("无法创建临时文件");
         fclose(file);
-        return 0;
+        return ;
     }
 
     // 读取文件内容并统计行数
@@ -44,13 +44,13 @@ void warning(){
     // 替换原文件
     if (remove(filePath) != 0) {
         perror("无法删除原文件");
-        return 0;
+        return ;
     }
     if (rename(tempFilePath, filePath) != 0) {
         perror("无法重命名临时文件");
-        return 0;
+        return ;
     }
 
     printf("已成功删除行号较大的那一半行。\n");
-    return 0;
+    return ;
 }

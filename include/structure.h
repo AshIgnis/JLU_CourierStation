@@ -13,7 +13,7 @@ struct package_r {
     char package_id[MAX_LEN]; // 包裹ID
     double volume; // 体积
     int package_type; // 包裹类型
-    int ifCollection; // 是否代付
+    int ifCollection; // 是否到付
     double shipping_fee; // 运费
     int package_status; // 包裹状态
     int user_id; // 用户ID
@@ -28,6 +28,7 @@ struct package_s {
     char receiver_name[MAX_LEN]; // 收件人姓名
     char sender_address[MAX_LEN]; // 寄件人地址
     char receiver_address[MAX_LEN]; // 收件人地址
+    int ifCollection; // 是否到付
     double volume; // 体积
     int package_type; // 包裹类型
     char order_time[MAX_LEN]; // 下单时间

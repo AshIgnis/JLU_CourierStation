@@ -2,6 +2,8 @@
 #include "fileOperations.h"
 #include "structure.h"
 #include "customer.h"
+#include "sendPackage.h"
+#include "receivedPackage.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -9,26 +11,37 @@
 
 // 用户操作界面
 void userOperating(struct customer *head) {
+
+    printf("欢迎使用用户操作系统！\n");
+    printf("请登录您的账户。\n");
+
     char phone_number[MAX_LEN]; // 电话号码
     char password[MAX_LEN]; // 密码
 
-    printf("请输入电话号码: ");
+    printf("请输入电话号码: \n");
     fgets(phone_number, MAX_LEN, stdin);
     phone_number[strcspn(phone_number, "\n")] = '\0'; // 去除换行符
 
-    printf("请输入密码: ");
+    printf("请输入密码: \n");
     fgets(password, MAX_LEN, stdin);
     password[strcspn(password, "\n")] = '\0'; // 去除换行符
 
     int flag = userLanding(head, phone_number, password);
+    system("cls");
     while (!flag) {
         int choice;
-        printf("电话号或密码错误！");
+        printf("电话号或密码错误！\n");
         printf("1. 注册\n");
         printf("2. 重新输入\n");
         printf("0. 退出\n");
-        printf("请输入您的选择: ");
-        scanf("%d", &choice);
+        printf("请输入您的选择: \n");
+        if (scanf("%d", &choice) != 1) {
+            printf("输入无效，请输入数字。\n");
+            while (getchar() != '\n'); // 清理输入缓冲区
+            system("pause");
+            system("cls");
+            continue;
+        }
 
         switch (choice) {
             case 1: {
@@ -37,23 +50,27 @@ void userOperating(struct customer *head) {
                 int customer_type;
 
                 do {
-                    printf("请输入电话号码: ");
+                    printf("请输入电话号码: \n");
                     scanf("%s", phone_number);
 
                     // 使用 isPhoneNumberDuplicate 检查电话号码是否已存在
                     if (isPhoneNumberDuplicate(head, phone_number)) {
                         printf("电话号码已存在，请重新输入！\n");
                     }
+                    system("pause");
+                    system("cls");
                 } while (isPhoneNumberDuplicate(head, phone_number));
 
-                printf("请输入用户名: ");
+                printf("请输入用户名: \n");
                 scanf("%s", username);
-                printf("请输入用户类型 (1-普通用户, 2-VIP用户, 3-企业用户, 4-学生用户, 5-老年用户): ");
+                printf("请输入用户类型 (1-普通用户, 2-VIP用户, 3-企业用户, 4-学生用户, 5-老年用户): \n");
                 scanf("%d", &customer_type);
                 while (customer_type < 1 || customer_type > 5) {
                     printf("输入数据非法，请重新输入！\n");
-                    printf("请输入用户类型 (1-普通用户, 2-VIP用户, 3-企业用户, 4-学生用户, 5-老年用户): ");
+                    printf("请输入用户类型 (1-普通用户, 2-VIP用户, 3-企业用户, 4-学生用户, 5-老年用户): \n");
                     scanf("%d", &customer_type);
+                    system("pause");
+                    system("cls");
                 }
                 
                 // 添加新用户到链表
@@ -71,9 +88,9 @@ void userOperating(struct customer *head) {
             case 2:
                 // 重新输入
                 printf("请重新输入电话号码和密码。\n");
-                printf("请输入电话号码: ");
+                printf("请输入电话号码: \n");
                 scanf("%s", phone_number);
-                printf("请输入密码: ");
+                printf("请输入密码: \n");
                 scanf("%s", password);
                 flag = userLanding(head, phone_number, password);
                 system("pause");
@@ -82,11 +99,14 @@ void userOperating(struct customer *head) {
             case 0:
                 // 退出
                 printf("退出系统\n");
+                system("pause");
                 system("cls");
                 return; // 直接返回，退出函数
             default:
                 printf("无效的选择，请重试。\n");
-        }
+                system("pause");
+                system("cls");
+        }       
     }
     userAction(head, phone_number);
 }
@@ -144,7 +164,13 @@ void userAction(struct customer *head,const char *phone_number){
     do {
         displayMenu_user();
         printf("请输入您的选择:\n ");
-        scanf("%d", &choice);
+        if (scanf("%d", &choice) != 1) {
+            printf("输入无效，请输入数字。\n");
+            while (getchar() != '\n'); // 清理输入缓冲区
+            system("pause");
+            system("cls");
+            continue;
+        }
 
         switch (choice) {
             case 1: {// 查看用户信息
@@ -183,11 +209,13 @@ void userAction(struct customer *head,const char *phone_number){
                 if (!found) {
                     printf("未找到用户信息。\n");
                 }
+                system("pause");
+                system("cls");
                 break;
             }
             case 2: {// 查询收件包裹信息
                 printf("您的包裹信息如下:\n");
-                userReceivedPackagesSearching(head, phone_number);
+                userReceivedPackagesSearching(phone_number);
 
                 int choice_package;
                 printf("1. 取件\n");
@@ -195,30 +223,44 @@ void userAction(struct customer *head,const char *phone_number){
                 printf("请输入您的选择: ");
                 scanf("%d", &choice_package);
 
+                if (scanf("%d", &choice_package) != 1) {
+                    printf("输入无效，请输入数字。\n");
+                    while (getchar() != '\n'); // 清理输入缓冲区
+                    system("pause");
+                    system("cls");
+                    continue;
+                }
+
                 switch (choice_package) {
                     case 1: // 取件
                         userTakePackage(phone_number);
                         break;
                     case 0: // 退出
                         printf("返回主菜单\n");
+                        system("pause");
                         system("cls");
                         return; // 直接返回，退出函数
                     default:
                         printf("无效的选择，请重试。\n");
+                        system("pause");
+                        system("cls");
                 }
                 break;
             }
-            case 3: // 邮寄包裹
-
+            case 3: {// 邮寄包裹
+                printf("进入寄件包裹管理系统...\n");
+                package_s_original_start((char *)phone_number);
+                system("cls");
                 break;
+            }
             case 0:
                 printf("返回主菜单\n");
+                system("cls");
                 break;
             default:
                 printf("无效的选择，请重试。\n");
+                system("cls");
         }
-        system("pause");
-        system("cls");
     } while (choice != 0);
 
 }
@@ -285,7 +327,7 @@ void userTakePackage(const char *phone_number) {
     int return_num = 0;
 
     // 遍历文件内容，找到并跳过目标包裹
-    while (fscanf(file, "%s %lf %d %d %lf %d %s", current_phone, current_volume, current_package_type, current_ifCollection, current_shipping_fee, current_package_status, current_package_id) != EOF) {
+    while (fscanf(file, "%s %lf %d %d %lf %d %s", current_phone, &current_volume, &current_package_type, &current_ifCollection, &current_shipping_fee, &current_package_status, current_package_id) != EOF) {
         if (strcmp(current_package_id, package_id) == 0 && strcmp(current_phone, phone_number) == 0) {
             found = 1; // 找到包裹，跳过写入
             return_num = convertStringToInt(current_package_id);
@@ -317,6 +359,7 @@ void userTakePackage(const char *phone_number) {
     }
 }
 
+// 字符串转整数
 int convertStringToInt(const char *input) {
     // 检查输入是否为空
     if (input == NULL) {

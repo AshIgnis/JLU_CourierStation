@@ -4,7 +4,7 @@
 #include "structure.h"
 
 // 包裹相关功能声明
-void show_package_s(struct package_s* x,int if_id); // 展示包裹信息
+void show_package_s(struct package_s* x); // 展示包裹信息
 void package_s_original_start(char* t); // 初始化界面
 //t 为传入手机号码的字符数组头指针
 void save_package_s(); // 包裹文件保存
