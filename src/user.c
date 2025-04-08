@@ -58,8 +58,6 @@ void userOperating(struct customer *head) {
                     if (isPhoneNumberDuplicate(head, phone_number)) {
                         printf("电话号码已存在，请重新输入！\n");
                     }
-                    system("pause");
-                    system("cls");
                 } while (isPhoneNumberDuplicate(head, phone_number));
 
                 printf("请输入用户名: \n");
@@ -240,7 +238,7 @@ void userAction(struct customer *head,const char *phone_number){
                         printf("返回主菜单\n");
                         system("pause");
                         system("cls");
-                        return; // 直接返回，退出函数
+                        break; // 直接返回，退出函数
                     default:
                         printf("无效的选择，请重试。\n");
                         system("pause");

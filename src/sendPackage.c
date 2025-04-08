@@ -124,9 +124,9 @@ void save_package_s(struct package_s* head){
 			fprintf(file," 0");
 		}fprintf(file," %d",(*now).package_status);
 		
-		if((*now).next!=NULL){
-			fprintf(file,"\n");
-		}
+		if((*now).receiver_name[0]=='D'){
+			break;
+		}fprintf(file,"\n");
 		
 		lst=now;
 	}

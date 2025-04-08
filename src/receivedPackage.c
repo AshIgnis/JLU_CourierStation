@@ -195,9 +195,9 @@ void save_package_r(struct package_r* head){
 		}fprintf(file," %d",(*now).package_status);
 		fprintf(file," %s",(*now).package_id);
 		
-		if((*now).next!=NULL){
-			fprintf(file,"\n");
-		}
+		if((*now).package_id[0]=='S'){
+			break;
+		}fprintf(file,"\n");
 		
 		lst=now;
 	}
@@ -225,8 +225,8 @@ void package_r_original_start(){
 		scanf("%d",&op);
 		
 		if(op==0){
-			free_package_r(head);
 			save_package_r(head);
+			free_package_r(head);
 			break;
 		}
 		
