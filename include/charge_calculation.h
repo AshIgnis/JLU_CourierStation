@@ -2,9 +2,7 @@
 #define CHARGE_CALCULATION_H
 #include <stdbool.h>
 #include "structure.h"
-
-double get_package_type_coefficient(int package_type);
-double get_customer_discount(int customer_type);
-void calculate_shipping_fees(struct customer *customers);
+void calculate_send_package_fees(struct package_s *send_pkg, int customer_type);
+void calculate_receive_package_fees(struct package_r *recv_pkg, int customer_type);
 
 #endif

@@ -16,6 +16,7 @@
 //(1-普通用户, 2-VIP用户, 3-企业用户, 4-学生用户, 5-老年用户):
 //(1-文件, 2-生鲜, 3-易碎品, 4-家电, 5-危险品)
 //(1-正常, 2-损坏, 3-违禁品)
+#define base_rate 0.0001
 
 double get_package_type_coefficient(int package_type) {
     switch (package_type) {
@@ -40,52 +41,46 @@ double get_customer_discount(int customer_type) {
     }
 }
 
-// 计算所有包裹的运费
-void calculate_shipping_fees(struct customer *customers) {
-    struct customer *current_customer = customers;
-    const double BASE_RATE = 0.00001; // 基础运费率
-    srand((unsigned int)time(NULL)); // 初始化随机数种子
+// 计算寄件包裹的运费
+void calculate_send_package_fees(struct package_s *send_pkg, int customer_type) {
+    while (send_pkg != NULL) {
+        double base = send_pkg->volume * base_rate;
+        double type_coeff = get_package_type_coefficient(send_pkg->package_type);
+        double discount = get_customer_discount(customer_type);
+        double random_factor = 0.8 + ((double)rand() / RAND_MAX) * 0.19; // 生成0.8到0.99之间的随机数
+        send_pkg->shipping_fee = base * type_coeff * discount * random_factor;
+        printf("新店开张，随机折扣八折到九九折，其中包裹%s抽到的比例%lf\n", send_pkg->package_id, random_factor);
 
-    while (current_customer != NULL) {
-        // 处理寄件包裹
-        struct package_s *send_pkg = current_customer->send_packages;
-        while (send_pkg != NULL) {
-            double base = send_pkg->volume * BASE_RATE;
-            double type_coeff = get_package_type_coefficient(send_pkg->package_type);
-            double discount = get_customer_discount(current_customer->customer_type);
+        // 判断是否抽中免单
+        if (((double)rand() / RAND_MAX) < 0.05) { // 5%的概率免单
+            send_pkg->shipping_fee = 0.0;
+            printf("包裹ID %s 抽中了免单！\n", send_pkg->package_id);
+        }
+
+        send_pkg = send_pkg->next;
+    }
+}
+
+// 计算收件包裹的运费
+void calculate_receive_package_fees(struct package_r *recv_pkg, int customer_type) {
+    while (recv_pkg != NULL) {
+        if (recv_pkg->ifCollection == 1) { // 仅处理到付包裹
+            double base = recv_pkg->volume * base_rate;
+            double type_coeff = get_package_type_coefficient(recv_pkg->package_type);
+            double discount = get_customer_discount(customer_type);
             double random_factor = 0.8 + ((double)rand() / RAND_MAX) * 0.19; // 生成0.8到0.99之间的随机数
-            send_pkg->shipping_fee = base * type_coeff * discount * random_factor;
+            recv_pkg->shipping_fee = base * type_coeff * discount * random_factor;
+            printf("新店开张，随机折扣八折到九九折，其中包裹%s抽到的比例%lf\n", recv_pkg->package_id, random_factor);
 
             // 判断是否抽中免单
             if (((double)rand() / RAND_MAX) < 0.05) { // 5%的概率免单
-                send_pkg->shipping_fee = 0.0;
-                printf("包裹ID %s 抽中了免单！\n", send_pkg->package_id);
+                recv_pkg->shipping_fee = 0.0;
+                printf("包裹ID %s 抽中了免单！\n", recv_pkg->package_id);
             }
-
-            send_pkg = send_pkg->next;
+        } else {
+            recv_pkg->shipping_fee = 0;
         }
 
-        // 处理收件包裹（仅处理到付）
-        struct package_r *recv_pkg = current_customer->received_packages;
-        while (recv_pkg != NULL) {
-            if (recv_pkg->ifCollection == 1) {
-                double base = recv_pkg->volume * BASE_RATE;
-                double type_coeff = get_package_type_coefficient(recv_pkg->package_type);
-                double discount = get_customer_discount(current_customer->customer_type);
-                double random_factor = 0.8 + ((double)rand() / RAND_MAX) * 0.19; // 生成0.8到0.99之间的随机数
-                recv_pkg->shipping_fee = base * type_coeff * discount * random_factor;
-
-                // 判断是否抽中免单
-                if (((double)rand() / RAND_MAX) < 0.05) { // 5%的概率免单
-                    recv_pkg->shipping_fee = 0.0;
-                    printf("包裹ID %s 抽中了免单！\n", recv_pkg->package_id);
-                }
-            }else{
-                recv_pkg->shipping_fee = 0;
-            }
-            recv_pkg = recv_pkg->next;
-        }
-
-        current_customer = current_customer->next;
+        recv_pkg = recv_pkg->next;
     }
 }
