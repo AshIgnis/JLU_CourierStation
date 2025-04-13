@@ -59,51 +59,50 @@ double round_to_two_decimals(double value) {
 }
 
 // 修改后的寄件包裹运费计算
-void calculate_send_package_fees(struct package_s *send_pkg, int customer_type) {
-    while (send_pkg != NULL) {
+double calculate_send_package_fees(struct package_s *send_pkg, int customer_type,int ifDoorToDoor) {
+        double shipping_fee = 0.0; // 初始化运费
         double Vbase = calculate_volume_fee(send_pkg->volume); // 使用分段计费规则
         double type_coeff = get_package_type_coefficient(send_pkg->package_type);
         double discount = get_customer_discount(customer_type);
         double random_factor = 0.8 + ((double)rand() / RAND_MAX) * 0.19; // 生成0.8到0.99之间的随机数
-        send_pkg->shipping_fee = Vbase * type_coeff * discount * random_factor;
-        send_pkg->shipping_fee = round_to_two_decimals(send_pkg->shipping_fee); // 保留两位小数
-
-       // printf("新店开张，随机折扣八折到九九折，其中包裹抽到的比例%lf\n", random_factor);
+        shipping_fee = Vbase * type_coeff * discount * random_factor;
 
         // 判断是否抽中免单
         if (((double)rand() / RAND_MAX) < 0.05) { // 5%的概率免单
-            send_pkg->shipping_fee = 0.0;
+            shipping_fee = 0.0;
             printf("包裹抽中了免单！\n");
         }
 
-        send_pkg = send_pkg->next;
-    }
+        if(ifDoorToDoor) shipping_fee +=calculate_door_to_door(customer_type,send_pkg->package_type);
+        shipping_fee = round_to_two_decimals(send_pkg->shipping_fee); // 保留两位小数
+        return shipping_fee;
+    
 }
 
 // 修改后的收件包裹运费计算
-void calculate_receive_package_fees(struct package_r *recv_pkg, int customer_type) {
-    while (recv_pkg != NULL) {
+double calculate_receive_package_fees(struct package_r *recv_pkg, int customer_type,int ifDoorToDoor) {
+        double shipping_fee = 0.0;
         if (recv_pkg->ifCollection == 1) { // 仅处理到付包裹
             double Vbase = calculate_volume_fee(recv_pkg->volume); // 使用分段计费规则
             double type_coeff = get_package_type_coefficient(recv_pkg->package_type);
             double discount = get_customer_discount(customer_type);
             double random_factor = 0.8 + ((double)rand() / RAND_MAX) * 0.19; // 生成0.8到0.99之间的随机数
-            recv_pkg->shipping_fee = Vbase * type_coeff * discount * random_factor;
-            recv_pkg->shipping_fee = round_to_two_decimals(recv_pkg->shipping_fee); // 保留两位小数
+            shipping_fee = Vbase * type_coeff * discount * random_factor;
+            
 
            // printf("新店开张，随机折扣八折到九九折，其中包裹%s抽到的比例%lf\n", recv_pkg->package_id, random_factor);
 
             // 判断是否抽中免单
             if (((double)rand() / RAND_MAX) < 0.05) { // 5%的概率免单
-                recv_pkg->shipping_fee = 0.0;
+                shipping_fee = 0.0;
                 printf("包裹ID %s 抽中了免单！\n", recv_pkg->package_id);
             }
-        } else {
-            recv_pkg->shipping_fee = 0;
         }
+        if(ifDoorToDoor) shipping_fee+=calculate_door_to_door(customer_type,recv_pkg->package_type);
 
-        recv_pkg = recv_pkg->next;
-    }
+        shipping_fee = round_to_two_decimals(recv_pkg->shipping_fee); // 保留两位小数
+        return shipping_fee;        
+    
 }
 
 double calculate_door_to_door(int customer_type,int package_type){
