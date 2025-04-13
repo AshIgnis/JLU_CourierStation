@@ -110,9 +110,9 @@ class Dashboard:
             average_value = np.mean(self.y) if self.y else 0
             stats_text = f"""
             Data Statistics:
-            - Predicted Value: {self.y[-1] if self.y else 'N/A'}
-            - Average: {average_value:.2f}
-            - Max Value: {max(self.y) if self.y else 0}
+            ---- Predicted Value: {self.y[-1] if self.y else 'N/A'}
+            ---- Average: {average_value:.2f}
+            ---- Max Value: {max(self.y) if self.y else 0}
             """
             self.stats.value = stats_text
             

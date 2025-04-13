@@ -47,6 +47,19 @@ void load_data_from_file(int real_time) {
     fclose(file);
 }
 
+int real_week ;  // 实际周,测试时可以通过终端改动real_day进而通过函数变动
+int real_month ;  // 实际月,测试时可以通过终端改动real_day进而通过函数变动
+
+// 天数转化周数函数
+int day_to_week(int day) {
+	return (day + 6) / 7; // 向上取整
+}
+
+// 天数转化月份函数,假设统计时以30天为一个月
+int day_to_month(int day) {
+	return (day + 29) / 30; // 向上取整
+}
+
 // 自定义四舍五入函数
 int custom_round(double num) {
 	return (int)(num + 0.5);
@@ -89,14 +102,14 @@ int* analysis(int real_time){
 		x1[i] = x0[i] + x1[i - 1];    //x1的第i个数就是x0的第i个数和第i-1个数之和
 	}
 	//创建矩阵B，大小为real_time*2
-	double B[real_time][2];
+	double B[400][2];
 	//对矩阵B进行赋值
 	for (int i = 0; i < real_time; ++i) {
 		B[i][0] = -(x1[i] + x1[i + 1]) / 2.0;
 		B[i][1] = 1.0;
 	}
 	//创建转置矩阵Bt，大小为2*real_time
-	double Bt[2][real_time];
+	double Bt[2][400];
 	//转置矩阵Bt值为矩阵B的转置
 	for (int i = 0; i < real_time; ++i) {
 		Bt[0][i] = B[i][0];
@@ -126,7 +139,7 @@ int* analysis(int real_time){
 		printf("矩阵不可逆");
 	}
 	//创建矩阵t2，作为t1*Bt的结果
-	double t2[2][real_time];
+	double t2[2][400];
 	for (int i = 0;i < 2;i++) {
 		for (int j = 0;j < real_time;j++) {
 			double sum = 0;
@@ -137,7 +150,7 @@ int* analysis(int real_time){
 		}
 	}
 	//创建矩阵Y
-	double Y[real_time][1];
+	double Y[400][1];
 	for (int i = 0; i < real_time; ++i) {
 		Y[i][0] = x0[i + 1];
 	}
