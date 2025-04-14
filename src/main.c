@@ -15,7 +15,6 @@ int main() {
     int choice;
     do {
         displayMainMenu();
-        printf("请输入您的选择: ");
 
         // 验证输入是否为有效整数
         if (scanf("%d", &choice) != 1) {
@@ -40,7 +39,6 @@ int main() {
                 int adminChoice;
                 do{
                     displayAdminMenu();
-                    printf("请输入您的选择: ");
 
                     // 验证输入是否为有效整数
                     if (scanf("%d", &adminChoice) != 1) {
