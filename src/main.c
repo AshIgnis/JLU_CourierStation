@@ -63,6 +63,20 @@ int main() {
                             package_s_original_start(NULL);
                             break;
                         }
+                        case 4:{ // 数据预测与统计
+                            int result = system("C:/Users/25531/AppData/Local/Programs/Python/Python312/python.exe c:/Users/25531/Desktop/shiyan/src/Data_prediction_and_statistics.py");
+                            // 检查命令执行结果
+                            if (result == -1) {
+                                printf("无法启动命令处理器\n");
+                            }
+                            else if (result != 0) {
+                                printf("Python脚本执行失败,返回值: %d\n", result);
+                            }
+                            else {
+                                printf("Python脚本执行完毕,返回值: %d\n", result);
+                            }
+                            break;
+                        }
                         case 0:
                             printf("返回主菜单\n");
                             break;

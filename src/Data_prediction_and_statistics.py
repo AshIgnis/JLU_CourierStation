@@ -9,7 +9,7 @@ import numpy as np
 from threading import Lock
 
 pn.extension()
-real_time = 120
+real_time = 100
 
 # 加载共享库
 lib1 = ctypes.CDLL("./huise.dll")
