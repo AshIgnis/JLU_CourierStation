@@ -64,17 +64,15 @@ int main() {
                             break;
                         }
                         case 4:{ // 数据预测与统计
-                            int result = system("C:/Users/25531/AppData/Local/Programs/Python/Python312/python.exe c:/Users/25531/Desktop/shiyan/src/Data_prediction_and_statistics.py");
-                            // 检查命令执行结果
+                            int result = system("start /B C:/Users/25531/AppData/Local/Programs/Python/Python312/python.exe c:/Users/25531/Desktop/shiyan/src/Data_prediction_and_statistics.py >nul 2>nul");
                             if (result == -1) {
                                 printf("无法启动命令处理器\n");
+                            } else {
+                                printf("Python脚本已启动,返回值: %d\n", result);
                             }
-                            else if (result != 0) {
-                                printf("Python脚本执行失败,返回值: %d\n", result);
-                            }
-                            else {
-                                printf("Python脚本执行完毕,返回值: %d\n", result);
-                            }
+                            printf("按任意键返回管理员菜单。\n");
+                            while (getchar() != '\n'); // 清理缓冲区
+                            getchar(); // 等待用户按键
                             break;
                         }
                         case 0:
