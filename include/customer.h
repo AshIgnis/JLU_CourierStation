@@ -11,4 +11,6 @@ void freeCustomers(struct customer *head); // 释放用户链表内存
 struct customer *customersCreating(struct customer *customerList); // 创建用户
 void displayMenu_customer(); // 显示用户菜单
 int isPhoneNumberDuplicate(struct customer *head, const char *phone_number); // 检查电话号码是否重复
+int get_customer_type(const char *phone_number);
+
 #endif // CUSTOMER_H
