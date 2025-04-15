@@ -7,9 +7,21 @@ import time
 import panel as pn
 import numpy as np
 from threading import Lock
+import sys
+
+# 从命令行参数获取 real_time 值
+if len(sys.argv) > 1:
+    try:
+        real_time = int(sys.argv[1])  # 从命令行读取并转换为整数
+        print(f"Real-time value received: {real_time}")
+    except ValueError:
+        print("Invalid real_time value received. Please provide a valid integer.")
+        sys.exit(1)
+else:
+    print("No real_time value provided. Exiting...")
+    sys.exit(1)
 
 pn.extension()
-real_time = 100
 
 # 加载共享库
 lib1 = ctypes.CDLL("./huise.dll")
