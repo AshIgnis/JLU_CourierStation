@@ -1,9 +1,11 @@
 #ifndef CUSTOMER_H
 #define CUSTOMER_H
-
+#include "stdbool.h"
+#include "ctype.h"
 #include "structure.h"
 
 // 用户相关功能声明
+
 struct customer *addCustomer(struct customer *head, const char *username, const char *phone_number, const char *password, int customer_type); // 添加新用户
 void queryCustomer(struct customer *head); // 查询用户信息
 struct customer *deleteCustomer(struct customer *head); // 删除用户

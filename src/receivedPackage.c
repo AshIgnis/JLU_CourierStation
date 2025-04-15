@@ -204,7 +204,7 @@ void save_package_r(struct package_r* head){
 	
 	fclose(file);
 }
-
+//收件管理的主函数
 void package_r_original_start(){
 	
 	struct package_r *head=load_package_r();
