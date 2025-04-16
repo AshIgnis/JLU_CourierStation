@@ -10,7 +10,7 @@ double get_package_type_coefficient(int package_type);
 double get_customer_discount(int customer_type);
 double calculate_volume_fee(double volume);
 double round_to_two_decimals(double value);
-double calculate_send_package_fees(struct package_s *send_pkg, int customer_type,int ifDoorToDoor); //调用
-double calculate_receive_package_fees(struct package_r *recv_pkg, int customer_type,int ifDoorToDoor); //调用
-double calculate_door_to_door(int customer_type,int package_type);
+double calculate_send_package_fees(struct package_s *send_pkg, int customer_type,int ifdoortodoor);//计算寄件包裹运费
+int get_customer_type(const char *phone_number);
+
 #endif

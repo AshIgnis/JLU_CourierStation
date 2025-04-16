@@ -8,7 +8,23 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <ctype.h>
 
+bool isPhoneNumberValid(const char *phone_number) {
+    // 检查长度是否为11
+    if (strlen(phone_number) != 11) {
+        return 0; // 不合法
+    }
+
+    // 检查是否全为数字
+    for (int i = 0; i < 11; i++) {
+        if (!isdigit(phone_number[i])) {
+            return 0; // 不合法
+        }
+    }
+
+    return 1; // 合法
+}
 // 用户操作界面
 void userOperating(struct customer *head) {
 
@@ -18,9 +34,14 @@ void userOperating(struct customer *head) {
     char phone_number[MAX_LEN]; // 电话号码
     char password[MAX_LEN]; // 密码
 
-    printf("请输入电话号码: \n"); // 获取电话号码
-    fgets(phone_number, MAX_LEN, stdin);
-    phone_number[strcspn(phone_number, "\n")] = '\0'; // 去除换行符
+    do {
+        printf("请输入电话号码: \n");
+        fgets(phone_number, MAX_LEN, stdin);
+        phone_number[strcspn(phone_number, "\n")] = '\0';
+        if (!isPhoneNumberValid(phone_number)) {
+            printf("电话号码格式错误，必须为11位数字！\n");
+        }
+    } while (!isPhoneNumberValid(phone_number));
 
     printf("请输入密码: \n"); // 获取密码
     fgets(password, MAX_LEN, stdin);
@@ -52,10 +73,16 @@ void userOperating(struct customer *head) {
                 char newpassword[MAX_LEN];
 
                 do {
-                    printf("请输入电话号码: \n");
-                    scanf("%s", phone_number);
+                    // 电话号码输入及验证
+                    do {
+                        printf("请输入电话号码: \n");
+                        scanf("%s", phone_number);
+                        if (!isPhoneNumberValid(phone_number)) {
+                            printf("电话号码格式错误,必须为11位数字!\n");
+                        }
+                    } while (!isPhoneNumberValid(phone_number));
 
-                    // 使用 isPhoneNumberDuplicate 检查电话号码是否已存在
+                    // 检查重复性
                     if (isPhoneNumberDuplicate(head, phone_number)) {
                         printf("电话号码已存在，请重新输入！\n");
                     }
@@ -90,10 +117,20 @@ void userOperating(struct customer *head) {
             case 2:
                 // 重新输入
                 printf("请重新输入电话号码和密码。\n");
-                printf("请输入电话号码: \n");
-                scanf("%s", phone_number);
+
+                char temp_phone[MAX_LEN];
+                do {
+                    printf("请输入电话号码: \n");
+                    scanf("%s", temp_phone);
+                    if (!isPhoneNumberValid(temp_phone)) {
+                        printf("电话号码格式错误,必须为11位数字\n");
+                    }
+                } while (!isPhoneNumberValid(temp_phone));
+                strcpy(phone_number, temp_phone);
+                
                 printf("请输入密码: \n");
                 scanf("%s", password);
+
                 flag = userLanding(head, phone_number, password);
                 system("pause");
                 system("cls");

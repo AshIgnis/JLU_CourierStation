@@ -5,6 +5,9 @@
 #include "fileOperations.h"
 #include "receivedPackage.h"
 #include "structure.h"
+#include "stdbool.h"
+#include "ctype.h"
+#include "user.h"
 
 // 添加用户
 struct customer *addCustomer(struct customer *head, const char *username, const char *phone_number, const char *password, int customer_type) {
@@ -33,9 +36,16 @@ void queryCustomer(struct customer *head) {
         printf("当前没有用户数据。\n");
         return;
     }
-    char phone_number[MAX_LEN];
-    printf("请输入要查询的用户电话号码: ");
-    scanf("%s", phone_number);
+    char temp_phone[MAX_LEN];
+    char phone_number[11];
+    do {
+        printf("请输入要查询的电话号码: \n");
+        scanf("%s", temp_phone);
+        if (!isPhoneNumberValid(temp_phone)) {
+            printf("电话号码格式错误,必须为11位数字!\n");
+            }
+        } while (!isPhoneNumberValid(temp_phone));
+        strcpy(phone_number, temp_phone);
 
     struct customer *current = head;
     while (current) { // 遍历链表
@@ -79,9 +89,16 @@ struct customer *deleteCustomer(struct customer *head) {
         return head;
     }
 
-    char phone_number[MAX_LEN];
-    printf("请输入要删除用户的电话号码: ");
-    scanf("%s", phone_number);
+    char temp_phone[MAX_LEN];
+    char phone_number[11];
+    do {
+        printf("请输入要删除的电话号码: \n");
+        scanf("%s", temp_phone);
+        if (!isPhoneNumberValid(temp_phone)) {
+            printf("电话号码格式错误,必须为11位数字!\n");
+            }
+        } while (!isPhoneNumberValid(temp_phone));
+        strcpy(phone_number, temp_phone);
 
     struct customer *current = head, *prev = NULL;
     while (current) { // 遍历链表查找用户
@@ -137,6 +154,7 @@ void displayMenu_customer() {
 
 //集成函数，便于调用
 struct customer *customersCreating(struct customer *customerList) {
+    customerList = loadCustomers();
     int choice;
     do {
         displayMenu_customer();
@@ -150,8 +168,16 @@ struct customer *customersCreating(struct customer *customerList) {
 
                 // 输入电话号码并检查是否重复
                 do {
-                    printf("请输入电话号码: ");
-                    scanf("%s", phone_number);
+                    char temp_phone[MAX_LEN];
+                    
+                    do {
+                        printf("请输入电话号码: \n");
+                        scanf("%s", temp_phone);
+                        if (!isPhoneNumberValid(temp_phone)) {
+                            printf("电话号码格式错误,必须为11位数字!\n");
+                            }
+                        } while (!isPhoneNumberValid(temp_phone));
+                        strcpy(phone_number, temp_phone);
                     if (isPhoneNumberDuplicate(customerList, phone_number)) {
                         printf("电话号码已存在，请重新输入！\n");
                     }

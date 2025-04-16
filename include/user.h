@@ -2,7 +2,9 @@
 #define USER_H
 #include <stdbool.h>
 #include "structure.h"
+#include <ctype.h>
 
+bool isPhoneNumberValid(const char *phone_number);
 void userOperating(struct customer *head); // 用户操作集成
 void userReceivedPackagesSearching(const char *phone_number); // 用户收件包裹查询
 void userAction(struct customer *head,const char *phone_number); // 用户登录后续操作

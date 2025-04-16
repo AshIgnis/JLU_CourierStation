@@ -18,5 +18,5 @@ void find_package_r(struct package_r **lstfin,struct package_r **fin,char* x,str
 //x 为查询包裹对应 id 字符串的首指针
 //head 为包裹链表的 head 指针
 //使用传参示例 find_package_r(&p1,&p2,cp,head);
-
+void show_all_packages_r(struct package_r* head);//展示所有包裹
 #endif // RECEIVEDPACKAGE_H

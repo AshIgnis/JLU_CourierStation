@@ -38,6 +38,8 @@ int main() {
             case 2:{ // 管理员操作
                 int adminChoice;
                 do{
+                    lastpage:
+
                     displayAdminMenu();
 
                     // 验证输入是否为有效整数
@@ -63,18 +65,69 @@ int main() {
                         }
                         case 4:{ // 数据预测与统计
                             int real_time = 0; // 示例值，可以根据实际情况动态设置
-                            printf("请输入真实时间\n");
+                            printf("请输入真实时间天数1~365\n");
                             if (scanf("%d", &real_time) != 1) { // 验证输入是否为有效整数
-                                printf("输入无效，请输入数字。\n");
+                                printf("输入无效,请重新输入。\n");
+                                while (getchar() != '\n'); // 清理输入缓冲区
+                                break;
+                            }
+                            else if(real_time < 1 || real_time > 365){
+                                printf("输入时间超出范围,请重新输入。\n");
                                 while (getchar() != '\n'); // 清理输入缓冲区
                                 break;
                             }
 
+                            int choice_son4;
+                            do{
+                                displayPredictedModeMenu();
+                            
+                                // 验证输入是否为有效整数
+                                if (scanf("%d", &choice_son4) != 1) {
+                                    printf("输入无效，请输入数字。\n");
+                                    while (getchar() != '\n');// 清理输入缓冲区
+                                    continue;
+                                }
+                                switch (choice_son4)
+                                {
+                                case 1:
+                                    goto nextpage;
+                                case 2:
+                                    switch (real_time >= 7)
+                                    {
+                                    case 1:
+                                        goto nextpage;
+                                        break;
+                                    default:
+                                        printf("输入时间不足7天,无法进行周预测\n");
+                                        break;
+                                    }
+                                    break;
+                                case 3:
+                                    switch (real_time >= 30)
+                                    {
+                                    case 1:
+                                        goto nextpage;
+                                        break;
+                                    default:
+                                        printf("输入时间不足30天,无法进行周预测\n");
+                                        break;
+                                    }
+                                    break;
+                                case 0:
+                                    printf("返回上一级菜单\n");
+                                    goto lastpage;
+                                    break;
+                                default:
+                                    printf("无效的选择，请重试。\n");
+                                    break;
+                                }
+                            } while (choice_son4 != 0);
+                            nextpage:
                             // 构建命令字符串，将 real_time 作为参数传递给 Python 脚本
-                            char command[512];
+                            char command[200];
                             snprintf(command, sizeof(command),
-                                     "start /B C:/Users/25531/AppData/Local/Programs/Python/Python312/python.exe C:/Users/25531/Desktop/programe/JLU_CourierStation/src/Data_prediction_and_statistics.py %d >nul 2>nul",
-                                     real_time);
+                                    "start /B C:/Users/25531/AppData/Local/Programs/Python/Python312/python.exe C:/Users/25531/Desktop/programe0/JLU_CourierStation/src/Data_prediction_and_statistics.py %d %d >nul 2>nul",
+                                     real_time,choice_son4);
 
                             // 执行命令
                             int result = system(command);

@@ -17,7 +17,29 @@
 //(1-普通用户, 2-VIP用户, 3-企业用户, 4-学生用户, 5-老年用户):
 //(1-文件, 2-生鲜, 3-易碎品, 4-家电, 5-危险品)
 //(1-正常, 2-损坏, 3-违禁品)
-#define base_rate 0.0001
+int get_customer_type(const char *phone_number) {
+    FILE *file = fopen("customers.txt", "r");
+    if (!file) {
+        perror("无法打开 customers.txt 文件");
+        return -1; // 返回 -1 表示文件打开失败
+    }
+
+    char current_phone[MAX_LEN];
+    char current_name[MAX_LEN];
+    char current_password[MAX_LEN];
+    int current_type;
+
+    // 遍历文件内容，查找匹配的电话号码
+    while (fscanf(file, "%s %s %s %d", current_name, current_phone, current_password,&current_type) != EOF) {
+        if (strcmp(current_phone, phone_number) == 0) {
+            fclose(file);
+            return current_type; // 返回匹配的用户类型
+        }
+    }
+
+    fclose(file);
+    return -1; // 返回 -1 表示未找到匹配的用户
+}
 
 double get_package_type_coefficient(int package_type) {
     switch (package_type) {
@@ -59,52 +81,41 @@ double round_to_two_decimals(double value) {
 }
 
 // 修改后的寄件包裹运费计算
-double calculate_send_package_fees(struct package_s *send_pkg, int customer_type,int ifDoorToDoor) {
-        double shipping_fee = 0.0; // 初始化运费
-        double Vbase = calculate_volume_fee(send_pkg->volume); // 使用分段计费规则
-        double type_coeff = get_package_type_coefficient(send_pkg->package_type);
-        double discount = get_customer_discount(customer_type);
-        double random_factor = 0.8 + ((double)rand() / RAND_MAX) * 0.19; // 生成0.8到0.99之间的随机数
-        shipping_fee = Vbase * type_coeff * discount * random_factor;
+double calculate_send_package_fees(struct package_s *send_pkg, int customer_type,int ifdoortodoor) {
+    double shipping_fee = 0.0; // 初始化运费
+    if(send_pkg->ifCollection==0){
+        return 0.0; // 如果不需要到付，运费为0
+    }
+    double Vbase = calculate_volume_fee(send_pkg->volume); // 使用分段计费规则
+    double type_coeff = get_package_type_coefficient(send_pkg->package_type);
+    double discount = get_customer_discount(customer_type);
+    shipping_fee = Vbase * type_coeff * discount ;
 
-        // 判断是否抽中免单
-        if (((double)rand() / RAND_MAX) < 0.05) { // 5%的概率免单
-            shipping_fee = 0.0;
-            printf("包裹抽中了免单！\n");
-        }
+    //等待时间函数
+    double random_factor = 0.8 + ((double)rand() / RAND_MAX) * 0.19; // 生成0.8到0.99之间的随机数
+    printf("新店开张，三个月随机减免，此包裹抽中了%lf的打折比例\n",random_factor);
+    shipping_fee*=random_factor;
 
-        if(ifDoorToDoor) shipping_fee +=calculate_door_to_door(customer_type,send_pkg->package_type);
-        shipping_fee = round_to_two_decimals(send_pkg->shipping_fee); // 保留两位小数
-        return shipping_fee;
-    
+    // 判断是否抽中免单
+    if (((double)rand() / RAND_MAX) < 0.05) { // 5%的概率免单
+        shipping_fee = 0.0;
+        printf("包裹抽中了免单！\n");
+    }
+    if(ifdoortodoor){
+        shipping_fee +=discount*Vbase; // 上门服务费用
+    }
+    shipping_fee = round_to_two_decimals(shipping_fee); // 保留两位小数
+    send_pkg->shipping_fee = shipping_fee;
+    return shipping_fee;
 }
 
+
+
+double DoorToDoorFee_r(int customer_type){
+
+}
 // 修改后的收件包裹运费计算
-double calculate_receive_package_fees(struct package_r *recv_pkg, int customer_type,int ifDoorToDoor) {
-        double shipping_fee = 0.0;
-        if (recv_pkg->ifCollection == 1) { // 仅处理到付包裹
-            double Vbase = calculate_volume_fee(recv_pkg->volume); // 使用分段计费规则
-            double type_coeff = get_package_type_coefficient(recv_pkg->package_type);
-            double discount = get_customer_discount(customer_type);
-            double random_factor = 0.8 + ((double)rand() / RAND_MAX) * 0.19; // 生成0.8到0.99之间的随机数
-            shipping_fee = Vbase * type_coeff * discount * random_factor;
-            
 
-           // printf("新店开张，随机折扣八折到九九折，其中包裹%s抽到的比例%lf\n", recv_pkg->package_id, random_factor);
-
-            // 判断是否抽中免单
-            if (((double)rand() / RAND_MAX) < 0.05) { // 5%的概率免单
-                shipping_fee = 0.0;
-                printf("包裹ID %s 抽中了免单！\n", recv_pkg->package_id);
-            }
-        }
-        if(ifDoorToDoor) shipping_fee+=calculate_door_to_door(customer_type,recv_pkg->package_type);
-
-        shipping_fee = round_to_two_decimals(recv_pkg->shipping_fee); // 保留两位小数
-        return shipping_fee;        
-    
-}
-
-double calculate_door_to_door(int customer_type,int package_type){
-    return 5*get_customer_discount(customer_type)*get_package_type_coefficient(package_type);
-}
+//收件只是输入，不需要计算
+//寄件则需要计算费用，从文件中读写寄件的包裹
+//上门费用与体积有关

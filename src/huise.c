@@ -1,10 +1,18 @@
 #include <stdio.h>
 #include <math.h>
 // 定义一个全局数组用于存储每天的包裹数量
-int count[366] = {0}; // 假设最多存储365天的数据
+int count_day[400] = {0};// 预计存储365个数据
+int count_week[60] = {0};//预计存储53个数据
+int count_month[15] = {0};//预计存储12个数据
 // 函数声明
 void load_data_from_file();
-void save_data_to_file();
+void set_count_week(int real_time);
+void set_count_month(int real_time);
+int day_to_week(int day);
+int day_to_month(int day);
+void save_data_to_file_day();
+void save_data_to_file_week();
+void save_data_to_file_month();
 int* analysis();
 void set_real_time(int value);
 int* get_array();
@@ -17,38 +25,86 @@ extern "C" {
 #endif
 
     // 获取数组指针
-    int* get_array(int real_time) {
-        return analysis(real_time);
+    int* get_array(int real_time,int choice_son4) {
+		int* p = NULL;
+		switch (choice_son4)
+		{
+		case 1:
+			p = analysis(real_time,count_day);
+			save_data_to_file_day(real_time);
+			return p;
+			break;
+		case 2:
+			int week = day_to_week(real_time + 1) - 1;
+			p = analysis(week,count_week);
+			save_data_to_file_week(week);
+			return p;
+			break;
+		case 3:
+			int month = day_to_month(real_time + 1) - 1;
+			p = analysis(month,count_month);
+			save_data_to_file_month(month);
+			return p;
+			break;
+		default:
+			return p;
+			break;
+		}
     }
 
     // 获取数组长度
-    size_t get_array_length(int real_time) {
-        return real_time + 1; // 返回数组长度
+    size_t get_array_length(int real_time,int choice_son4) {
+		switch (choice_son4)
+		{
+		case 1:
+        	return real_time + 1; // 返回数组长度
+			break;
+		case 2:
+			return day_to_week(real_time) + 1;
+			break;
+		case 3:
+			return day_to_month(real_time) + 1;
+			break;
+		default:
+			return 0;
+			break;
+		}
     }
 
     // 加载数据
-    void load(int real_time) {
-        load_data_from_file(real_time);
+    void load(int real_time,int choice_son4) {
+		switch (choice_son4)
+		{
+		case 1:
+			load_data_from_file(real_time);
+			break;
+		case 2:
+			load_data_from_file(real_time);
+			set_count_week(real_time);
+			break;
+		case 3:
+			load_data_from_file(real_time);
+			set_count_month(real_time);
+			break;
+		default:
+			break;
+		}
     }
 
 #ifdef __cplusplus
 }
 #endif
 
-// 从文件 "huise.txt" 中读取数据并初始化 count 数组
-// 在分析函数中调用文件加载函数
+// 从文件 "huise.txt" 中读取数据并初始化 count_day 数组
 void load_data_from_file(int real_time) {
     FILE* file = fopen("huise.txt", "r");
     if (file == NULL) {
         printf("无法打开文件 huise.txt\n");
         return;
     }
-    for (int i = 0; i <= real_time && fscanf(file, "%d", &count[i]) == 1; ++i);
+    for (int i = 0; i <= real_time && fscanf(file, "%d", &count_day[i]) == 1; ++i);
     fclose(file);
 }
-
-int real_week ;  // 实际周,测试时可以通过终端改动real_day进而通过函数变动
-int real_month ;  // 实际月,测试时可以通过终端改动real_day进而通过函数变动
 
 // 天数转化周数函数
 int day_to_week(int day) {
@@ -60,16 +116,43 @@ int day_to_month(int day) {
 	return (day + 29) / 30; // 向上取整
 }
 
+// 开辟count_week数组
+void set_count_week(int real_time){
+	// 清零 count_week 数组
+    for (int i = 0; i < 60; ++i) {
+        count_week[i] = 0;
+    }
+	int real_week = day_to_week(real_time + 1) - 1;// 实际满七天的周数,测试时可以通过终端改动real_day进而通过函数变动
+	for (int i = 0; i < real_week; ++i) {
+		for (int j = 1; j <= 7 ; ++j) {
+			count_week[i+1] += count_day[i * 7 + j];
+		}
+	}
+}
+
+void set_count_month(int real_time){
+	// 清零 count_month 数组
+    for (int i = 0; i < 15; ++i) {
+        count_month[i] = 0;
+    }
+	int real_month = day_to_month(real_time + 1) - 1;// 实际满30天的月数,测试时可以通过终端改动real_day进而通过函数变动
+	for (int i = 0; i < real_month; ++i) {
+		for (int j = 1; j <= 30 ; ++j) {
+			count_month[i+1] += count_day[i * 30 + j];
+		}
+	}
+}
+
 // 自定义四舍五入函数
 int custom_round(double num) {
 	return (int)(num + 0.5);
 }
 
-// 保存数据到文件
-void save_data_to_file(int real_time) {
-    // 动态生成文件名，例如 "huise_real_time_7.txt"
+// 保存数据到文件,三种
+void save_data_to_file_day(int real_time) {
+    // 动态生成文件名
     char filename[50];
-    sprintf(filename, "huise_real_time_%d.txt", real_time);
+    sprintf(filename, "huise_real_time_day_%d.txt", real_time);
 
     FILE* file = fopen(filename, "w");
     if (file == NULL) {
@@ -77,23 +160,56 @@ void save_data_to_file(int real_time) {
         return;
     }
     for (int i = 0; i <= real_time + 1; i++) {
-        fprintf(file, "%d\n", count[i]);
+        fprintf(file, "%d\n", count_day[i]);
+    }
+    fclose(file);
+    // printf("数据已保存到文件: %s\n", filename);
+}
+
+void save_data_to_file_week(int real_time) {
+    // 动态生成文件名
+    char filename[50];
+    sprintf(filename, "huise_real_time_week_%d.txt", real_time);
+
+    FILE* file = fopen(filename, "w");
+    if (file == NULL) {
+        printf("无法保存文件 %s\n", filename);
+        return;
+    }
+    for (int i = 0; i <= real_time + 1; i++) {
+        fprintf(file, "%d\n", count_week[i]);
+    }
+    fclose(file);
+    // printf("数据已保存到文件: %s\n", filename);
+}
+
+void save_data_to_file_month(int real_time) {
+    // 动态生成文件名
+    char filename[50];
+    sprintf(filename, "huise_real_time_month_%d.txt", real_time);
+
+    FILE* file = fopen(filename, "w");
+    if (file == NULL) {
+        printf("无法保存文件 %s\n", filename);
+        return;
+    }
+    for (int i = 0; i <= real_time + 1; i++) {
+        fprintf(file, "%d\n", count_month[i]);
     }
     fclose(file);
     // printf("数据已保存到文件: %s\n", filename);
 }
 
 // 自定义数据分析函数
-int* analysis(int real_time){
-	// 第一个数据分析预测函数(灰色预测)，适用于real_time较小(不超过15天)情况
+int* analysis(int real_time,int count[]){
     // 读取每天的包裹数量
-	double x0[366] = { 0 }; // 原始序列，real_time不超过365天
+	double x0[400] = { 0 }; // 原始序列，real_time不超过365天
     for (int i = 0; i <= real_time; i++)
     {
         x0[i] = count[i]; // count数组存储日包裹数
     }
 	//定义累加数组x1，累加数组大小为real_time
-	double x1[366] = { 1 };
+	double x1[400] = { 1 };
 	//x1累加数组的第一个数就是x0原始数组的第一个数
 	x1[0] = x0[0];
 	//x1累加数组除去第一个数的后面数
@@ -179,9 +295,8 @@ int* analysis(int real_time){
 	double n = (x0[0] - b / a) * exp(-a * (real_time + 1)) + b / a;
 	//原始序列第k+1个预测值
 	double p = n-m;
-	// printf("The estimated number of packages is:%d", custom_round(p));
+	printf("The estimated number of packages is:%d", custom_round(p));
 	// printf("\n");
 	count[real_time + 1] = custom_round(p);
-	save_data_to_file(real_time); // 新增保存操作
 	return count;
 }

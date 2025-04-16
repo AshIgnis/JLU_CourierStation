@@ -21,6 +21,18 @@ else:
     print("No real_time value provided. Exiting...")
     sys.exit(1)
 
+# 从命令行参数获取 数据预测模式
+if len(sys.argv) > 2:
+    try:
+        choice_son4 = int(sys.argv[2])  # 从命令行读取并转换为整数
+        print(f"Prediction mode value received: {choice_son4}")
+    except ValueError:
+        print("Invalid prediction_mode value received. Please provide a valid integer.")
+        sys.exit(1)
+else:
+    print("No prediction_mode value provided. Exiting...")
+    sys.exit(1)
+
 pn.extension()
 
 # 加载共享库
@@ -94,10 +106,9 @@ class Dashboard:
     def update_data(self):
         """更新数据并刷新图表"""
         with lock:
-            lib1.load(real_time)  # 加载数据
-            arr = lib1.get_array(real_time)  # 获取数组
-            length = lib1.get_array_length(real_time)  # 获取数组长度
-            
+            lib1.load(real_time,choice_son4)  # 加载数据
+            arr = lib1.get_array(real_time,choice_son4)  # 获取数组
+            length = lib1.get_array_length(real_time,choice_son4)  # 获取数组长度
             valid_indices = [i for i in range(length) if arr[i+1] > 0]
             self.x = [i+1 for i in valid_indices]
             self.y = [arr[i+1] for i in valid_indices]
