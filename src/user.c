@@ -18,25 +18,25 @@ void userOperating(struct customer *head) {
     char phone_number[MAX_LEN]; // 电话号码
     char password[MAX_LEN]; // 密码
 
-    printf("请输入电话号码: \n");
+    printf("请输入电话号码: \n"); // 获取电话号码
     fgets(phone_number, MAX_LEN, stdin);
     phone_number[strcspn(phone_number, "\n")] = '\0'; // 去除换行符
 
-    printf("请输入密码: \n");
+    printf("请输入密码: \n"); // 获取密码
     fgets(password, MAX_LEN, stdin);
     password[strcspn(password, "\n")] = '\0'; // 去除换行符
 
     int flag = userLanding(head, phone_number, password);
     system("pause");
     system("cls");
-    while (!flag) {
+    while (!flag) { // 登录失败
         int choice;
         printf("电话号或密码错误！\n");
         printf("1. 注册\n");
         printf("2. 重新输入\n");
         printf("0. 退出\n");
         printf("请输入您的选择: \n");
-        if (scanf("%d", &choice) != 1) {
+        if (scanf("%d", &choice) != 1) { //利用scanf返回值异常处理
             printf("输入无效，请输入数字。\n");
             while (getchar() != '\n'); // 清理输入缓冲区
             system("pause");
@@ -161,6 +161,7 @@ void displayMenu_user(){
     printf("=================================\n");
 }
 
+//登录成功后续功能
 void userAction(struct customer *head,const char *phone_number){
     int choice;
     do {
@@ -248,7 +249,7 @@ void userAction(struct customer *head,const char *phone_number){
                 }
                 break;
             }
-            case 3: {// 邮寄包裹
+            case 3: { // 邮寄包裹
                 printf("进入寄件包裹管理系统...\n");
                 package_s_original_start((char *)phone_number);
                 system("pause");
@@ -269,6 +270,7 @@ void userAction(struct customer *head,const char *phone_number){
 
 }
 
+//用户查找包裹
 void userReceivedPackagesSearching(const char *phone_number) {
     FILE *file = fopen(RECEIVED_FILE, "r");
     if (!file) {
@@ -297,7 +299,7 @@ void userReceivedPackagesSearching(const char *phone_number) {
     fclose(file);
 }
 
-
+//用户取走包裹
 void userTakePackage(const char *phone_number) {
     char package_id[MAX_LEN];
     printf("请输入取件码: ");

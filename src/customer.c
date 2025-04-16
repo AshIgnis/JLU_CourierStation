@@ -8,12 +8,12 @@
 
 // 添加用户
 struct customer *addCustomer(struct customer *head, const char *username, const char *phone_number, const char *password, int customer_type) {
-    struct customer *newCustomer = (struct customer *)malloc(sizeof(struct customer));
-    if (!newCustomer) {
+    struct customer *newCustomer = (struct customer *)malloc(sizeof(struct customer)); // 新建用户结点
+    if (!newCustomer) { //构建失败返回
         perror("Failed to allocate memory for new customer");
         return head;
     }
-
+    //值拷贝
     strcpy(newCustomer->username, username);
     strcpy(newCustomer->phone_number, phone_number);
     strcpy(newCustomer->password, password);
@@ -24,12 +24,12 @@ struct customer *addCustomer(struct customer *head, const char *username, const 
     newCustomer->ticket = 3;
 
     printf("用户添加成功！\n");
-    return newCustomer;
+    return newCustomer; //返回新结点地址
 }
 
 // 查询用户信息
 void queryCustomer(struct customer *head) {
-    if (!head) {
+    if (!head) { // 处理空链表报错
         printf("当前没有用户数据。\n");
         return;
     }
@@ -38,7 +38,8 @@ void queryCustomer(struct customer *head) {
     scanf("%s", phone_number);
 
     struct customer *current = head;
-    while (current) {
+    while (current) { // 遍历链表
+                      // 判断电话号码是否匹配
         if (strcmp(current->phone_number , phone_number) == 0){
             printf("\n用户信息:\n");
             printf("用户名: %s\n", current->username);
@@ -83,7 +84,7 @@ struct customer *deleteCustomer(struct customer *head) {
     scanf("%s", phone_number);
 
     struct customer *current = head, *prev = NULL;
-    while (current) {
+    while (current) { // 遍历链表查找用户
         if (strcmp(current->phone_number , phone_number) == 0) {
             if (prev) {
                 prev->next = current->next;
@@ -104,13 +105,14 @@ struct customer *deleteCustomer(struct customer *head) {
 
 // 释放用户链表
 void freeCustomers(struct customer *head) {
-    while (head) {
+    while (head) { // 释放函数
         struct customer *temp = head;
         head = head->next;
         free(temp);
     }
 }
 
+//判断电话号码是否重复（以电话号为唯一身份标识）
 int isPhoneNumberDuplicate(struct customer *head, const char *phone_number) {
     struct customer *current = head;
     while (current) {
@@ -133,6 +135,7 @@ void displayMenu_customer() {
     printf("=================================\n");
 }
 
+//集成函数，便于调用
 struct customer *customersCreating(struct customer *customerList) {
     int choice;
     do {
@@ -141,7 +144,7 @@ struct customer *customersCreating(struct customer *customerList) {
         scanf("%d", &choice);
 
         switch (choice) {
-            case 1: {
+            case 1: { // 添加新用户（管理员权限）
                 char username[100], phone_number[100], password[100];
                 int customer_type;
 
@@ -171,16 +174,16 @@ struct customer *customersCreating(struct customer *customerList) {
                 saveCustomers(customerList);
                 break;
             }
-            case 2:
+            case 2: // 查询用户信息
                 queryCustomer(customerList);
                 break;
-            case 3:
+            case 3: // 删除用户
                 customerList = deleteCustomer(customerList);
                 break;
-            case 4:
+            case 4: // 保存到文件中
                 saveCustomers(customerList);
                 break;
-            case 5:
+            case 5: // 从文件中读取数据
                 customerList = loadCustomers();
                 break;
             case 0:
@@ -196,7 +199,7 @@ struct customer *customersCreating(struct customer *customerList) {
     return customerList;
 }
 
-
+//获取用户类型
 int get_customer_type(const char *phone_number) {
     FILE *file = fopen("customers.txt", "r");
     if (!file) {

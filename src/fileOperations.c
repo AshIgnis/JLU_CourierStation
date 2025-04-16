@@ -23,6 +23,7 @@ void saveCustomers(struct customer *head) {
     printf("用户数据保存成功！\n");
 }
 
+//从文件读取用户
 struct customer *loadCustomers() {
     FILE *file = fopen(CUSTOMER_FILE, "r");
     if (!file) {
