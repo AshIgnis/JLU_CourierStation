@@ -91,8 +91,27 @@ int main() {
                                 {
                                 case 1:
                                 case 2:
+                                    switch (real_time >= 7)
+                                    {
+                                    case 1:
+                                        goto nextpage;
+                                        break;
+                                    default:
+                                        printf("输入时间不足7天,无法进行周预测\n");
+                                        break;
+                                    }
+                                    break;
                                 case 3:
-                                    goto nextpage;
+                                    switch (real_time >= 30)
+                                    {
+                                    case 1:
+                                        goto nextpage;
+                                        break;
+                                    default:
+                                        printf("输入时间不足30天,无法进行周预测\n");
+                                        break;
+                                    }
+                                    break;
                                 case 0:
                                     printf("返回上一级菜单\n");
                                     goto lastpage;

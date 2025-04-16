@@ -295,7 +295,7 @@ int* analysis(int real_time,int count[]){
 	double n = (x0[0] - b / a) * exp(-a * (real_time + 1)) + b / a;
 	//原始序列第k+1个预测值
 	double p = n-m;
-	// printf("The estimated number of packages is:%d", custom_round(p));
+	printf("The estimated number of packages is:%d", custom_round(p));
 	// printf("\n");
 	count[real_time + 1] = custom_round(p);
 	return count;
