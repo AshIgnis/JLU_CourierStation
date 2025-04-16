@@ -31,6 +31,9 @@ void show_package_s(struct package_s* now){
     printf("%d\n",(*now).ifCollection);
     printf("6.包裹状态 (1-正常, 2-损坏, 3-违禁品): ");
     printf("%d\n",(*now).package_status);
+    printf("7.包裹运费：");
+    printf("%.2lf元",(*now).shipping_fee);
+    
     return;
 }
 
@@ -135,6 +138,7 @@ void package_s_original_start(char* t){
             for(int i=0;i<=13;i++){
                 (*now).phone_number[i]=nm[i];
             }
+            int ifdoortodoor=0;//是否上门服务
             printf("1.请输入收件人姓名: \n");
             scanf("%s",(*now).receiver_name);
             printf("2.请输入收件人地址: \n");
@@ -159,9 +163,13 @@ void package_s_original_start(char* t){
                 printf("输入无效，请输入1-3之间的数字: ");
                 while(getchar()!='\n');
             }
+            printf("7.是否需要上门服务 (0-不, 1-是): \n");
+            while (scanf("%d", &ifdoortodoor) != 1 || (ifdoortodoor != 0 && ifdoortodoor != 1)) {
+                printf("输入无效，请输入0或1: ");
+                while (getchar() != '\n'); // 清空输入缓冲区
+            }
+
             
-            double shipping_fee = calculate_send_package_fees(now, get_customer_type(nm)); // 计算一次运费
-            printf("包裹的运费计算为：%.2lf\n", shipping_fee);
 
             char jdg[22];
             for (;;) {
@@ -193,7 +201,7 @@ void package_s_original_start(char* t){
                 } else if (strlen(jdg) == 1 && (*jdg) == 'N') {
                     printf("请输入希望更改项的序号 (输入\"0\"以放弃本次修改):\n");
                     int lsl;
-                    while (scanf("%d", &lsl) != 1 || lsl < 0 || lsl > 6) {
+                    while (scanf("%d", &lsl) != 1 || lsl < 0 || lsl > 7) {
                         printf("输入无效，请输入0-6之间的数字: ");
                         while (getchar() != '\n');
                     }
@@ -233,11 +241,19 @@ void package_s_original_start(char* t){
                             while (getchar() != '\n');
                         }
                     }
+                    if(lsl==7){
+                        printf("请重新输入是否需要上门服务 (0-不, 1-是): \n");
+                        while (scanf("%d", &ifdoortodoor) != 1 || (ifdoortodoor != 0 && ifdoortodoor != 1)) {
+                            printf("输入无效，请输入0或1: ");
+                            while (getchar() != '\n');
+                        }
+                    }
                 } else {
                     printf("输入\"Y\"以表示确认, \"N\"以表示需要修改包裹信息.\n");
                 }
             }
-
+            double shipping_fee = calculate_send_package_fees(now, get_customer_type(nm), ifdoortodoor); // 计算运费
+            printf("包裹的运费计算为：%.2lf\n", shipping_fee);
             (*now).next=(*head).next;
             (*head).next=now;
            

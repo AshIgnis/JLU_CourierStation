@@ -81,7 +81,7 @@ double round_to_two_decimals(double value) {
 }
 
 // 修改后的寄件包裹运费计算
-double calculate_send_package_fees(struct package_s *send_pkg, int customer_type) {
+double calculate_send_package_fees(struct package_s *send_pkg, int customer_type,int ifdoortodoor) {
     double shipping_fee = 0.0; // 初始化运费
     if(send_pkg->ifCollection==0){
         return 0.0; // 如果不需要到付，运费为0
@@ -89,31 +89,29 @@ double calculate_send_package_fees(struct package_s *send_pkg, int customer_type
     double Vbase = calculate_volume_fee(send_pkg->volume); // 使用分段计费规则
     double type_coeff = get_package_type_coefficient(send_pkg->package_type);
     double discount = get_customer_discount(customer_type);
+    shipping_fee = Vbase * type_coeff * discount ;
+
+    //等待时间函数
     double random_factor = 0.8 + ((double)rand() / RAND_MAX) * 0.19; // 生成0.8到0.99之间的随机数
     printf("新店开张，三个月随机减免，此包裹抽中了%lf的打折比例\n",random_factor);
-    shipping_fee = Vbase * type_coeff * discount * random_factor;
+    shipping_fee*=random_factor;
 
     // 判断是否抽中免单
     if (((double)rand() / RAND_MAX) < 0.05) { // 5%的概率免单
         shipping_fee = 0.0;
         printf("包裹抽中了免单！\n");
     }
-
+    if(ifdoortodoor){
+        shipping_fee +=discount*5; // 上门服务费用
+    }
     shipping_fee = round_to_two_decimals(shipping_fee); // 保留两位小数
     send_pkg->shipping_fee = shipping_fee;
     return shipping_fee;
 }
 
-bool ifDoorToDoor(int user_type){
-
-}
-
-double DoorToDoorFee_s(int customer_type,struct package_s *send_pkg){
 
 
-}
-
-double DoorToDoorFee_r(int customer_type,struct package_r *recv_pkg){
+double DoorToDoorFee_r(int customer_type){
 
 }
 // 修改后的收件包裹运费计算
