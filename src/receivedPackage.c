@@ -141,7 +141,7 @@ void show_all_packages_r(struct package_r* head) {
     int count = 0;
 
     printf("\n========== 所有收件包裹信息 ==========\n");
-    while (current != NULL) {
+    while (current->next != NULL) {
         count++;
         printf("\n包裹 %d:\n", count);
         printf("1. 包裹所属用户电话: %s\n", current->phone_number);
