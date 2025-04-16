@@ -90,6 +90,7 @@ int main() {
                                 switch (choice_son4)
                                 {
                                 case 1:
+                                    goto nextpage;
                                 case 2:
                                     switch (real_time >= 7)
                                     {
