@@ -34,18 +34,29 @@ void userOperating(struct customer *head) {
     char phone_number[MAX_LEN]; // 电话号码
     char password[MAX_LEN]; // 密码
 
+// 电话数位判别
+    printf("请输入电话号码: \n");
     do {
-        printf("请输入电话号码: \n");
         fgets(phone_number, MAX_LEN, stdin);
         phone_number[strcspn(phone_number, "\n")] = '\0';
         if (!isPhoneNumberValid(phone_number)) {
-            printf("电话号码格式错误，必须为11位数字！\n");
+            printf("电话号码格式错误,必须为11位数字!\n");
         }
     } while (!isPhoneNumberValid(phone_number));
 
-    printf("请输入密码: \n"); // 获取密码
-    fgets(password, MAX_LEN, stdin);
-    password[strcspn(password, "\n")] = '\0'; // 去除换行符
+ // 密码数位判别
+    printf("请输入密码 (8-20 个字符): \n");
+    do {
+        fgets(password, MAX_LEN, stdin);
+        password[strcspn(password, "\n")] = '\0'; // 去除换行符
+
+        int length = strlen(password);
+        if (length < 8 || length > 20) {
+            printf("密码长度必须在 8 到 20 个字符之间，请重新输入: \n");
+        } else {
+            break; // 密码长度合法，退出循环
+        }
+    } while (1);
 
     int flag = userLanding(head, phone_number, password);
     system("pause");
@@ -90,6 +101,7 @@ void userOperating(struct customer *head) {
 
                 printf("请输入用户名: \n");
                 scanf("%s", username);
+
                 printf("请输入用户类型 (1-普通用户, 2-VIP用户, 3-企业用户, 4-学生用户, 5-老年用户): \n");
                 scanf("%d", &customer_type);
                 while (customer_type < 1 || customer_type > 5) {
@@ -99,8 +111,19 @@ void userOperating(struct customer *head) {
                     system("pause");
                     system("cls");
                 }
-                printf("新输入密码: \n");
-                scanf("%s", newpassword);
+
+                printf("请输入密码 (8-20 个字符): \n");
+                do {
+                    fgets(password, MAX_LEN, stdin);
+                    password[strcspn(password, "\n")] = '\0'; // 去除换行符
+
+                    int length = strlen(password);
+                    if (length < 8 || length > 20) {
+                        printf("密码长度必须在 8 到 20 个字符之间，请重新输入: \n");
+                    } else {
+                    break; // 密码长度合法，退出循环
+                    }
+                } while (1);
                 
                 // 添加新用户到链表
                 head = addCustomer(head, username, phone_number, newpassword, customer_type);
@@ -128,8 +151,18 @@ void userOperating(struct customer *head) {
                 } while (!isPhoneNumberValid(temp_phone));
                 strcpy(phone_number, temp_phone);
                 
-                printf("请输入密码: \n");
-                scanf("%s", password);
+                printf("请输入密码 (8-20 个字符): \n");
+                do {
+                    fgets(password, MAX_LEN, stdin);
+                    password[strcspn(password, "\n")] = '\0'; // 去除换行符
+
+                    int length = strlen(password);
+                    if (length < 8 || length > 20) {
+                    printf("密码长度必须在 8 到 20 个字符之间，请重新输入: \n");
+                    } else {
+                        break; // 密码长度合法，退出循环
+                }
+                } while (1);
 
                 flag = userLanding(head, phone_number, password);
                 system("pause");
