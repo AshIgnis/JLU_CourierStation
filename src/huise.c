@@ -35,13 +35,13 @@ extern "C" {
 			return p;
 			break;
 		case 2:
-			int week = day_to_week(real_time) - 1;
+			int week = day_to_week(real_time + 1) - 1;
 			p = analysis(week,count_week);
 			save_data_to_file_week(week);
 			return p;
 			break;
 		case 3:
-			int month = day_to_month(real_time) - 1;
+			int month = day_to_month(real_time + 1) - 1;
 			p = analysis(month,count_month);
 			save_data_to_file_month(month);
 			return p;
@@ -122,7 +122,7 @@ void set_count_week(int real_time){
     for (int i = 0; i < 60; ++i) {
         count_week[i] = 0;
     }
-	int real_week = day_to_week(real_time) - 1;// 实际满七天的周数,测试时可以通过终端改动real_day进而通过函数变动
+	int real_week = day_to_week(real_time + 1) - 1;// 实际满七天的周数,测试时可以通过终端改动real_day进而通过函数变动
 	for (int i = 0; i < real_week; ++i) {
 		for (int j = 1; j <= 7 ; ++j) {
 			count_week[i+1] += count_day[i * 7 + j];
@@ -135,7 +135,7 @@ void set_count_month(int real_time){
     for (int i = 0; i < 15; ++i) {
         count_month[i] = 0;
     }
-	int real_month = day_to_month(real_time) - 1;// 实际满30天的月数,测试时可以通过终端改动real_day进而通过函数变动
+	int real_month = day_to_month(real_time + 1) - 1;// 实际满30天的月数,测试时可以通过终端改动real_day进而通过函数变动
 	for (int i = 0; i < real_month; ++i) {
 		for (int j = 1; j <= 30 ; ++j) {
 			count_month[i+1] += count_day[i * 30 + j];
