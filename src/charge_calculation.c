@@ -102,7 +102,7 @@ double calculate_send_package_fees(struct package_s *send_pkg, int customer_type
         printf("包裹抽中了免单！\n");
     }
     if(ifdoortodoor){
-        shipping_fee +=discount*5; // 上门服务费用
+        shipping_fee +=discount*Vbase; // 上门服务费用
     }
     shipping_fee = round_to_two_decimals(shipping_fee); // 保留两位小数
     send_pkg->shipping_fee = shipping_fee;
