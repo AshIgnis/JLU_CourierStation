@@ -27,7 +27,6 @@ struct customer *addCustomer(struct customer *head, const char *username, const 
     newCustomer->ticket = 3;
 
     printf("用户添加成功！\n");
-    
     return newCustomer;
 }
 
@@ -224,26 +223,3 @@ struct customer *customersCreating(struct customer *customerList) {
 }
 
 
-int get_customer_type(const char *phone_number) {
-    FILE *file = fopen("customers.txt", "r");
-    if (!file) {
-        perror("无法打开 customers.txt 文件");
-        return -1; // 返回 -1 表示文件打开失败
-    }
-
-    char current_phone[MAX_LEN];
-    char current_name[MAX_LEN];
-    char current_password[MAX_LEN];
-    int current_type;
-
-    // 遍历文件内容，查找匹配的电话号码
-    while (fscanf(file, "%s %s %s %d", current_name, current_phone, current_password,&current_type) != EOF) {
-        if (strcmp(current_phone, phone_number) == 0) {
-            fclose(file);
-            return current_type; // 返回匹配的用户类型
-        }
-    }
-
-    fclose(file);
-    return -1; // 返回 -1 表示未找到匹配的用户
-}

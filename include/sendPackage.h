@@ -5,7 +5,8 @@
 
 // 包裹相关功能声明
 void show_package_s(struct package_s* x); // 展示包裹信息
-void package_s_original_start(char* t); // 初始化界面
+void package_s_original_start(char *t);   // 初始化界面
+void NewFunction(char jdg[22], int &retFlag);
 //t 为传入手机号码的字符数组头指针
 void save_package_s(); // 包裹文件保存
 struct package_s* load_package_s(); // 包裹文件读取
