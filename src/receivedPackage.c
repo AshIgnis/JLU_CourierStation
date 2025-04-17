@@ -140,24 +140,26 @@ void show_all_packages_r(struct package_r* head) {
     struct package_r* current = head->next; // 跳过头节点
     int count = 0;
 
-    printf("\n========== 所有收件包裹信息 ==========\n");
+    printf("\n======================= 所有收件包裹信息 ======================\n");
+    printf("%-5s %-18s %-15s %-6s %-6s %-8s %-15s\n", 
+           "序号", "用户电话", "体积(cm³)", "类型", "到付", "状态", "序列号");
+    printf("---------------------------------------------------------------\n");
+
     while (current->next != NULL) {
         count++;
-        printf("\n包裹 %d:\n", count);
-        printf("1. 包裹所属用户电话: %s\n", current->phone_number);
-        printf("2. 包裹体积 (立方厘米): %.2lf\n", current->volume);
-        printf("3. 包裹类型 (1-文件, 2-生鲜, 3-易碎品, 4-家电, 5-危险品): %d\n", current->package_type);
-        printf("4. 是否需要到付 (0-不需要, 1-需要): %d\n", current->ifCollection);
-        if (current->ifCollection) {
-            printf("   运输费用: %.2lf\n", current->shipping_fee);
-        }
-        printf("5. 包裹状态 (1-正常, 2-损坏, 3-违禁品): %d\n", current->package_status);
-        printf("6. 包裹序列号: %s\n", current->package_id);
-
+        printf("%-5d %-15s %-12.2lf %-4d %-4d %-4d %-10s\n", 
+               count, 
+               current->phone_number, 
+               current->volume, 
+               current->package_type, 
+               current->ifCollection, 
+               current->package_status, 
+               current->package_id);
         current = current->next;
     }
 
-    printf("\n总计 %d 个收件包裹。\n", count);
+    printf("---------------------------------------------------------------\n");
+    printf("总计 %d 个收件包裹。\n", count);
 }
 
 void find_package_r(struct package_r **lstfind, struct package_r **find, char* p, struct package_r* head) {
