@@ -4,6 +4,7 @@
 #define RECEIVED_FILE "received_packages.txt" // 收件包裹文件
 #define SEND_FILE "send_packages.txt" // 寄件包裹文件
 #define CUSTOMER_FILE "customers.txt" // 用户文件
+#define ADMIN_FILE "admin.txt" // 管理员文件
 
 #define MAX_LEN 100 // 字符串最大长度
 #define MAX_PACKAGE_NUM 10000 // 最大包裹数量
@@ -45,6 +46,12 @@ struct customer {
     struct package_s *send_packages; // 寄件包裹
     struct customer *next; // 下一个用户
     int ticket;
+};
+
+struct admin{
+    char adminname[MAX_LEN]; // 管理员姓名
+    char password[MAX_LEN]; // 管理员密码
+    struct admin *next; // 下一个管理员
 };
 
 #endif // STRUCTURE_H

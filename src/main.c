@@ -7,10 +7,12 @@
 #include "sendPackage.h"
 #include "structure.h"
 #include "user.h"
+#include "admin.h"
 #include "warehouse_explosion_warning.h"
 
 int main() {
     struct customer *customerList = NULL; // 初始化客户列表
+    char command[200];
 
     int choice;
     do {
@@ -36,6 +38,12 @@ int main() {
                 break;
             }
             case 2:{ // 管理员操作
+                //管理员登录
+                if (!adminLogin()) {
+                    printf("管理员登录失败，返回主菜单。\n");
+                    break;
+                }
+            
                 int adminChoice;
                 do{
                     lastpage:
@@ -124,7 +132,6 @@ int main() {
                             } while (choice_son4 != 0);
                             nextpage:
                             // 构建命令字符串，将 real_time 作为参数传递给 Python 脚本
-                            char command[200];
                             snprintf(command, sizeof(command),
                                     "start /B C:/Users/25531/AppData/Local/Programs/Python/Python312/python.exe C:/Users/25531/Desktop/programe0/JLU_CourierStation/src/Data_prediction_and_statistics.py %d %d >nul 2>nul",
                                      real_time,choice_son4);

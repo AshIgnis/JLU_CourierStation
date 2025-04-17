@@ -39,22 +39,25 @@ void queryCustomer(struct customer *head) {
     char temp_phone[MAX_LEN];
     char phone_number[11];
     do {
-        printf("请输入要查询的电话号码: \n");
+        printf("请输入要查询的电话号码 (按q退出): \n");
         scanf("%s", temp_phone);
+        if (strcmp(temp_phone, "q") == 0) {
+            printf("已退出查询操作。\n");
+            return;
+        }
         if (!isPhoneNumberValid(temp_phone)) {
             printf("电话号码格式错误,必须为11位数字!\n");
-            }
-        } while (!isPhoneNumberValid(temp_phone));
-        strcpy(phone_number, temp_phone);
+        }
+    } while (!isPhoneNumberValid(temp_phone));
+    strcpy(phone_number, temp_phone);
 
     struct customer *current = head;
     while (current) { // 遍历链表
-                      // 判断电话号码是否匹配
-        if (strcmp(current->phone_number , phone_number) == 0){
+        if (strcmp(current->phone_number, phone_number) == 0) {
             printf("\n用户信息:\n");
             printf("用户名: %s\n", current->username);
             printf("电话号码: %s\n", current->phone_number);
-            switch(current->customer_type){
+            switch (current->customer_type) {
                 case 1:
                     printf("用户类型: 普通用户\n");
                     break;
@@ -92,17 +95,21 @@ struct customer *deleteCustomer(struct customer *head) {
     char temp_phone[MAX_LEN];
     char phone_number[11];
     do {
-        printf("请输入要删除的电话号码: \n");
+        printf("请输入要删除的电话号码 (按q退出): \n");
         scanf("%s", temp_phone);
+        if (strcmp(temp_phone, "q") == 0) {
+            printf("已退出删除操作。\n");
+            return head;
+        }
         if (!isPhoneNumberValid(temp_phone)) {
             printf("电话号码格式错误,必须为11位数字!\n");
-            }
-        } while (!isPhoneNumberValid(temp_phone));
-        strcpy(phone_number, temp_phone);
+        }
+    } while (!isPhoneNumberValid(temp_phone));
+    strcpy(phone_number, temp_phone);
 
     struct customer *current = head, *prev = NULL;
     while (current) { // 遍历链表查找用户
-        if (strcmp(current->phone_number , phone_number) == 0) {
+        if (strcmp(current->phone_number, phone_number) == 0) {
             if (prev) {
                 prev->next = current->next;
             } else {
@@ -158,8 +165,14 @@ struct customer *customersCreating(struct customer *customerList) {
     int choice;
     do {
         displayMenu_customer();
-        printf("请输入您的选择: ");
-        scanf("%d", &choice);
+        printf("请输入您的选择 (按q退出): ");
+        char temp_choice[10];
+        scanf("%s", temp_choice);
+        if (strcmp(temp_choice, "q") == 0) {
+            printf("已退出用户管理系统。\n");
+            return customerList;
+        }
+        choice = atoi(temp_choice); // 将输入转换为整数
 
         switch (choice) {
             case 1: { // 添加新用户（管理员权限）
@@ -169,26 +182,45 @@ struct customer *customersCreating(struct customer *customerList) {
                 // 输入电话号码并检查是否重复
                 do {
                     char temp_phone[MAX_LEN];
-                    
                     do {
-                        printf("请输入电话号码: \n");
+                        printf("请输入电话号码 (按q退出): \n");
                         scanf("%s", temp_phone);
+                        if (strcmp(temp_phone, "q") == 0) {
+                            printf("已退出添加用户操作。\n");
+                            return customerList;
+                        }
                         if (!isPhoneNumberValid(temp_phone)) {
                             printf("电话号码格式错误,必须为11位数字!\n");
-                            }
-                        } while (!isPhoneNumberValid(temp_phone));
-                        strcpy(phone_number, temp_phone);
+                        }
+                    } while (!isPhoneNumberValid(temp_phone));
+                    strcpy(phone_number, temp_phone);
                     if (isPhoneNumberDuplicate(customerList, phone_number)) {
                         printf("电话号码已存在，请重新输入！\n");
                     }
                 } while (isPhoneNumberDuplicate(customerList, phone_number));
 
-                printf("请输入用户名: ");
+                printf("请输入用户名 (按q退出): ");
                 scanf("%s", username);
-                printf("请输入密码: ");
+                if (strcmp(username, "q") == 0) {
+                    printf("已退出添加用户操作。\n");
+                    return customerList;
+                }
+
+                printf("请输入密码 (按q退出): ");
                 scanf("%s", password);
-                printf("请输入用户类型 (1-普通用户, 2-VIP用户, 3-企业用户, 4-学生用户, 5-老年用户): ");
-                scanf("%d", &customer_type);
+                if (strcmp(password, "q") == 0) {
+                    printf("已退出添加用户操作。\n");
+                    return customerList;
+                }
+
+                printf("请输入用户类型 (1-普通用户, 2-VIP用户, 3-企业用户, 4-学生用户, 5-老年用户, 按q退出): ");
+                char temp_type[10];
+                scanf("%s", temp_type);
+                if (strcmp(temp_type, "q") == 0) {
+                    printf("已退出添加用户操作。\n");
+                    return customerList;
+                }
+                customer_type = atoi(temp_type);
                 while (customer_type < 1 || customer_type > 5) {
                     printf("输入数据非法，请重新输入！\n");
                     printf("请输入用户类型 (1-普通用户, 2-VIP用户, 3-企业用户, 4-学生用户, 5-老年用户): ");
@@ -223,29 +255,4 @@ struct customer *customersCreating(struct customer *customerList) {
     } while (choice != 0);
 
     return customerList;
-}
-
-//获取用户类型
-int get_customer_type(const char *phone_number) {
-    FILE *file = fopen("customers.txt", "r");
-    if (!file) {
-        perror("无法打开 customers.txt 文件");
-        return -1; // 返回 -1 表示文件打开失败
-    }
-
-    char current_phone[MAX_LEN];
-    char current_name[MAX_LEN];
-    char current_password[MAX_LEN];
-    int current_type;
-
-    // 遍历文件内容，查找匹配的电话号码
-    while (fscanf(file, "%s %s %s %d", current_name, current_phone, current_password,&current_type) != EOF) {
-        if (strcmp(current_phone, phone_number) == 0) {
-            fclose(file);
-            return current_type; // 返回匹配的用户类型
-        }
-    }
-
-    fclose(file);
-    return -1; // 返回 -1 表示未找到匹配的用户
 }
