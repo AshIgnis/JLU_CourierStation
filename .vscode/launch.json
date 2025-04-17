@@ -1,31 +1,50 @@
 {
-    "version": "0.2.0",
-    "configurations": [
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug",
+      "type": "cppdbg",
+      "request": "launch",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": false,
+      "linux": {
+        "MIMode": "gdb",
+        "miDebuggerPath": "gdb",
+        "program": "${workspaceFolder}/output/main"
+      },
+      "osx": {
+        "MIMode": "lldb",
+        "miDebuggerPath": "lldb-mi",
+        "program": "${workspaceFolder}/output/main"
+      },
+      "windows": {
+        "MIMode": "gdb",
+        "miDebuggerPath": "gdb.exe",
+        "program": "${workspaceFolder}/output/main.exe"
+      },
+      "preLaunchTask": "build"
+    },
+    {
+      "name": "C/C++ Runner: Debug Session",
+      "type": "cppdbg",
+      "request": "launch",
+      "args": [],
+      "stopAtEntry": false,
+      "externalConsole": true,
+      "cwd": "c:/Users/LAN/Desktop/Cainiao完整/JLU_CourierStation",
+      "program": "c:/Users/LAN/Desktop/Cainiao完整/JLU_CourierStation/build/Debug/outDebug",
+      "MIMode": "gdb",
+      "miDebuggerPath": "gdb",
+      "setupCommands": [
         {
-            "name": "Debug",
-            "type": "cppdbg",
-            "request": "launch",
-            "args": [],
-            "stopAtEntry": false,
-            "cwd": "${workspaceFolder}",
-            "environment": [],
-            "externalConsole": false,
-            "linux": {
-                "MIMode": "gdb",
-                "miDebuggerPath": "gdb",
-                "program": "${workspaceFolder}/output/main"
-            },
-            "osx": {
-                "MIMode": "lldb",
-                "miDebuggerPath": "lldb-mi",
-                "program": "${workspaceFolder}/output/main"
-            },
-            "windows": {
-                "MIMode": "gdb",
-                "miDebuggerPath": "gdb.exe",
-                "program": "${workspaceFolder}/output/main.exe"
-            },
-            "preLaunchTask": "build"
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
         }
-    ]
+      ]
+    }
+  ]
 }

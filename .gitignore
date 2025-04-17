@@ -1,0 +1,6 @@
+*.d
+*.o
+*.log
+*.exe
+.vscode/
+.idea/
