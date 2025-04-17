@@ -27,6 +27,8 @@ extern "C" {
     // 获取数组指针
     int* get_array(int real_time,int choice_son4) {
 		int* p = NULL;
+		int week;
+		int month;
 		switch (choice_son4)
 		{
 		case 1:
@@ -35,13 +37,13 @@ extern "C" {
 			return p;
 			break;
 		case 2:
-			int week = day_to_week(real_time + 1) - 1;
+			week = day_to_week(real_time + 1) - 1;
 			p = analysis(week,count_week);
 			save_data_to_file_week(week);
 			return p;
 			break;
 		case 3:
-			int month = day_to_month(real_time + 1) - 1;
+			month = day_to_month(real_time + 1) - 1;
 			p = analysis(month,count_month);
 			save_data_to_file_month(month);
 			return p;
