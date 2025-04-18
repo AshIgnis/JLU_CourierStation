@@ -278,27 +278,8 @@ bool userLanding(struct customer *head, const char *phone_number, const char *pa
             printf("用户信息:\n");
             printf("用户名: %s\n", current->username);
             printf("电话号码: %s\n", current->phone_number);
-            switch (current->customer_type)
-            {
-            case 1:
-                printf("用户类型: 普通用户\n");
-                break;
-            case 2:
-                printf("用户类型: VIP用户\n");
-                break;
-            case 3:
-                printf("用户类型: 企业用户\n");
-                break;
-            case 4:
-                printf("用户类型: 学生用户\n");
-                break;
-            case 5:
-                printf("用户类型: 老年用户\n");
-                break;
-            default:
-                printf("用户类型: 非法用户\n");
-                break;
-            }
+            printf("用户类型: %s\n", cstmType[current->customer_type - 1]); // 使用字符串数组
+            printf("票数: %d\n", current->tickets);
             return true;
         }
         current = current->next;
@@ -322,12 +303,10 @@ void displayMenu_user()
 void userAction(struct customer *head, const char *phone_number)
 {
     int choice;
-    do
-    {
+    do {
         displayMenu_user();
         printf("请输入您的选择:\n ");
-        if (scanf("%d", &choice) != 1)
-        {
+        if (scanf("%d", &choice) != 1) {
             printf("输入无效，请输入数字。\n");
             while (getchar() != '\n')
                 ; // 清理输入缓冲区
@@ -336,55 +315,34 @@ void userAction(struct customer *head, const char *phone_number)
             continue;
         }
 
-        switch (choice)
-        {
-        case 1:
-        { // 查看用户信息
+        switch (choice) {
+        case 1: { // 查看用户信息
+            // 重新加载用户数据
+            head = loadCustomers();
+
             struct customer *current = head;
             int found = 0;
-            while (current)
-            {
-                if (strcmp(current->phone_number, phone_number) == 0)
-                {
+            while (current) {
+                if (strcmp(current->phone_number, phone_number) == 0) {
                     printf("用户信息:\n");
                     printf("用户名: %s\n", current->username);
                     printf("电话号码: %s\n", current->phone_number);
-                    switch (current->customer_type)
-                    {
-                    case 1:
-                        printf("用户类型: 普通用户\n");
-                        break;
-                    case 2:
-                        printf("用户类型: VIP用户\n");
-                        break;
-                    case 3:
-                        printf("用户类型: 企业用户\n");
-                        break;
-                    case 4:
-                        printf("用户类型: 学生用户\n");
-                        break;
-                    case 5:
-                        printf("用户类型: 老年用户\n");
-                        break;
-                    default:
-                        printf("用户类型: 非法用户\n");
-                        break;
-                    }
+                    printf("用户类型: %s\n", cstmType[current->customer_type - 1]); // 使用字符串数组
+                    printf("票数: %d\n", current->tickets);
                     found = 1;
                     break;
                 }
                 current = current->next;
             }
-            if (!found)
-            {
+            if (!found) {
                 printf("未找到用户信息。\n");
             }
+            freeCustomers(head); // 释放重新加载的链表
             system("pause");
             system("cls");
             break;
         }
-        case 2:
-        { // 查询收件包裹信息
+        case 2: { // 查询收件包裹信息
             printf("您的包裹信息如下:\n");
             userReceivedPackagesSearching(phone_number);
 
@@ -393,8 +351,7 @@ void userAction(struct customer *head, const char *phone_number)
             printf("0. 退出\n");
             printf("请输入您的选择: ");
 
-            if (scanf("%d", &choice_package) != 1)
-            {
+            if (scanf("%d", &choice_package) != 1) {
                 printf("输入无效，请输入数字。\n");
                 while (getchar() != '\n')
                     ; // 清理输入缓冲区
@@ -403,8 +360,7 @@ void userAction(struct customer *head, const char *phone_number)
                 continue;
             }
 
-            switch (choice_package)
-            {
+            switch (choice_package) {
             case 1: // 取件
                 userTakePackage(phone_number);
                 break;
@@ -412,7 +368,7 @@ void userAction(struct customer *head, const char *phone_number)
                 printf("返回主菜单\n");
                 system("pause");
                 system("cls");
-                return; // 直接返回，退出函数
+                continue; // 直接返回，退出函数
             default:
                 printf("无效的选择，请重试。\n");
                 system("pause");
@@ -420,8 +376,7 @@ void userAction(struct customer *head, const char *phone_number)
             }
             break;
         }
-        case 3:
-        { // 邮寄包裹
+        case 3: { // 邮寄包裹
             printf("进入寄件包裹管理系统...\n");
             package_s_original_start((char *)phone_number);
             system("pause");

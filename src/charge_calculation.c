@@ -17,15 +17,6 @@
 //(1-普通用户, 2-VIP用户, 3-企业用户, 4-学生用户, 5-老年用户):
 //(1-文件, 2-生鲜, 3-易碎品, 4-家电, 5-危险品)
 //(1-正常, 2-损坏, 3-违禁品)
-void initialize_random_seed()
-{
-    srand((unsigned int)time(NULL)); // 使用当前时间作为种子
-}
-
-double generate_random_factor()
-{
-    return 0.8 + ((double)rand() / RAND_MAX) * 0.19; // 生成0.8到0.99之间的随机数
-}
 
 int get_customer_type(const char *phone_number)
 {
@@ -40,9 +31,9 @@ int get_customer_type(const char *phone_number)
     char current_name[MAX_LEN];
     char current_password[MAX_LEN];
     int current_type;
-
+    int current_tickets;
     // 遍历文件内容，查找匹配的电话号码
-    while (fscanf(file, "%s %s %s %d", current_name, current_phone, current_password, &current_type) != EOF)
+    while (fscanf(file, "%s %s %s %d %d", current_name, current_phone, current_password, &current_type,&current_tickets) != EOF)
     {
         if (strcmp(current_phone, phone_number) == 0)
         {
@@ -53,6 +44,54 @@ int get_customer_type(const char *phone_number)
 
     fclose(file);
     return -1; // 返回 -1 表示未找到匹配的用户
+}
+
+int get_customer_tickets(const char *phone_number) {
+    FILE *file = fopen(CUSTOMER_FILE, "r");
+    if (!file) {
+        perror("无法打开 customers.txt 文件");
+        return -1; // 返回 -1 表示文件打开失败
+    }
+
+    FILE *temp = fopen("temp.txt", "w");
+    if (!temp) {
+        perror("无法创建临时文件 temp.txt");
+        fclose(file);
+        return -1;
+    }
+
+    char current_phone[MAX_LEN];
+    char current_name[MAX_LEN];
+    char current_password[MAX_LEN];
+    int current_type;
+    int current_tickets;
+    int found = 0;
+
+    // 遍历文件内容，查找匹配的电话号码
+    while (fscanf(file, "%s %s %s %d %d", current_name, current_phone, current_password, &current_type, &current_tickets) != EOF) {
+        if (strcmp(current_phone, phone_number) == 0) {
+            found = 1;
+            if (current_tickets > 0) {
+                current_tickets--; // 使用票数后减 1
+            }
+        }
+        fprintf(temp, "%s %s %s %d %d\n", current_name, current_phone, current_password, current_type, current_tickets);
+    }
+
+    fclose(file);
+    fclose(temp);
+
+    // 替换原文件
+    if (remove(CUSTOMER_FILE) != 0) {
+        perror("删除原文件失败");
+        return -1;
+    }
+    if (rename("temp.txt", CUSTOMER_FILE) != 0) {
+        perror("重命名临时文件失败");
+        return -1;
+    }
+
+    return found ? current_tickets : 0; // 如果找到用户，返回剩余票数；否则返回 0
 }
 
 double get_package_type_coefficient(int package_type)
@@ -118,33 +157,24 @@ double round_to_two_decimals(double value)
 }
 
 // 修改后的寄件包裹运费计算
-double calculate_send_package_fees(struct package_s *send_pkg, int customer_type, int ifdoortodoor)
-{
+double calculate_send_package_fees(struct package_s *send_pkg, int ifdoortodoor, const char *phone_number) {
     double shipping_fee = 0.0; // 初始化运费
     double Vbase = calculate_volume_fee(send_pkg->volume); // 使用分段计费规则
     double type_coeff = get_package_type_coefficient(send_pkg->package_type);
-    double discount = get_customer_discount(customer_type);
-    
-    if (send_pkg->ifCollection)
-    {       
+    double discount = get_customer_discount(get_customer_type(phone_number));
+
+    // 获取用户票数
+    int tickets = get_customer_tickets(phone_number);
+
+    if (send_pkg->ifCollection) {
         shipping_fee = Vbase * type_coeff * discount;
-
-        // 等待时间函数
-        double random_factor = generate_random_factor(); // 生成0.8到0.99之间的随机数
-        printf("新店开张，三个月随机减免，此包裹抽中了%lf的打折比例\n", random_factor);
-        shipping_fee *= random_factor;
-
-        // 判断是否抽中免单
-        if (((double)rand() / RAND_MAX) < 0.05)
-        { // 5%的概率免单
-            shipping_fee = 0.0;
-            printf("包裹抽中了免单！\n");
+        if (tickets > 0) {
+            printf("检测到您有八折券，已自动使用，剩余 %d 张\n", tickets);
+            shipping_fee *= 0.8; // 使用八折券
         }
-
         printf("包裹运费为：%.2lf\n", shipping_fee);
     }
-    if (ifdoortodoor)
-    {
+    if (ifdoortodoor) {
         double doorfee = discount * Vbase * type_coeff * 0.7;
         printf("上门服务费用为：%.2lf\n", doorfee);
         shipping_fee += doorfee; // 上门服务费用

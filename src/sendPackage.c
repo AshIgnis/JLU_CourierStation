@@ -50,7 +50,7 @@ void add_package_s(struct package_s *head, const char *phone_number) {
         while (getchar() != '\n'); // 清空输入缓冲区
     }
 
-    double shipping_fee = calculate_send_package_fees(now, get_customer_type(phone_number), ifdoortodoor); // 计算运费
+    double shipping_fee = calculate_send_package_fees(now, ifdoortodoor,phone_number); // 计算运费
     printf("包裹的总计算为：%.2lf\n", shipping_fee);
     (*now).next = (*head).next;
     (*head).next = now;
@@ -58,7 +58,6 @@ void add_package_s(struct package_s *head, const char *phone_number) {
     printf("寄件包裹添加成功！\n");
     save_package_s(head); // 隐式保存
 }
-
 
 
 void query_and_show_packages(struct package_s *head, const char *phone_number) {
@@ -72,6 +71,7 @@ void query_and_show_packages(struct package_s *head, const char *phone_number) {
 
     printf("\n========================== 寄件包裹信息 ===========================\n");
     while (current != NULL) {
+        if(strcmp(current->phone_number,"1")==0) break;
         // 如果是管理员，显示所有包裹；如果是普通用户，只显示与其电话号码匹配的包裹
         if (phone_number == NULL || strcmp(current->phone_number, phone_number) == 0) {
             count++;

@@ -53,6 +53,7 @@ struct customer {
     char phone_number[MAX_LEN]; // 电话号码
     char password[MAX_LEN]; // 密码
     int customer_type; // 用户类型
+    int tickets;
     struct customer *next; // 下一个用户
 };
 

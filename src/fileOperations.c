@@ -13,9 +13,9 @@ void saveCustomers(struct customer *head) {
 
     struct customer *current = head;
     while (current) {
-        fprintf(file, "%s %s %s %d\n",
+        fprintf(file, "%s %s %s %d %d\n",
                 current->username, current->phone_number,
-                current->password, current->customer_type);
+                current->password, current->customer_type,current->tickets);
         current = current->next;
     }
 
@@ -38,9 +38,9 @@ struct customer *loadCustomers() {
             perror("Memory allocation failed");
             break;
         }
-        if (fscanf(file, "%s %s %s %d",
+        if (fscanf(file, "%s %s %s %d %d",
                    cust->username, cust->phone_number,
-                   cust->password, &cust->customer_type) == 4) {
+                   cust->password, &cust->customer_type,&cust->tickets) == 5) {
             cust->next = NULL;
             if (!head) {
                 head = tail = cust;

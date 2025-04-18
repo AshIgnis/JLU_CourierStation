@@ -22,6 +22,7 @@ struct customer *addCustomer(struct customer *head, const char *username, const 
     strcpy(newCustomer->username, username);
     strcpy(newCustomer->phone_number, phone_number);
     strcpy(newCustomer->password, password);
+    newCustomer->tickets = 10; // 初始化票数为10
     newCustomer->customer_type = customer_type;
     newCustomer->next = head;
 
@@ -63,6 +64,8 @@ void queryCustomer(struct customer *head) {
             } else {
                 printf("用户类型: 非法用户\n");
             }
+            printf("票数: %d\n", current->tickets);
+            printf("----------------------------------------------------------\n");
             return;
         }
         current = current->next;
@@ -157,7 +160,7 @@ void displayAllCustomers(struct customer *head) {
     }
 
     printf("\n===================== 所有用户信息 =======================\n");
-    printf("%-5s %-18s %-15s %-10s\n", "序号", "电话号码", "用户名", "用户类型");
+    printf("%-5s %-18s %-15s %-10s %-5s\n", "序号", "电话号码", "用户名", "用户类型","票数");
     printf("----------------------------------------------------------\n");
 
     struct customer *current = head;
@@ -169,7 +172,7 @@ void displayAllCustomers(struct customer *head) {
         const char *customer_type = (current->customer_type >= 1 && current->customer_type <= 5)
                                         ? cstmType[current->customer_type - 1]
                                         : "非法用户"; // 使用字符串数组
-        printf("%-5d %-15s %-10s %-10s\n", count, current->phone_number, current->username, customer_type);
+        printf("%-5d %-15s %-10s %-10s %-5d\n", count, current->phone_number, current->username, customer_type,current->tickets);
         current = current->next;
     }
 
@@ -295,7 +298,7 @@ struct customer *customersCreating(struct customer *customerList)
             }
 
             customerList = addCustomer(customerList, username, phone_number, password, customer_type);
-            printf("用户添加成功！\n");
+            printf("用户添加成功！新用户赠送10张八折卷，可用于运费！\n");
             saveCustomers(customerList);
             break;
         }
