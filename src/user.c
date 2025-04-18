@@ -9,7 +9,7 @@
 #include "receivedPackage.h"
 #include <stdbool.h>
 #include <ctype.h>
-
+#include "charge_calculation.h"
 // 电话号码验证函数
 bool isPhoneNumberValid(const char *phone_number)
 {
@@ -479,8 +479,22 @@ void userReceivedPackagesSearching(const char *phone_number)
 void userTakePackage(const char *phone_number)
 {
     char package_id[MAX_LEN];
-    printf("请输入取件码: ");
+    printf("请输入取件码('q'退出): ");
     scanf("%s", package_id);
+
+    if (strcmp(package_id, "q") == 0)
+    {
+        printf("已退出取件操作。\n");
+        return;
+    }
+
+    int ifdoortodoor = 0;
+    printf("是否需要上门服务 (0-不需要, 1-需要): ");
+    while (scanf("%d", &ifdoortodoor) != 1 || (ifdoortodoor != 0 && ifdoortodoor != 1))
+    {
+        printf("输入无效，请输入0或1: ");
+        while (getchar() != '\n'); // 清空输入缓冲区
+    }
 
     FILE *file = fopen(RECEIVED_FILE, "r");
     if (!file)
@@ -501,6 +515,8 @@ void userTakePackage(const char *phone_number)
     if (!box)
     {
         perror("无法打开 id_box.txt 文件");
+        fclose(file);
+        fclose(temp);
         return;
     }
 
@@ -514,6 +530,8 @@ void userTakePackage(const char *phone_number)
     int found = 0;
 
     int return_num = 0;
+    double door_to_door_fee = 0.0; // 上门服务费用
+    double total_fee = 0.0;        // 总费用
 
     // 遍历文件内容，找到并跳过目标包裹
     while (fscanf(file, "%s %lf %d %d %lf %d %s", current_phone, &current_volume, &current_package_type, &current_ifCollection, &current_shipping_fee, &current_package_status, current_package_id) != EOF)
@@ -523,6 +541,20 @@ void userTakePackage(const char *phone_number)
             found = 1; // 找到包裹，跳过写入
             return_num = convertStringToInt(current_package_id);
             fprintf(box, " %d", return_num);
+
+            // 计算上门服务费用
+            if (ifdoortodoor == 1)
+            {
+                door_to_door_fee = DoorToDoorFee_r(current_phone,current_volume,current_package_type); 
+                printf("上门服务费用: %.2lf 元\n", door_to_door_fee);
+            }
+
+            // 计算总费用
+            total_fee = current_shipping_fee + door_to_door_fee;
+
+            // 输出费用信息
+            printf("到付运费: %.2lf 元\n", current_shipping_fee);
+            printf("总费用: %.2lf 元\n", total_fee);
         }
         else
         {
