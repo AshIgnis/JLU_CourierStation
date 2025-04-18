@@ -13,10 +13,17 @@ void add_package_s(struct package_s *head, const char *phone_number) {
         (*now).phone_number[i] = phone_number[i];
     }
     int ifdoortodoor = 0; // 是否上门服务
-    printf("1.请输入收件人姓名: \n");
-    scanf("%s", (*now).receiver_name);
-    printf("2.请输入收件人地址: \n");
-    scanf("%s", (*now).receiver_address);
+    printf("1.请输入收件人姓名 (不超过10个字符): \n");
+    while (scanf("%10s", (*now).receiver_name) != 1 || strlen((*now).receiver_name) > 10) {
+        printf("输入无效，请输入不超过10个字符的姓名: ");
+        while (getchar() != '\n'); // 清空输入缓冲区
+    }
+
+    printf("2.请输入收件人地址 (不超过20个字符): \n");
+    while (scanf("%20s", (*now).receiver_address) != 1 || strlen((*now).receiver_address) > 20) {
+        printf("输入无效，请输入不超过20个字符的地址: ");
+        while (getchar() != '\n'); // 清空输入缓冲区
+    }
     printf("3.请输入包裹体积 (立方厘米): \n");
     while (scanf("%lf", &(*now).volume) != 1 || (*now).volume <= 0) {
         printf("输入无效，请输入一个正数: ");
