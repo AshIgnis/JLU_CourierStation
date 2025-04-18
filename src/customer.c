@@ -182,7 +182,7 @@ void displayAllCustomers(struct customer *head)
         return;
     }
 
-    printf("\n========== 所有用户信息 ==========\n");
+    printf("\n===================== 所有用户信息 =======================\n");
     printf("%-5s %-18s %-15s %-10s\n", "序号", "电话号码", "用户名", "用户类型");
     printf("----------------------------------------------------------\n");
 
@@ -190,7 +190,8 @@ void displayAllCustomers(struct customer *head)
     int count = 0;
 
     while (current)
-    {
+    {   
+        if(strcmp(current->phone_number, "1") == 0) continue; // 跳过空用户
         count++;
         char *customer_type;
         switch (current->customer_type)
