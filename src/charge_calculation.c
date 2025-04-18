@@ -110,9 +110,14 @@ double calculate_send_package_fees(struct package_s *send_pkg, int customer_type
 }
 
 
-
-double DoorToDoorFee_r(int customer_type){
-
+double DoorToDoorFee_r(struct package_r* rev){
+    if (get_customer_type(rev->phone_number)==-1)
+    {
+        printf("该用户暂未注册，已默认设置为普通用户\n");
+        return get_customer_discount(1)*calculate_volume_fee(rev->volume);
+    }
+    
+    return get_package_type_coefficient(get_customer_type(rev->phone_number))*calculate_volume_fee(rev->volume);
 }
 // 修改后的收件包裹运费计算
 

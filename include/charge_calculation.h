@@ -12,5 +12,5 @@ double calculate_volume_fee(double volume);
 double round_to_two_decimals(double value);
 double calculate_send_package_fees(struct package_s *send_pkg, int customer_type,int ifdoortodoor);//计算寄件包裹运费
 int get_customer_type(const char *phone_number);
-
+double DoorToDoorFee_r(struct package_r* rev);
 #endif

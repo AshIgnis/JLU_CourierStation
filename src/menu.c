@@ -12,7 +12,7 @@ void displayMainMenu() {
 void displayAdminMenu() {
     printf("\n========== 管理员菜单 ==========\n");
     printf("1. 用户管理\n");
-    printf("2. 收取包裹管理\n");
+    printf("2. 收件包裹管理\n");
     printf("3. 邮寄包裹管理\n");
     printf("4. 数据预测与统计\n");
     printf("0. 返回主菜单\n");
