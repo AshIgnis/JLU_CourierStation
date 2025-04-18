@@ -9,6 +9,7 @@
 #include "user.h"
 #include "admin.h"
 #include "warehouse_explosion_warning.h"
+#define adminPhoneNumber "20245524116" //增加管理员测试用的号码
 
 int main() {
     struct customer *customerList = NULL; // 初始化客户列表
@@ -68,7 +69,7 @@ int main() {
                             break;
                         }
                         case 3:{ //邮寄包裹管理
-                            package_s_original_start(NULL);
+                            package_s_original_start(adminPhoneNumber);
                             break;
                         }
                         case 4:{ // 数据预测与统计
