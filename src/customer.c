@@ -23,10 +23,8 @@ struct customer *addCustomer(struct customer *head, const char *username, const 
     strcpy(newCustomer->phone_number, phone_number);
     strcpy(newCustomer->password, password);
     newCustomer->customer_type = customer_type;
-    newCustomer->received_packages = NULL;
-    newCustomer->send_packages = NULL;
     newCustomer->next = head;
-    newCustomer->ticket = 10;
+
 
     printf("用户添加成功！\n");
     return newCustomer; // 返回新结点地址

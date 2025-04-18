@@ -4,7 +4,7 @@
 #include "receivedPackage.h"
 #include "structure.h"
 #include "user.h"
-#include "charge_calculation.h"
+
 
 void free_package_r(struct package_r* head) {
     struct package_r *lst, *now;
@@ -258,6 +258,8 @@ void add_received_package(struct package_r *head) {
             printf("输入无效，请输入一个非负数: ");
             while (getchar() != '\n'); // 清空输入缓冲区
         }
+    }else {
+        (*now).shipping_fee = 0.0; // 如果不需要到付，运费为0
     }
 
     // 输入包裹状态并验证合法性
@@ -265,16 +267,6 @@ void add_received_package(struct package_r *head) {
     while (scanf("%d", &(*now).package_status) != 1 || (*now).package_status < 1 || (*now).package_status > 3) {
         printf("输入无效，请输入1-3之间的数字: ");
         while (getchar() != '\n'); // 清空输入缓冲区
-    }
-
-    int ifDoorToDoor = 0;
-    printf("6.是否需要上门 (0-不需要, 1-需要): \n");
-    while (scanf("%d", &ifDoorToDoor) != 1 || (ifDoorToDoor != 0 && ifDoorToDoor != 1)) {
-        printf("输入无效，请输入0或1: ");
-        while (getchar() != '\n'); // 清空输入缓冲区
-    }
-    if(ifDoorToDoor){
-        (*now).shipping_fee+=DoorToDoorFee_r(now);
     }
 
     (*now).next = (*head).next;

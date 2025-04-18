@@ -41,8 +41,6 @@ struct customer *loadCustomers() {
         if (fscanf(file, "%s %s %s %d",
                    cust->username, cust->phone_number,
                    cust->password, &cust->customer_type) == 4) {
-            cust->received_packages = NULL;
-            cust->send_packages = NULL;
             cust->next = NULL;
             if (!head) {
                 head = tail = cust;

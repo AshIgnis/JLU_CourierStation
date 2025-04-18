@@ -29,7 +29,6 @@ struct package_s {
     int ifCollection; // 是否到付
     double volume; // 体积
     int package_type; // 包裹类型
-    char order_time[MAX_LEN]; // 下单时间
     double shipping_fee; // 运费
     int package_status; // 包裹状态
     struct package_s *next; // 下一个包裹
@@ -42,10 +41,7 @@ struct customer {
     char phone_number[MAX_LEN]; // 电话号码
     char password[MAX_LEN]; // 密码
     int customer_type; // 用户类型
-    struct package_r *received_packages; // 收件包裹
-    struct package_s *send_packages; // 寄件包裹
     struct customer *next; // 下一个用户
-    int ticket;
 };
 
 struct admin{

@@ -17,6 +17,15 @@
 //(1-普通用户, 2-VIP用户, 3-企业用户, 4-学生用户, 5-老年用户):
 //(1-文件, 2-生鲜, 3-易碎品, 4-家电, 5-危险品)
 //(1-正常, 2-损坏, 3-违禁品)
+void initialize_random_seed() {
+    srand((unsigned int)time(NULL)); // 使用当前时间作为种子
+}
+
+double generate_random_factor() {
+    return 0.8 + ((double)rand() / RAND_MAX) * 0.19; // 生成0.8到0.99之间的随机数
+}
+
+
 int get_customer_type(const char *phone_number) {
     FILE *file = fopen("customers.txt", "r");
     if (!file) {
@@ -40,6 +49,7 @@ int get_customer_type(const char *phone_number) {
     fclose(file);
     return -1; // 返回 -1 表示未找到匹配的用户
 }
+
 
 double get_package_type_coefficient(int package_type) {
     switch (package_type) {
@@ -92,7 +102,7 @@ double calculate_send_package_fees(struct package_s *send_pkg, int customer_type
     shipping_fee = Vbase * type_coeff * discount ;
 
     //等待时间函数
-    double random_factor = 0.8 + ((double)rand() / RAND_MAX) * 0.19; // 生成0.8到0.99之间的随机数
+    double random_factor =generate_random_factor(); // 生成0.8到0.99之间的随机数
     printf("新店开张，三个月随机减免，此包裹抽中了%lf的打折比例\n",random_factor);
     shipping_fee*=random_factor;
 
@@ -101,8 +111,13 @@ double calculate_send_package_fees(struct package_s *send_pkg, int customer_type
         shipping_fee = 0.0;
         printf("包裹抽中了免单！\n");
     }
+
+    printf("包裹运费为：%.2lf\n", shipping_fee);
     if(ifdoortodoor){
-        shipping_fee +=discount*Vbase; // 上门服务费用
+        double doorfee=discount*Vbase*type_coeff*0.7;
+        printf("上门服务费用为：%.2lf\n", doorfee);
+        shipping_fee +=doorfee; // 上门服务费用
+
     }
     shipping_fee = round_to_two_decimals(shipping_fee); // 保留两位小数
     send_pkg->shipping_fee = shipping_fee;
@@ -110,14 +125,11 @@ double calculate_send_package_fees(struct package_s *send_pkg, int customer_type
 }
 
 
-double DoorToDoorFee_r(struct package_r* rev){
-    if (get_customer_type(rev->phone_number)==-1)
-    {
-        printf("该用户暂未注册，已默认设置为普通用户\n");
-        return get_customer_discount(1)*calculate_volume_fee(rev->volume);
-    }
+double DoorToDoorFee_r(const char* phone_number,double vol,int pkg_type) {
+    double fee=0.7*get_customer_discount(get_customer_type(phone_number))*calculate_volume_fee(vol)*get_package_type_coefficient(pkg_type);
+    fee = round_to_two_decimals(fee); // 保留两位小数
+    return fee;
     
-    return get_package_type_coefficient(get_customer_type(rev->phone_number))*calculate_volume_fee(rev->volume);
 }
 // 修改后的收件包裹运费计算
 

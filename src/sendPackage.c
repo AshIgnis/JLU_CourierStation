@@ -44,7 +44,7 @@ void add_package_s(struct package_s *head, const char *phone_number) {
     }
 
     double shipping_fee = calculate_send_package_fees(now, get_customer_type(phone_number), ifdoortodoor); // 计算运费
-    printf("包裹的运费计算为：%.2lf\n", shipping_fee);
+    printf("包裹的总计算为：%.2lf\n", shipping_fee);
     (*now).next = (*head).next;
     (*head).next = now;
 
