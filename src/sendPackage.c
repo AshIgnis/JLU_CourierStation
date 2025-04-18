@@ -59,7 +59,6 @@ void add_package_s(struct package_s *head, const char *phone_number) {
     save_package_s(head); // 隐式保存
 }
 
-
 void query_and_show_packages(struct package_s *head, const char *phone_number) {
     if (head == NULL || head->next == NULL) {
         printf("当前没有任何包裹信息。\n");
@@ -153,53 +152,71 @@ void delete_package_s(struct package_s* head, const char* phone_number) {
     }
 }
 
-
-struct package_s* load_package_s(){
-    FILE *file = fopen("send_packages.txt", "r");
+struct package_s* load_package_s() {
+    FILE *file = fopen(SEND_FILE, "r");
     if (!file) {
         perror("No package file found");
         return NULL;
     }
-    struct package_s *head,*lst;
-    head=(struct package_s*)malloc(sizeof(struct package_s));
-    (*head).next=NULL;
-    lst=head;
-    while(!feof(file)){
-        struct package_s* now=(struct package_s*)malloc(sizeof(struct package_s));
-        fscanf(file,"%s%s%s%lf%d%d",(*now).phone_number,(*now).receiver_name,(*now).receiver_address,&(*now).volume,&(*now).package_type,&(*now).ifCollection);
-        fscanf(file,"%lf",&(*now).shipping_fee);
-        fscanf(file,"%d",&(*now).package_status);
-        (*lst).next=now;
-        lst=now;
-        (*lst).next=NULL;
+
+    struct package_s *head = (struct package_s*)malloc(sizeof(struct package_s));
+    head->next = NULL;
+    struct package_s *lst = head;
+
+    while (1) {
+        struct package_s* now = (struct package_s*)malloc(sizeof(struct package_s));
+        if (fscanf(file, "%s %s %s %lf %d %d %d %lf",
+                   now->phone_number,
+                   now->receiver_name,
+                   now->receiver_address,
+                   &now->volume,
+                   &now->package_type,
+                   &now->ifCollection,
+                   &now->package_status,
+                   &now->shipping_fee) != 8) {
+            free(now);
+            break;
+        }
+
+        // 校验数据合法性
+        if (strlen(now->phone_number) != 11 || now->volume <= 0 || 
+            now->package_type < 1 || now->package_type > 5 || 
+            now->ifCollection < 0 || now->ifCollection > 1 || 
+            now->package_status < 1 || now->package_status > 3) {
+            free(now);
+            continue; // 跳过无效数据
+        }
+
+        lst->next = now;
+        lst = now;
+        lst->next = NULL;
     }
+
     fclose(file);
     return head;
 }
 
-void save_package_s(struct package_s* head){
-    FILE *file = fopen("send_packages.txt", "w");
+void save_package_s(struct package_s* head) {
+    FILE *file = fopen(SEND_FILE, "w");
     if (!file) {
         perror("Failed to open file for saving packages");
         return;
     }
-    struct package_s *lst,*now;
-    lst=head;
-    for(; ;){
-        now=(*lst).next;
-        if(now==NULL){
-            break;
-        }fprintf(file,"%s %s %s %lf %d %d",(*now).phone_number,(*now).receiver_name,(*now).receiver_address,(*now).volume,(*now).package_type,(*now).ifCollection);
-        if((*now).ifCollection==1){
-            fprintf(file," %.2lf",(*now).shipping_fee);
-        }else{
-            fprintf(file," 0");
-        }fprintf(file," %d",(*now).package_status);
-        if((*now).receiver_name[0]=='D'){
-            break;
-        }fprintf(file,"\n");
-        lst=now;
+
+    struct package_s *lst = head->next; // 跳过头节点
+    while (lst != NULL) {
+        fprintf(file, "%s %s %s %.2lf %d %d %d %.2lf\n",
+                lst->phone_number,
+                lst->receiver_name,
+                lst->receiver_address,
+                lst->volume,
+                lst->package_type,
+                lst->ifCollection,
+                lst->package_status,
+                lst->shipping_fee);
+        lst = lst->next;
     }
+
     fclose(file);
 }
 

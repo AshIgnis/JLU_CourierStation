@@ -36,15 +36,16 @@ struct package_r {
 
 // 寄件包裹结构体
 struct package_s {
+    char phone_number[MAX_LEN]; // 电话号码
     char receiver_name[MAX_LEN]; // 收件人姓名
     char receiver_address[MAX_LEN]; // 收件人地址
-    int ifCollection; // 是否到付
     double volume; // 体积
     int package_type; // 包裹类型
-    double shipping_fee; // 运费
-    int package_status; // 包裹状态
+    int ifCollection; // 是否到付
+    int package_status; // 包裹状态   
+    double shipping_fee; // 运费    
     struct package_s *next; // 下一个包裹
-    char phone_number[MAX_LEN]; // 电话号码
+    
 };
 
 // 用户结构体
