@@ -101,24 +101,24 @@ int main() {
                                 case 1:
                                     goto nextpage;
                                 case 2:
-                                    switch (real_time >= 7)
+                                    switch (real_time >= 14)
                                     {
                                     case 1:
                                         goto nextpage;
                                         break;
                                     default:
-                                        printf("输入时间不足7天,无法进行周预测\n");
+                                        printf("输入时间不足14天(两周),无法进行周预测\n");
                                         break;
                                     }
                                     break;
                                 case 3:
-                                    switch (real_time >= 30)
+                                    switch (real_time >= 60)
                                     {
                                     case 1:
                                         goto nextpage;
                                         break;
                                     default:
-                                        printf("输入时间不足30天,无法进行周预测\n");
+                                        printf("输入时间不足60天(两个月),无法进行周预测\n");
                                         break;
                                     }
                                     break;

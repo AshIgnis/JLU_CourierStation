@@ -61,7 +61,19 @@ class Dashboard:
 
         # 创建控制面板
         self.refresh_rate = pn.widgets.IntSlider(name='Refresh Rate (ms)', value=1000, start=500, end=5000)
-        self.alert_threshold = pn.widgets.FloatInput(name='Alert Threshold', value=1000, step=50)
+        # 根据 choice_son4 的值设置不同的初始阈值
+        if choice_son4 == 1:
+            initial_threshold = 500  # 阈值1
+            initial_step = 20
+        elif choice_son4 == 2:
+            initial_threshold = 3000  # 阈值2
+            initial_step = 100
+        elif choice_son4 == 3:
+            initial_threshold = 10000  # 阈值3
+            initial_step = 200
+        else:
+            initial_threshold = 1000  # 默认阈值
+        self.alert_threshold = pn.widgets.FloatInput(name='Alert Threshold', value=initial_threshold, step=initial_step, width=300)
 
         # 仪表盘布局
         self.template = pn.template.FastListTemplate(
@@ -109,7 +121,7 @@ class Dashboard:
             lib1.load(real_time,choice_son4)  # 加载数据
             arr = lib1.get_array(real_time,choice_son4)  # 获取数组
             length = lib1.get_array_length(real_time,choice_son4)  # 获取数组长度
-            valid_indices = [i for i in range(length) if arr[i+1] > 0]
+            valid_indices = [i for i in range(length - 1) if arr[i+1] >= 0]
             self.x = [i+1 for i in valid_indices]
             self.y = [arr[i+1] for i in valid_indices]
             
