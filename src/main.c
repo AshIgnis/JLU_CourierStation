@@ -24,7 +24,7 @@ int main() {
             printf("输入无效，请输入数字。\n");
             // 清理输入缓冲区
             while (getchar() != '\n');
-            continue;
+            choice = -1; // 设置为无效值以继续循环
         }
 
         switch (choice) {
@@ -164,7 +164,7 @@ int main() {
 
             case 0:
                 printf("退出系统...\n");
-                break;
+                return 0;
             default:
                 printf("无效的选择，请重试。\n");
         }

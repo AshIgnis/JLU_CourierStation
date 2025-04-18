@@ -404,28 +404,26 @@ void show_all_packages_r(struct package_r* head) {
     struct package_r* current = head->next; // 跳过头节点
     int count = 0;
 
-    printf("\n======================= 所有收件包裹信息 ======================\n");
-    printf("包裹类型 (1-文件, 2-生鲜, 3-易碎品, 4-家电, 5-危险品):\n");
-    printf("包裹状态 (1-正常, 2-损坏, 3-违禁品):\n\n");
-    printf("%-5s %-18s %-15s %-6s %-6s %-8s %-15s\n", 
+    printf("\n======================= 所有收件包裹信息 ============================\n");
+    printf("%-5s %-18s %-15s %-10s %-10s %-10s %-15s\n", 
            "序号", "用户电话", "体积(cm³)", "类型", "到付", "状态", "序列号");
-    printf("---------------------------------------------------------------\n");
+    printf("---------------------------------------------------------------------\n");
 
-    while (current->next != NULL) {
-        if(strcmp(current->phone_number,"1")==0) break;
+    while (current != NULL) {
+        if (strcmp(current->phone_number, "1") == 0) break;
         count++;
-        printf("%-5d %-15s %-12.2lf %-4d %-4d %-4d %-10s\n", 
+        printf("%-5d %-15s %-9.2lf %-8s %-14s %-10s %-15s\n", 
                count, 
                current->phone_number, 
                current->volume, 
-               current->package_type, 
-               current->ifCollection, 
-               current->package_status, 
+               pkgType[current->package_type - 1], // 显示包裹类型的中文描述
+               ifcollection[current->ifCollection], // 显示是否到付的中文描述
+               pkgStatus[current->package_status - 1], // 显示包裹状态的中文描述
                current->package_id);
         current = current->next;
     }
 
-    printf("---------------------------------------------------------------\n");
+    printf("---------------------------------------------------------------------\n");
     printf("总计 %d 个收件包裹。\n", count);
 }
 

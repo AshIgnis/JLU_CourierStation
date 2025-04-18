@@ -31,59 +31,37 @@ struct customer *addCustomer(struct customer *head, const char *username, const 
 }
 
 // 查询用户信息
-void queryCustomer(struct customer *head)
-{
-    if (!head)
-    { // 处理空链表报错
+void queryCustomer(struct customer *head) {
+    if (!head) {
         printf("当前没有用户数据。\n");
         return;
     }
+
     char temp_phone[MAX_LEN];
     char phone_number[11];
-    do
-    {
+    do {
         printf("请输入要查询的电话号码 (按q退出): \n");
         scanf("%s", temp_phone);
-        if (strcmp(temp_phone, "q") == 0)
-        {
+        if (strcmp(temp_phone, "q") == 0) {
             printf("已退出查询操作。\n");
             return;
         }
-        if (!isPhoneNumberValid(temp_phone))
-        {
+        if (!isPhoneNumberValid(temp_phone)) {
             printf("电话号码格式错误,必须为11位数字!\n");
         }
     } while (!isPhoneNumberValid(temp_phone));
     strcpy(phone_number, temp_phone);
 
     struct customer *current = head;
-    while (current)
-    { // 遍历链表
-        if (strcmp(current->phone_number, phone_number) == 0)
-        {
+    while (current) {
+        if (strcmp(current->phone_number, phone_number) == 0) {
             printf("\n用户信息:\n");
             printf("用户名: %s\n", current->username);
             printf("电话号码: %s\n", current->phone_number);
-            switch (current->customer_type)
-            {
-            case 1:
-                printf("用户类型: 普通用户\n");
-                break;
-            case 2:
-                printf("用户类型: VIP用户\n");
-                break;
-            case 3:
-                printf("用户类型: 企业用户\n");
-                break;
-            case 4:
-                printf("用户类型: 学生用户\n");
-                break;
-            case 5:
-                printf("用户类型: 老年用户\n");
-                break;
-            default:
+            if (current->customer_type >= 1 && current->customer_type <= 5) {
+                printf("用户类型: %s\n", cstmType[current->customer_type - 1]); // 使用字符串数组
+            } else {
                 printf("用户类型: 非法用户\n");
-                break;
             }
             return;
         }
@@ -141,7 +119,7 @@ struct customer *deleteCustomer(struct customer *head)
         current = current->next;
     }
 
-    printf("未找到电话号码为 %s 的用户。\n", phone_number);
+    printf("未找到电话号码为 %s 的用户。\n",phone_number);
     return head;
 }
 
@@ -172,10 +150,8 @@ int isPhoneNumberDuplicate(struct customer *head, const char *phone_number)
 }
 
 // 显示所有用户信息
-void displayAllCustomers(struct customer *head)
-{
-    if (!head)
-    {
+void displayAllCustomers(struct customer *head) {
+    if (!head) {
         printf("当前没有用户数据。\n");
         return;
     }
@@ -187,32 +163,12 @@ void displayAllCustomers(struct customer *head)
     struct customer *current = head;
     int count = 0;
 
-    while (current)
-    {   
-        if(strcmp(current->phone_number, "1") == 0) continue; // 跳过空用户
+    while (current) {
+        if (strcmp(current->phone_number, "1") == 0) continue; // 跳过空用户
         count++;
-        char *customer_type;
-        switch (current->customer_type)
-        {
-        case 1:
-            customer_type = "普通用户";
-            break;
-        case 2:
-            customer_type = "VIP用户";
-            break;
-        case 3:
-            customer_type = "企业用户";
-            break;
-        case 4:
-            customer_type = "学生用户";
-            break;
-        case 5:
-            customer_type = "老年用户";
-            break;
-        default:
-            customer_type = "非法用户";
-            break;
-        }
+        const char *customer_type = (current->customer_type >= 1 && current->customer_type <= 5)
+                                        ? cstmType[current->customer_type - 1]
+                                        : "非法用户"; // 使用字符串数组
         printf("%-5d %-15s %-10s %-10s\n", count, current->phone_number, current->username, customer_type);
         current = current->next;
     }

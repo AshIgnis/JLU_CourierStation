@@ -8,6 +8,18 @@
 
 #define MAX_LEN 100 // 字符串最大长度
 #define MAX_PACKAGE_NUM 10000 // 最大包裹数量
+// 用户类型字符串数组
+// 用户类型字符串数组
+extern const char *cstmType[5];
+
+// 包裹类型字符串数组
+extern const char *pkgType[5];
+
+// 包裹状态字符串数组
+extern const char *pkgStatus[3];
+
+// 是否到付字符串数组
+extern const char *ifcollection[2];
 
 // 收件包裹结构体
 struct package_r {

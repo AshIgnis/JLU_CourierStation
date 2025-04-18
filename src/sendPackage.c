@@ -13,13 +13,13 @@ void add_package_s(struct package_s *head, const char *phone_number) {
         (*now).phone_number[i] = phone_number[i];
     }
     int ifdoortodoor = 0; // 是否上门服务
-    printf("1.请输入收件人姓名 (不超过10个字符): \n");
+    printf("1.请输入收件人姓名 (不超过10个字符,不含空格): \n");
     while (scanf("%10s", (*now).receiver_name) != 1 || strlen((*now).receiver_name) > 10) {
         printf("输入无效，请输入不超过10个字符的姓名: ");
         while (getchar() != '\n'); // 清空输入缓冲区
     }
 
-    printf("2.请输入收件人地址 (不超过20个字符): \n");
+    printf("2.请输入收件人地址 (不超过20个字符,不含空格): \n");
     while (scanf("%20s", (*now).receiver_address) != 1 || strlen((*now).receiver_address) > 20) {
         printf("输入无效，请输入不超过20个字符的地址: ");
         while (getchar() != '\n'); // 清空输入缓冲区
@@ -71,18 +71,17 @@ void query_and_show_packages(struct package_s *head, const char *phone_number) {
     int count = 0;
 
     printf("\n========================== 寄件包裹信息 ===========================\n");
-    printf("包裹类型 (1-文件, 2-生鲜, 3-易碎品, 4-家电, 5-危险品):\n");
-    printf("包裹状态 (1-正常, 2-损坏, 3-违禁品):\n\n");
     while (current != NULL) {
         // 如果是管理员，显示所有包裹；如果是普通用户，只显示与其电话号码匹配的包裹
         if (phone_number == NULL || strcmp(current->phone_number, phone_number) == 0) {
             count++;
-            printf("序号: %-5d 发件电话：%-11s 收件人姓名: %-12s\n", count,current->phone_number, current->receiver_name);
-            printf("体积(cm³): %-12.2lf 类型: %-5d 到付: %-5d 状态: %-7d 运费(元): %-7.2lf\n",
+            printf("序号: %-5d 发件电话：%-11s 收件人姓名: %-12s\n", count, current->phone_number, current->receiver_name);
+            printf("收件地址: %-20s\n", current->receiver_address);
+            printf("体积(cm³): %-12.2lf 类型: %-10s 到付: %-10s 状态: %-10s 运费(元): %-7.2lf\n\n",
                    current->volume,
-                   current->package_type,
-                   current->ifCollection,
-                   current->package_status,
+                   pkgType[current->package_type - 1], // 包裹类型中文
+                   ifcollection[current->ifCollection], // 是否到付中文
+                   pkgStatus[current->package_status - 1], // 包裹状态中文
                    current->shipping_fee);
         }
         current = current->next;
@@ -105,29 +104,29 @@ void delete_package_s(struct package_s* head, const char* phone_number) {
     struct package_s *prev = head, *current = head->next;
     int count = 0;
 
-    printf("\n======================== 删除寄件包裹 ===========================\n");
-    printf("包裹类型 (1-文件, 2-生鲜, 3-易碎品, 4-家电, 5-危险品):\n");
-    printf("包裹状态 (1-正常, 2-损坏, 3-违禁品):\n\n");
+    printf("\n========================== 删除包裹信息 ===========================\n");
     while (current != NULL) {
+        // 如果是管理员，显示所有包裹；如果是普通用户，只显示与其电话号码匹配的包裹
         if (phone_number == NULL || strcmp(current->phone_number, phone_number) == 0) {
             count++;
-            printf("序号: %-5d 发件电话: %-11s 收件人姓名: %-12s\n", count,current->phone_number, current->receiver_name);
-            printf("体积(cm³): %-12.2lf 类型: %-5d 到付: %-5d 状态: %-7d 运费(元): %-7.2lf\n",
+            printf("序号: %-5d 发件电话：%-11s 收件人姓名: %-12s\n", count, current->phone_number, current->receiver_name);
+            printf("收件地址: %-20s\n", current->receiver_address);
+            printf("体积(cm³): %-12.2lf 类型: %-10s 到付: %-10s 状态: %-10s 运费(元): %-7.2lf\n\n",
                    current->volume,
-                   current->package_type,
-                   current->ifCollection,
-                   current->package_status,
+                   pkgType[current->package_type - 1], // 包裹类型中文
+                   ifcollection[current->ifCollection], // 是否到付中文
+                   pkgStatus[current->package_status - 1], // 包裹状态中文
                    current->shipping_fee);
         }
-        prev = current;
         current = current->next;
     }
 
     if (count == 0) {
         printf("没有找到符合条件的包裹。\n");
-        return;
-    }else printf("---------------------------------------------------------------------\n");
-    printf("总计 %d 个寄件包裹。\n", count);
+    } else {
+        printf("---------------------------------------------------------------------\n");
+        printf("总计 %d 个寄件包裹。\n", count);
+    }
 
     printf("请输入要删除的包裹序号: ");
     int delete_index;
