@@ -9,11 +9,23 @@ import numpy as np
 from threading import Lock
 import sys
 
-# 从命令行参数获取 real_time 值
+# 从命令行参数获取 real_time_left 值
 if len(sys.argv) > 1:
     try:
-        real_time = int(sys.argv[1])  # 从命令行读取并转换为整数
-        print(f"Real-time value received: {real_time}")
+        real_time_left = int(sys.argv[1])  # 从命令行读取并转换为整数
+        print(f"Real-time value received: {real_time_left}")
+    except ValueError:
+        print("Invalid real_time value received. Please provide a valid integer.")
+        sys.exit(1)
+else:
+    print("No real_time value provided. Exiting...")
+    sys.exit(1)
+
+# 从命令行参数获取 real_time_right 值
+if len(sys.argv) > 2:
+    try:
+        real_time_right = int(sys.argv[2])  # 从命令行读取并转换为整数
+        print(f"Real-time value received: {real_time_right}")
     except ValueError:
         print("Invalid real_time value received. Please provide a valid integer.")
         sys.exit(1)
@@ -22,9 +34,9 @@ else:
     sys.exit(1)
 
 # 从命令行参数获取 数据预测模式
-if len(sys.argv) > 2:
+if len(sys.argv) > 3:
     try:
-        choice_son4 = int(sys.argv[2])  # 从命令行读取并转换为整数
+        choice_son4 = int(sys.argv[3])  # 从命令行读取并转换为整数
         print(f"Prediction mode value received: {choice_son4}")
     except ValueError:
         print("Invalid prediction_mode value received. Please provide a valid integer.")
@@ -118,9 +130,9 @@ class Dashboard:
     def update_data(self):
         """更新数据并刷新图表"""
         with lock:
-            lib1.load(real_time,choice_son4)  # 加载数据
-            arr = lib1.get_array(real_time,choice_son4)  # 获取数组
-            length = lib1.get_array_length(real_time,choice_son4)  # 获取数组长度
+            lib1.load(real_time_left,real_time_right,choice_son4)  # 加载数据
+            arr = lib1.get_array(real_time_left,real_time_right,choice_son4)  # 获取数组
+            length = lib1.get_array_length(real_time_left,real_time_right,choice_son4)  # 获取数组长度
             valid_indices = [i for i in range(length - 1) if arr[i+1] >= 0]
             self.x = [i+1 for i in valid_indices]
             self.y = [arr[i+1] for i in valid_indices]

@@ -25,27 +25,28 @@ extern "C" {
 #endif
 
     // 获取数组指针
-    int* get_array(int real_time,int choice_son4) {
+    int* get_array(int real_time_left,int real_time_right,int choice_son4) {
 		int* p = NULL;
 		int week;
 		int month;
+		int real_time = real_time_right - real_time_left + 1;
 		switch (choice_son4)
 		{
 		case 1:
 			p = analysis(real_time,count_day);
-			save_data_to_file_day(real_time);
+			save_data_to_file_day(real_time_left,real_time_right);
 			return p;
 			break;
 		case 2:
 			week = day_to_week(real_time + 1) - 1;
 			p = analysis(week,count_week);
-			save_data_to_file_week(week);
+			save_data_to_file_week(real_time_left,real_time_right);
 			return p;
 			break;
 		case 3:
 			month = day_to_month(real_time + 1) - 1;
 			p = analysis(month,count_month);
-			save_data_to_file_month(month);
+			save_data_to_file_month(real_time_left,real_time_right);
 			return p;
 			break;
 		default:
@@ -55,7 +56,8 @@ extern "C" {
     }
 
     // 获取数组长度
-    size_t get_array_length(int real_time,int choice_son4) {
+    size_t get_array_length(int real_time_left,int real_time_right,int choice_son4) {
+		int real_time = real_time_right - real_time_left + 1;
 		switch (choice_son4)
 		{
 		case 1:
@@ -74,18 +76,19 @@ extern "C" {
     }
 
     // 加载数据
-    void load(int real_time,int choice_son4) {
+    void load(int real_time_left,int real_time_right,int choice_son4) {
+		int real_time = real_time_right - real_time_left + 1;
 		switch (choice_son4)
 		{
 		case 1:
-			load_data_from_file(real_time);
+			load_data_from_file(real_time_left,real_time_right);
 			break;
 		case 2:
-			load_data_from_file(real_time);
+			load_data_from_file(real_time_left,real_time_right);
 			set_count_week(real_time);
 			break;
 		case 3:
-			load_data_from_file(real_time);
+			load_data_from_file(real_time_left,real_time_right);
 			set_count_month(real_time);
 			break;
 		default:
@@ -98,13 +101,19 @@ extern "C" {
 #endif
 
 // 从文件 "huise.txt" 中读取数据并初始化 count_day 数组
-void load_data_from_file(int real_time) {
+void load_data_from_file(int real_time_left,int real_time_right) {
     FILE* file = fopen("huise.txt", "r");
     if (file == NULL) {
         printf("无法打开文件 huise.txt\n");
         return;
     }
-    for (int i = 0; i <= real_time && fscanf(file, "%d", &count_day[i]) == 1; ++i);
+	int real_time = real_time_right - real_time_left + 1;
+	// 跳过real_time_left行
+	for (int i = 0; i < real_time_left; ++i) {
+		fscanf(file, "%*d");
+	}
+	count_day[0] = 0;
+    for (int i = 1 ; i <= real_time && fscanf(file, "%d", &count_day[i]) == 1; ++i);
     fclose(file);
 }
 
@@ -151,10 +160,11 @@ int custom_round(double num) {
 }
 
 // 保存数据到文件,三种
-void save_data_to_file_day(int real_time) {
+void save_data_to_file_day(int real_time_left,int real_time_right) {
+	int real_time = real_time_right - real_time_left + 1;
     // 动态生成文件名
     char filename[50];
-    sprintf(filename, "huise_real_time_day_%d.txt", real_time);
+    sprintf(filename, "huise_real_time_day_(%d_to_%d).txt", real_time_left,real_time_right);
 
     FILE* file = fopen(filename, "w");
     if (file == NULL) {
@@ -168,10 +178,11 @@ void save_data_to_file_day(int real_time) {
     // printf("数据已保存到文件: %s\n", filename);
 }
 
-void save_data_to_file_week(int real_time) {
+void save_data_to_file_week(int real_time_left,int real_time_right) {
+	int real_time = real_time_right - real_time_left + 1;
     // 动态生成文件名
     char filename[50];
-    sprintf(filename, "huise_real_time_week_%d.txt", real_time);
+    sprintf(filename, "huise_real_time_week_(%d_to_%d).txt", real_time_left,real_time_right);
 
     FILE* file = fopen(filename, "w");
     if (file == NULL) {
@@ -185,10 +196,11 @@ void save_data_to_file_week(int real_time) {
     // printf("数据已保存到文件: %s\n", filename);
 }
 
-void save_data_to_file_month(int real_time) {
+void save_data_to_file_month(int real_time_left,int real_time_right) {
+	int real_time = real_time_right - real_time_left + 1;
     // 动态生成文件名
     char filename[50];
-    sprintf(filename, "huise_real_time_month_%d.txt", real_time);
+    sprintf(filename, "huise_real_time_month_(%d_to_%d).txt", real_time_left,real_time_right);
 
     FILE* file = fopen(filename, "w");
     if (file == NULL) {
