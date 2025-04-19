@@ -179,7 +179,7 @@ void save_data_to_file_day(int real_time_left,int real_time_right) {
 }
 
 void save_data_to_file_week(int real_time_left,int real_time_right) {
-	int real_time = real_time_right - real_time_left + 1;
+	int real_time = day_to_week(real_time_right - real_time_left + 1);
     // 动态生成文件名
     char filename[50];
     sprintf(filename, "huise_real_time_week_(%d_to_%d).txt", real_time_left,real_time_right);
@@ -189,7 +189,7 @@ void save_data_to_file_week(int real_time_left,int real_time_right) {
         printf("无法保存文件 %s\n", filename);
         return;
     }
-    for (int i = 0; i <= real_time + 1; i++) {
+    for (int i = 0; i <= real_time ; i++) {
         fprintf(file, "%d\n", count_week[i]);
     }
     fclose(file);
@@ -197,7 +197,7 @@ void save_data_to_file_week(int real_time_left,int real_time_right) {
 }
 
 void save_data_to_file_month(int real_time_left,int real_time_right) {
-	int real_time = real_time_right - real_time_left + 1;
+	int real_time = day_to_month(real_time_right - real_time_left + 1);
     // 动态生成文件名
     char filename[50];
     sprintf(filename, "huise_real_time_month_(%d_to_%d).txt", real_time_left,real_time_right);
@@ -207,7 +207,7 @@ void save_data_to_file_month(int real_time_left,int real_time_right) {
         printf("无法保存文件 %s\n", filename);
         return;
     }
-    for (int i = 0; i <= real_time + 1; i++) {
+    for (int i = 0; i <= real_time ; i++) {
         fprintf(file, "%d\n", count_month[i]);
     }
     fclose(file);
