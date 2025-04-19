@@ -61,7 +61,7 @@ int main() {
 
                     switch(adminChoice){
                         case 1:{ //用户管理
-                            customerList = customersCreating(customerList);
+                            customerList = customersOperation(customerList);
                             break;
                         }
                         case 2:{ //收取包裹管理

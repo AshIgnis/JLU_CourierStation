@@ -28,8 +28,7 @@ bool isPhoneNumberValid(const char *phone_number)
 }
 
 // 用户操作界面
-void userOperating(struct customer *head)
-{
+void userOperating(struct customer *head) {
     printf("欢迎使用用户操作系统！\n");
     printf("请登录您的账户。\n");
 
@@ -38,37 +37,29 @@ void userOperating(struct customer *head)
 
     // 电话号码输入及验证
     printf("请输入电话号码 (按q退出): \n");
-    do
-    {
+    do {
         scanf("%s", phone_number);
-        if (strcmp(phone_number, "q") == 0)
-        {
+        if (strcmp(phone_number, "q") == 0) {
             printf("已退出用户操作系统。\n");
             return;
         }
-        if (!isPhoneNumberValid(phone_number))
-        {
+        if (!isPhoneNumberValid(phone_number)) {
             printf("电话号码格式错误,必须为11位数字!\n");
         }
     } while (!isPhoneNumberValid(phone_number));
 
     // 密码输入及验证
     printf("请输入密码 (8-20 个字符, 按q退出): \n");
-    do
-    {
+    do {
         scanf("%s", password);
-        if (strcmp(password, "q") == 0)
-        {
+        if (strcmp(password, "q") == 0) {
             printf("已退出用户操作系统。\n");
             return;
         }
         int length = strlen(password);
-        if (length < 8 || length > 20)
-        {
+        if (length < 8 || length > 20) {
             printf("密码长度必须在 8 到 20 个字符之间，请重新输入: \n");
-        }
-        else
-        {
+        } else {
             break; // 密码长度合法，退出循环
         }
     } while (1);
@@ -77,8 +68,7 @@ void userOperating(struct customer *head)
     system("pause");
     system("cls");
 
-    while (!flag)
-    { // 登录失败
+    while (!flag) { // 登录失败
         int choice;
         printf("电话号或密码错误！\n");
         printf("1. 注册\n");
@@ -88,159 +78,50 @@ void userOperating(struct customer *head)
 
         char temp_choice[MAX_LEN];
         scanf("%s", temp_choice);
-        if (strcmp(temp_choice, "q") == 0)
-        {
+        if (strcmp(temp_choice, "q") == 0) {
             printf("已退出用户操作系统。\n");
             return;
         }
         choice = atoi(temp_choice);
 
-        switch (choice)
-        {
-        case 1:
-        {
-            // 注册新用户
-            char username[MAX_LEN];
-            int customer_type;
-            char newpassword[MAX_LEN];
-
-            do
-            {
-                // 电话号码输入及验证
-                do
-                {
-                    printf("请输入电话号码:(按q退出) \n");
-                    scanf("%s", phone_number);
-                    if (strcmp(phone_number, "q") == 0)
-                    {
-                        printf("已退出注册操作。\n");
-                        return;
-                    }
-                    if (!isPhoneNumberValid(phone_number))
-                    {
-                        printf("电话号码格式错误,必须为11位数字!\n");
-                    }
-                } while (!isPhoneNumberValid(phone_number));
-
-                // 检查重复性
-                if (isPhoneNumberDuplicate(head, phone_number))
-                {
-                    printf("电话号码已存在，请重新输入！\n");
-                }
-            } while (isPhoneNumberDuplicate(head, phone_number));
-
-            printf("请输入用户名 (1-10 个字符, 按q退出): \n");
-            do
-            {
-                scanf("%s", username);
-                if (strcmp(username, "q") == 0)
-                {
-                    printf("已退出添加用户操作。\n");
-                    return;
-                }
-                int length = strlen(username);
-                if (length < 1 || length > 10)
-                {
-                    printf("用户名长度必须在 1 到 10 个字符之间，请重新输入: \n");
-                }
-                else
-                {
-                    break; // 用户名长度合法，退出循环
-                }
-            } while (1);
-
-            printf("请输入用户类型 (1-普通用户, 2-VIP用户, 3-企业用户, 4-学生用户, 5-老年用户):(按q退出) \n");
-            char temp_type[MAX_LEN];
-            scanf("%s", temp_type);
-            if (strcmp(temp_type, "q") == 0)
-            {
-                printf("已退出注册操作。\n");
-                return;
-            }
-            customer_type = atoi(temp_type);
-            while (customer_type < 1 || customer_type > 5)
-            {
-                printf("输入数据非法，请重新输入！\n");
-                printf("请输入用户类型 (1-普通用户, 2-VIP用户, 3-企业用户, 4-学生用户, 5-老年用户): \n");
-                scanf("%s", temp_type);
-                if (strcmp(temp_type, "q") == 0)
-                {
-                    printf("已退出注册操作。\n");
-                    return;
-                }
-                customer_type = atoi(temp_type);
-            }
-
-            printf("请输入密码 (8-20 个字符, 按q退出): \n");
-            do
-            {
-                scanf("%s", newpassword);
-                if (strcmp(newpassword, "q") == 0)
-                {
-                    printf("已退出注册操作。\n");
-                    return;
-                }
-                int length = strlen(newpassword);
-                if (length < 8 || length > 20)
-                {
-                    printf("密码长度必须在 8 到 20 个字符之间，请重新输入: \n");
-                }
-                else
-                {
-                    break; // 密码长度合法，退出循环
-                }
-            } while (1);
-
-            // 添加新用户到链表
-            head = addCustomer(head, username, phone_number, newpassword, customer_type);
-
-            // 保存用户到文件
-            saveCustomers(head);
-
+        switch (choice) {
+        case 1: { // 注册新用户
+            head = addCustomer(head); // 调用 customer.c 中的 addCustomer 函数
+            saveCustomers(head);      // 保存用户到文件
             printf("注册成功！\n");
             flag = 1; // 注册成功后退出循环
             system("pause");
             system("cls");
             break;
         }
-        case 2:
-        {
-            // 重新输入
+        case 2: { // 重新输入
             printf("请重新输入电话号码和密码。\n");
 
             char temp_phone[MAX_LEN];
-            do
-            {
+            do {
                 printf("请输入电话号码 (按q退出): \n");
                 scanf("%s", temp_phone);
-                if (strcmp(temp_phone, "q") == 0)
-                {
+                if (strcmp(temp_phone, "q") == 0) {
                     printf("已退出重新输入操作。\n");
                     return;
                 }
-                if (!isPhoneNumberValid(temp_phone))
-                {
+                if (!isPhoneNumberValid(temp_phone)) {
                     printf("电话号码格式错误,必须为11位数字\n");
                 }
             } while (!isPhoneNumberValid(temp_phone));
             strcpy(phone_number, temp_phone);
 
             printf("请输入密码 (8-20 个字符, 按q退出): \n");
-            do
-            {
+            do {
                 scanf("%s", password);
-                if (strcmp(password, "q") == 0)
-                {
+                if (strcmp(password, "q") == 0) {
                     printf("已退出重新输入操作。\n");
                     return;
                 }
                 int length = strlen(password);
-                if (length < 8 || length > 20)
-                {
+                if (length < 8 || length > 20) {
                     printf("密码长度必须在 8 到 20 个字符之间，请重新输入: \n");
-                }
-                else
-                {
+                } else {
                     break; // 密码长度合法，退出循环
                 }
             } while (1);
@@ -250,8 +131,7 @@ void userOperating(struct customer *head)
             system("cls");
             break;
         }
-        case 0:
-            // 退出
+        case 0: // 退出
             printf("退出系统\n");
             system("pause");
             system("cls");
