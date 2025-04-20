@@ -241,6 +241,19 @@ struct customer *modifyCustomer(struct customer *head) {
                 }
             }
 
+            // 修改票数
+            printf("请输入新的票数 (0-100, 按q跳过): \n");
+            char temp_tickets[10];
+            scanf("%s", temp_tickets);
+            if (strcmp(temp_tickets, "q") != 0) {
+                int new_tickets = atoi(temp_tickets);
+                if (new_tickets >= 0 && new_tickets <= 100) {
+                    current->tickets = new_tickets;
+                } else {
+                    printf("票数非法，未修改。\n");
+                }
+            }
+
             printf("用户信息修改成功！\n");
             return head;
         }
