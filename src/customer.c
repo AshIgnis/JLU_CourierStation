@@ -272,7 +272,7 @@ struct customer *deleteCustomer(struct customer *head)
         printf("当前没有用户数据。\n");
         return head;
     }
-
+    displayAllCustomers(head); // 显示所有用户信息
     char temp_phone[MAX_LEN];
     char phone_number[11];
     do
