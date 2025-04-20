@@ -258,6 +258,7 @@ void add_received_package(struct package_r *head) {
     do {
         printf("> ");
         scanf("%s", now->phone_number);
+        while (getchar() != '\n'); // 清空输入缓冲区
         if (!isPhoneNumberValid(now->phone_number)) {
             printf("电话号码格式错误，必须为11位数字！请重新输入。\n");
         } else {
