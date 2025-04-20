@@ -349,7 +349,7 @@ void displayMenu_customer() {
     printf("3. 显示所有用户\n");
     printf("4. 修改用户信息\n");
     printf("5. 删除用户\n");
-    printf("6. 更新用户信息");
+    printf("6. 更新用户信息\n");
     printf("0. 退出系统\n");
     printf("=================================\n");
 }
