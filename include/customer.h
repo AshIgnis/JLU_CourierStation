@@ -11,11 +11,9 @@ void queryCustomer(struct customer *head);
 void displayAllCustomers(struct customer *head);
 struct customer *modifyCustomer(struct customer *head);
 struct customer *deleteCustomer(struct customer *head);
-
 void freeCustomers(struct customer *head);
 int isPhoneNumberDuplicate(struct customer *head, const char *phone_number);
 void displayMenu_customer();
 struct customer *customersOperation(struct customer *customerList);
-
 
 #endif // CUSTOMER_H

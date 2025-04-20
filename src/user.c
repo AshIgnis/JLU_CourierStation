@@ -10,6 +10,11 @@
 #include <stdbool.h>
 #include <ctype.h>
 #include "charge_calculation.h"
+
+void clearInputBuffer(){
+    while (getchar() != '\n');
+}
+
 // 电话号码验证函数
 bool isPhoneNumberValid(const char *phone_number)
 {
@@ -39,6 +44,7 @@ void userOperating(struct customer *head) {
     printf("请输入电话号码 (按q退出): \n");
     do {
         scanf("%s", phone_number);
+        clearInputBuffer();
         if (strcmp(phone_number, "q") == 0) {
             printf("已退出用户操作系统。\n");
             return;
@@ -52,6 +58,7 @@ void userOperating(struct customer *head) {
     printf("请输入密码 (8-20 个字符, 按q退出): \n");
     do {
         scanf("%s", password);
+        clearInputBuffer();
         if (strcmp(password, "q") == 0) {
             printf("已退出用户操作系统。\n");
             return;
@@ -121,9 +128,10 @@ void userOperating(struct customer *head) {
                 } while (!isPhoneNumberValid(temp_phone));
                 strcpy(phone_number, temp_phone);
             
-                printf("请输入密码 (8-20 个字符, 按q退出): \n");
+                printf("请输入密码 (8-20 个字符,以空格或换行结尾 按q退出): \n");
                 do {
                     scanf("%s", password);
+                    clearInputBuffer();
                     if (strcmp(password, "q") == 0) {
                         printf("已退出重新输入操作。\n");
                         flag = 0;
