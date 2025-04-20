@@ -315,7 +315,7 @@ void package_s_original_start(char* t) {
         printf("1. 添加寄件包裹\n");
         printf("2. 查询寄件包裹\n");
         printf("3. 删除寄件包裹\n");
-        printf("0. 返回主菜单\n");
+        printf("0. 返回上一级\n");
         printf("=====================================\n");
         printf("请输入您的选择: ");
         while (scanf("%d", &op) != 1 || op < 0 || op > 3) {
