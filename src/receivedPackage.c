@@ -272,10 +272,12 @@ void add_received_package(struct package_r *head) {
         char buffer[50];
         printf("> ");
         fgets(buffer, sizeof(buffer), stdin);
-        if (sscanf(buffer, "%lf", &now->volume) == 1 && now->volume > 0) {
+        if (sscanf(buffer, "%lf", &now->volume) != 1 && now->volume > 0) {
+            printf("输入无效，请输入一个正数: \n");
+        }
+        else{
             break;
         }
-        printf("输入无效，请输入一个正数: \n");
     } while (1);
 
     // 输入包裹类型并验证合法性
