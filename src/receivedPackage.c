@@ -5,7 +5,6 @@
 #include "structure.h"
 #include "user.h"
 
-
 void free_package_r(struct package_r* head) {
     struct package_r *lst, *now;
     lst = head;
