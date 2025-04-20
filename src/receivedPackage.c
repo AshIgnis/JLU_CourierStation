@@ -254,52 +254,80 @@ void add_received_package(struct package_r *head) {
     struct package_r* now = (struct package_r*)malloc(sizeof(struct package_r));
 
     // 输入手机号并验证合法性
+    printf("1.请输入包裹所属用户电话 (11位数字): \n");
     do {
-        printf("1.请输入包裹所属用户电话: \n");
-        scanf("%s", (*now).phone_number);
-        if (!isPhoneNumberValid((*now).phone_number)) {
-            printf("电话号码格式错误，必须为11位数字！\n");
+        printf("> ");
+        scanf("%s", now->phone_number);
+        if (!isPhoneNumberValid(now->phone_number)) {
+            printf("电话号码格式错误，必须为11位数字！请重新输入。\n");
+        } else {
+            break;
         }
-    } while (!isPhoneNumberValid((*now).phone_number));
+    } while (1);
 
     // 输入包裹体积并验证合法性
     printf("2.请输入包裹体积 (立方厘米): \n");
-    while (scanf("%lf", &(*now).volume) != 1 || (*now).volume <= 0) {
-        printf("输入无效，请输入一个正数: ");
-        while (getchar() != '\n'); // 清空输入缓冲区
-    }
+    do {
+        char buffer[50];
+        printf("> ");
+        fgets(buffer, sizeof(buffer), stdin);
+        if (sscanf(buffer, "%lf", &now->volume) == 1 && now->volume > 0) {
+            break;
+        }
+        printf("输入无效，请输入一个正数: \n");
+    } while (1);
 
     // 输入包裹类型并验证合法性
     printf("3.请输入包裹类型 (1-文件, 2-生鲜, 3-易碎品, 4-家电, 5-危险品): \n");
-    while (scanf("%d", &(*now).package_type) != 1 || (*now).package_type < 1 || (*now).package_type > 5) {
-        printf("输入无效，请输入1-5之间的数字: ");
-        while (getchar() != '\n'); // 清空输入缓冲区
-    }
+    do {
+        char buffer[50];
+        printf("> ");
+        fgets(buffer, sizeof(buffer), stdin);
+        if (sscanf(buffer, "%d", &now->package_type) == 1 && now->package_type >= 1 && now->package_type <= 5) {
+            break;
+        }
+        printf("输入无效，请输入1-5之间的数字: \n");
+    } while (1);
 
     // 输入是否到付并验证合法性
     printf("4.是否需要到付 (0-不需要, 1-需要): \n");
-    while (scanf("%d", &(*now).ifCollection) != 1 || ((*now).ifCollection != 0 && (*now).ifCollection != 1)) {
-        printf("输入无效，请输入0或1: ");
-        while (getchar() != '\n'); // 清空输入缓冲区
-    }
+    do {
+        char buffer[50];
+        printf("> ");
+        fgets(buffer, sizeof(buffer), stdin);
+        if (sscanf(buffer, "%d", &now->ifCollection) == 1 && (now->ifCollection == 0 || now->ifCollection == 1)) {
+            break;
+        }
+        printf("输入无效，请输入0或1: \n");
+    } while (1);
 
     // 如果需要到付，输入运费并验证合法性
-    if ((*now).ifCollection) {
-        printf("请输入运输费用: \n");
-        while (scanf("%lf", &(*now).shipping_fee) != 1 || (*now).shipping_fee < 0) {
-            printf("输入无效，请输入一个非负数: ");
-            while (getchar() != '\n'); // 清空输入缓冲区
-        }
-    }else {
-        (*now).shipping_fee = 0.0; // 如果不需要到付，运费为0
+    if (now->ifCollection) {
+        printf("请输入运输费用 (非负数): \n");
+        do {
+            char buffer[50];
+            printf("> ");
+            fgets(buffer, sizeof(buffer), stdin);
+            if (sscanf(buffer, "%lf", &now->shipping_fee) == 1 && now->shipping_fee >= 0) {
+                break;
+            }
+            printf("输入无效，请输入一个非负数: \n");
+        } while (1);
+    } else {
+        now->shipping_fee = 0.0; // 如果不需要到付，运费为0
     }
 
     // 输入包裹状态并验证合法性
     printf("5.请输入包裹状态 (1-正常, 2-损坏, 3-违禁品): \n");
-    while (scanf("%d", &(*now).package_status) != 1 || (*now).package_status < 1 || (*now).package_status > 3) {
-        printf("输入无效，请输入1-3之间的数字: ");
-        while (getchar() != '\n'); // 清空输入缓冲区
-    }
+    do {
+        char buffer[50];
+        printf("> ");
+        fgets(buffer, sizeof(buffer), stdin);
+        if (sscanf(buffer, "%d", &now->package_status) == 1 && now->package_status >= 1 && now->package_status <= 3) {
+            break;
+        }
+        printf("输入无效，请输入1-3之间的数字: \n");
+    } while (1);
 
     // 输入包裹到达时间并验证合法性
     printf("6.请重新输入包裹到达时间(1~366): \n");
@@ -406,12 +434,15 @@ void add_received_package(struct package_r *head) {
     (*now).next = (*head).next;
     (*head).next = now;
 
+    // 自动分配包裹序列号
     get_package_r_id(now);
     load_data();
     count_day[(*now).day]++;
     save_data();
     printf("收件包裹添加成功！\n");
-    printf("已自动为您分配包裹序列号：\n%s\n", (*now).package_id);
+    printf("已自动为您分配包裹序列号：%s\n", now->package_id);
+
+    // 保存包裹信息
     save_package_r(head);
 }
 

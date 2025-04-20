@@ -349,6 +349,7 @@ void displayMenu_customer() {
     printf("3. 显示所有用户\n");
     printf("4. 修改用户信息\n");
     printf("5. 删除用户\n");
+    printf("6. 更新用户信息\n");
     printf("0. 退出系统\n");
     printf("=================================\n");
 }
@@ -387,7 +388,16 @@ struct customer *customersOperation(struct customer *customerList) {
             customerList = deleteCustomer(customerList);
             saveCustomers(customerList);
             break;
-        
+        case 6: // 更新用户信息
+            printf("从文件中重新载入用户数据...\n");
+            freeCustomers(customerList); // 释放当前链表
+            customerList = loadCustomers(); // 从文件重新加载用户数据
+            if (customerList) {
+                printf("用户数据已成功从文件中更新！\n");
+            } else {
+                printf("未能从文件中加载用户数据，可能文件不存在或为空。\n");
+            }
+            break;
         case 0:
             printf("返回主菜单...\n");
             break;
