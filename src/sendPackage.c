@@ -14,47 +14,90 @@ void add_package_s(struct package_s *head, const char *phone_number) {
     strncpy(now->phone_number, phone_number, MAX_LEN - 1);
 
     int ifdoortodoor = 0; // 是否上门服务
-    printf("1.请输入收件人姓名 (不超过10个字符,不含空格): \n");
-    while (scanf("%10s", now->receiver_name) != 1 || strlen(now->receiver_name) > 10) {
-        printf("输入无效，请输入不超过10个字符的姓名: ");
-        while (getchar() != '\n'); // 清空输入缓冲区
-    }
 
-    printf("2.请输入收件人地址 (不超过20个字符,不含空格): \n");
-    while (scanf("%20s", now->receiver_address) != 1 || strlen(now->receiver_address) > 20) {
-        printf("输入无效，请输入不超过20个字符的地址: ");
-        while (getchar() != '\n'); // 清空输入缓冲区
-    }
+    // 输入收件人姓名
+    printf("1.请输入收件人姓名 (不超过10个字符): \n");
+    do {
+        printf("> ");
+        fgets(now->receiver_name, 11, stdin); // 读取最多10个字符
+        now->receiver_name[strcspn(now->receiver_name, "\n")] = '\0'; // 去掉换行符
+        if (strlen(now->receiver_name) > 0 && strlen(now->receiver_name) <= 10) {
+            break;
+        }
+        printf("输入无效，请输入不超过10个字符的姓名: \n");
+    } while (1);
 
+    // 输入收件人地址
+    printf("2.请输入收件人地址 (不超过20个字符): \n");
+    do {
+        printf("> ");
+        fgets(now->receiver_address, 21, stdin); // 读取最多20个字符
+        now->receiver_address[strcspn(now->receiver_address, "\n")] = '\0'; // 去掉换行符
+        if (strlen(now->receiver_address) > 0 && strlen(now->receiver_address) <= 20) {
+            break;
+        }
+        printf("输入无效，请输入不超过20个字符的地址: \n");
+    } while (1);
+
+    // 输入包裹体积
     printf("3.请输入包裹体积 (立方厘米): \n");
-    while (scanf("%lf", &now->volume) != 1 || now->volume <= 0||now->volume > 1000000) {
-        printf("输入无效，请输入一个正数: ");
-        while (getchar() != '\n'); // 清空输入缓冲区
-    }
+    do {
+        char buffer[50];
+        printf("> ");
+        fgets(buffer, sizeof(buffer), stdin);
+        if (sscanf(buffer, "%lf", &now->volume) == 1 && now->volume > 0 && now->volume <= 1000000) {
+            break;
+        }
+        printf("输入无效，请输入一个正数 (1-1000000): \n");
+    } while (1);
 
+    // 输入包裹类型
     printf("4.请输入包裹类型 (1-文件, 2-生鲜, 3-易碎品, 4-家电, 5-危险品): \n");
-    while (scanf("%d", &now->package_type) != 1 || now->package_type < 1 || now->package_type > 5) {
-        printf("输入无效，请输入1-5之间的数字: ");
-        while (getchar() != '\n'); // 清空输入缓冲区
-    }
+    do {
+        char buffer[50];
+        printf("> ");
+        fgets(buffer, sizeof(buffer), stdin);
+        if (sscanf(buffer, "%d", &now->package_type) == 1 && now->package_type >= 1 && now->package_type <= 5) {
+            break;
+        }
+        printf("输入无效，请输入1-5之间的数字: \n");
+    } while (1);
 
+    // 输入是否到付
     printf("5.在此缴纳运费 (0-不, 1-是): \n");
-    while (scanf("%d", &now->ifCollection) != 1 || (now->ifCollection != 0 && now->ifCollection != 1)) {
-        printf("输入无效，请输入0或1: ");
-        while (getchar() != '\n'); // 清空输入缓冲区
-    }
+    do {
+        char buffer[50];
+        printf("> ");
+        fgets(buffer, sizeof(buffer), stdin);
+        if (sscanf(buffer, "%d", &now->ifCollection) == 1 && (now->ifCollection == 0 || now->ifCollection == 1)) {
+            break;
+        }
+        printf("输入无效，请输入0或1: \n");
+    } while (1);
 
+    // 输入包裹状态
     printf("6.请输入包裹状态 (1-正常, 2-损坏, 3-违禁品): \n");
-    while (scanf("%d", &now->package_status) != 1 || now->package_status < 1 || now->package_status > 3) {
-        printf("输入无效，请输入1-3之间的数字: ");
-        while (getchar() != '\n'); // 清空输入缓冲区
-    }
+    do {
+        char buffer[50];
+        printf("> ");
+        fgets(buffer, sizeof(buffer), stdin);
+        if (sscanf(buffer, "%d", &now->package_status) == 1 && now->package_status >= 1 && now->package_status <= 3) {
+            break;
+        }
+        printf("输入无效，请输入1-3之间的数字: \n");
+    } while (1);
 
+    // 输入是否需要上门服务
     printf("7.是否需要上门服务 (0-不, 1-是): \n");
-    while (scanf("%d", &ifdoortodoor) != 1 || (ifdoortodoor != 0 && ifdoortodoor != 1)) {
-        printf("输入无效，请输入0或1: ");
-        while (getchar() != '\n'); // 清空输入缓冲区
-    }
+    do {
+        char buffer[50];
+        printf("> ");
+        fgets(buffer, sizeof(buffer), stdin);
+        if (sscanf(buffer, "%d", &ifdoortodoor) == 1 && (ifdoortodoor == 0 || ifdoortodoor == 1)) {
+            break;
+        }
+        printf("输入无效，请输入0或1: \n");
+    } while (1);
 
     double shipping_fee = calculate_send_package_fees(now, ifdoortodoor, phone_number); // 计算运费
     printf("包裹的总计算为：%.2lf\n", shipping_fee);
