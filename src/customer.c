@@ -20,6 +20,7 @@ struct customer *addCustomer(struct customer *head) {
         do {
             printf("请输入电话号码 (按q退出): \n");
             scanf("%s", temp_phone);
+            clearInputBuffer();
             if (strcmp(temp_phone, "q") == 0) {
                 printf("已退出添加用户操作。\n");
                 return head;
@@ -38,6 +39,7 @@ struct customer *addCustomer(struct customer *head) {
     printf("请输入用户名 (1-10 个字符, 按q退出): \n");
     do {
         scanf("%s", username);
+        clearInputBuffer();
         if (strcmp(username, "q") == 0) {
             printf("已退出添加用户操作。\n");
             return head;
@@ -54,6 +56,7 @@ struct customer *addCustomer(struct customer *head) {
     printf("请输入密码 (8-20 个字符, 按q退出): \n");
     do {
         scanf("%s", password);
+        clearInputBuffer();
         if (strcmp(password, "q") == 0) {
             printf("已退出用户添加。\n");
             return head;
@@ -70,6 +73,7 @@ struct customer *addCustomer(struct customer *head) {
     printf("请输入用户类型 (1-普通用户, 2-VIP用户, 3-企业用户, 4-学生用户, 5-老年用户, 按q退出): ");
     char temp_type[10];
     scanf("%s", temp_type);
+    clearInputBuffer();
     if (strcmp(temp_type, "q") == 0) {
         printf("已退出添加用户操作。\n");
         return head;
@@ -79,6 +83,7 @@ struct customer *addCustomer(struct customer *head) {
         printf("输入数据非法，请重新输入！\n");
         printf("请输入用户类型 (1-普通用户, 2-VIP用户, 3-企业用户, 4-学生用户, 5-老年用户): ");
         scanf("%d", &customer_type);
+        clearInputBuffer();
     }
 
     // 创建新用户节点
@@ -96,7 +101,7 @@ struct customer *addCustomer(struct customer *head) {
     newCustomer->customer_type = customer_type;
     newCustomer->next = head;
 
-    printf("用户添加成功！新用户赠送10张八折卷，可用于运费！\n");
+    printf("用户添加成功!新用户赠送10张八折卷,可用于运费!\n");
     return newCustomer; // 返回新结点地址
 }
 
@@ -112,6 +117,7 @@ void queryCustomer(struct customer *head) {
     do {
         printf("请输入要查询的电话号码 (按q退出): \n");
         scanf("%s", temp_phone);
+        clearInputBuffer();
         if (strcmp(temp_phone, "q") == 0) {
             printf("已退出查询操作。\n");
             return;
@@ -390,8 +396,13 @@ struct customer *customersOperation(struct customer *customerList) {
             break;
         case 6: // 更新用户信息
             printf("从文件中重新载入用户数据...\n");
-            freeCustomers(customerList); // 释放当前链表
-            customerList = loadCustomers(); // 从文件重新加载用户数据
+            // 释放当前链表
+            if (customerList) {
+                freeCustomers(customerList);
+                customerList = NULL; // 避免悬空指针
+            }
+            // 从文件重新加载用户数据
+            customerList = loadCustomers();
             if (customerList) {
                 printf("用户数据已成功从文件中更新！\n");
             } else {
