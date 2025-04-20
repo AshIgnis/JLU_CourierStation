@@ -141,6 +141,21 @@ void delete_package_s(struct package_s* head, const char* phone_number) {
         while (getchar() != '\n'); // 清空输入缓冲区
     }
 
+    // 确认是否删除
+    char confirm;
+    printf("是否确认删除包裹序号 %d？(Y/N): ", delete_index);
+    while (1) {
+        scanf(" %c", &confirm);
+        if (confirm == 'Y' || confirm == 'y') {
+            break; // 确认删除
+        } else if (confirm == 'N' || confirm == 'n') {
+            printf("取消删除操作。\n");
+            return;
+        } else {
+            printf("输入无效，请输入 Y 或 N: ");
+        }
+    }
+
     prev = head;
     current = head->next;
     count = 0;
