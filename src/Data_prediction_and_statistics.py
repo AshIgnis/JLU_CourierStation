@@ -177,7 +177,7 @@ class Dashboard:
 
             def on_modified(self, event):
                 if "huise.txt" in event.src_path:
-                    time.sleep(1)
+                    # time.sleep(1)
                     # 更新数据时间阻塞
                     self.dashboard.update_data()
 
