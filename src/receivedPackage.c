@@ -5,6 +5,8 @@
 #include "structure.h"
 #include "user.h"
 
+extern int count_day[]; // 声明 count_day 数组
+
 int count_day[400] = {0}; // 预计存储365个数据
 //每录入一个包裹，就重写huise.txt文件，第i+1行的内容为第i天到达驿站的包裹数
 // 从文件 "huise.txt" 中读取数据并初始化(修改) count_day 数组
@@ -258,6 +260,7 @@ void add_received_package(struct package_r *head) {
     do {
         printf("> ");
         scanf("%s", now->phone_number);
+        while (getchar() != '\n'); // 清空输入缓冲区
         if (!isPhoneNumberValid(now->phone_number)) {
             printf("电话号码格式错误，必须为11位数字！请重新输入。\n");
         } else {
@@ -572,21 +575,22 @@ void show_all_packages_r(struct package_r* head) {
     int count = 0;
 
     printf("\n======================= 所有收件包裹信息 ============================\n");
-    printf("%-5s %-18s %-15s %-10s %-10s %-10s %-15s %d\n", 
+    printf("%-5s %-18s %-15s %-10s %-10s %-10s %-15s %-10s\n", 
            "序号", "用户电话", "体积(cm³)", "类型", "到付", "状态", "序列号", "到达时间");
     printf("---------------------------------------------------------------------\n");
 
     while (current != NULL) {
         if (strcmp(current->phone_number, "1") == 0) break;
         count++;
-        printf("%-5d %-15s %-9.2lf %-8s %-14s %-10s %-15s %d\n", 
+        printf("%-5d %-15s %-9.2lf %-8s %-14s %-10s %-15s %-10d\n", 
                count, 
                current->phone_number, 
                current->volume, 
                pkgType[current->package_type - 1], // 显示包裹类型的中文描述
                ifcollection[current->ifCollection], // 显示是否到付的中文描述
                pkgStatus[current->package_status - 1], // 显示包裹状态的中文描述
-               current->package_id);
+               current->package_id,
+               current->day); // 修复到达时间的类型
         current = current->next;
     }
 
