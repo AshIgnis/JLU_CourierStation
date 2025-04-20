@@ -24,4 +24,5 @@ void query_received_package(struct package_r *head);
 void delete_received_package(struct package_r *head);
 void show_package_r(struct package_r* x,int if_id); // 展示包裹信息
 void show_all_packages_r(struct package_r* head);//展示所有包裹
+void free_package_r(struct package_r* head);
 #endif // RECEIVEDPACKAGE_H

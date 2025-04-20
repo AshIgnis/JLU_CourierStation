@@ -32,6 +32,7 @@ struct package_r {
     int user_id; // 用户ID
     struct package_r *next; // 下一个包裹
     char phone_number[MAX_LEN]; // 电话号码
+    int day;//到达驿站时间
 };
 
 // 寄件包裹结构体

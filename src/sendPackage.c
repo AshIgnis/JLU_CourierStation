@@ -18,7 +18,7 @@ void add_package_s(struct package_s *head, const char *phone_number) {
     // 输入收件人姓名
     printf("1.请输入收件人姓名 (不超过10个字符): \n");
     do {
-        printf("> ");
+        
         fgets(now->receiver_name, 11, stdin); // 读取最多10个字符
         now->receiver_name[strcspn(now->receiver_name, "\n")] = '\0'; // 去掉换行符
         if (strlen(now->receiver_name) > 0 && strlen(now->receiver_name) <= 10) {
@@ -30,7 +30,7 @@ void add_package_s(struct package_s *head, const char *phone_number) {
     // 输入收件人地址
     printf("2.请输入收件人地址 (不超过20个字符): \n");
     do {
-        printf("> ");
+        
         fgets(now->receiver_address, 21, stdin); // 读取最多20个字符
         now->receiver_address[strcspn(now->receiver_address, "\n")] = '\0'; // 去掉换行符
         if (strlen(now->receiver_address) > 0 && strlen(now->receiver_address) <= 20) {
