@@ -12,5 +12,6 @@ void displayMenu_user(); // 用户菜单显示
 bool userLanding(struct customer *head,const char *phone_number, const char *password); // 用户登录判断
 void userTakePackage(const char *phone_number); // 用户取件函数
 int convertStringToInt(const char *input); // 取件码归还函数
+void clearInputBuffer();
 
 #endif
