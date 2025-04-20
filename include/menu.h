@@ -3,3 +3,4 @@
 void displayMainMenu();
 void displayAdminMenu();
 void displayPredictedModeMenu();
+void displayDeletePredictedFileMenu();

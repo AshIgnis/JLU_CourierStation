@@ -16,4 +16,4 @@ void save_package_s(struct package_s* head); // 包裹文件保存
 struct package_s* load_package_s(); // 包裹文件读取
 void free_package_s(struct package_s* head); // 释放包裹链表
 
-#endif // SENDPACKAGE_H_H
+#endif // SENDPACKAGE_H

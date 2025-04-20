@@ -8,6 +8,7 @@
 #include "structure.h"
 #include "user.h"
 #include "admin.h"
+#include "huise.h"
 #include "warehouse_explosion_warning.h"
 #define adminPhoneNumber "20245524116" //增加管理员测试用的号码
 
@@ -140,7 +141,7 @@ int main() {
                                     }
                                     break;
                                 case 0:
-                                    printf("返回上一级菜单\n");
+                                    printf("返回管理员菜单\n");
                                     goto lastpage;
                                     break;
                                 default:
@@ -163,13 +164,72 @@ int main() {
                             }
 
                             // 提示用户按回车键返回管理员菜单
-                            printf("按回车键返回管理员菜单。\n");
+                            printf("按回车键返回上一级菜单。\n");
                             while (getchar() != '\n'); // 清理缓冲区
                             while (getchar() != '\n');
                             break;
                         }
+                        case 5:{ // 删除预测文件
+                            int choice_son5;
+                            int real_time_left = 0;
+                            int real_time_right = 0;// 真实时间范围                            
+                            do{
+                                displayDeletePredictedFileMenu();
+                            
+                                // 验证输入是否为有效整数
+                                if (scanf("%d", &choice_son5) != 1) {
+                                    printf("输入无效，请输入数字。\n");
+                                    while (getchar() != '\n');// 清理输入缓冲区
+                                    continue;
+                                }
+                                switch (choice_son5)
+                                {
+                                case 1:
+                                    printf("请输入起始时间天数1~365\n");
+                                    if (scanf("%d", &real_time_left) != 1) { // 验证输入是否为有效整数
+                                        printf("输入无效,请重新输入。\n");
+                                        while (getchar() != '\n'); // 清理输入缓冲区
+                                        break;
+                                    }
+                                    else if(real_time_left < 1 || real_time_left > 365){
+                                        printf("输入时间超出范围,请重新输入。\n");
+                                        while (getchar() != '\n'); // 清理输入缓冲区
+                                        break;
+                                    }
+                                    printf("请输入结束时间天数2~366\n");
+                                    if (scanf("%d", &real_time_right) != 1) { // 验证输入是否为有效整数
+                                        printf("输入无效,请重新输入。\n");
+                                        while (getchar() != '\n'); // 清理输入缓冲区
+                                        break;
+                                    }
+                                    else if(real_time_right < 2 || real_time_right > 366){
+                                        printf("输入时间超出范围,请重新输入。\n");
+                                        while (getchar() != '\n'); // 清理输入缓冲区
+                                        break;
+                                    }
+                                    else if(real_time_left >= real_time_right){
+                                        printf("输入时间范围错误,请重新输入。\n");
+                                        while (getchar() != '\n'); // 清理输入缓冲区
+                                        break;
+                                    }
+                                    delete_predicted_file(real_time_left,real_time_right);
+                                    break;
+                                case 2:
+                                    const char* directory = "."; // 当前目录
+                                    delete_all_predicted_files(directory);
+                                    break;
+                                case 0:
+                                    printf("返回管理员菜单\n");
+                                    break;
+                                default:
+                                    printf("无效的选择，请重试。\n");
+                                    break;
+                                }
+                            } while (choice_son5 != 0);
+                            break;
+                        }
                         case 0:
-                            printf("返回主菜单\n");
+                            printf("返回管理员菜单\n");
                             break;
                         default:
                             printf("无效的选择，请重试。\n");
