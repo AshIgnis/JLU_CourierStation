@@ -85,63 +85,75 @@ void userOperating(struct customer *head) {
         choice = atoi(temp_choice);
 
         switch (choice) {
-        case 1: { // 注册新用户
-            head = addCustomer(head); // 调用 customer.c 中的 addCustomer 函数
-            saveCustomers(head);      // 保存用户到文件
-            printf("注册成功！\n");
-            flag = 1; // 注册成功后退出循环
-            system("pause");
-            system("cls");
-            break;
-        }
-        case 2: { // 重新输入
-            printf("请重新输入电话号码和密码。\n");
-
-            char temp_phone[MAX_LEN];
-            do {
-                printf("请输入电话号码 (按q退出): \n");
-                scanf("%s", temp_phone);
-                if (strcmp(temp_phone, "q") == 0) {
-                    printf("已退出重新输入操作。\n");
-                    return;
-                }
-                if (!isPhoneNumberValid(temp_phone)) {
-                    printf("电话号码格式错误,必须为11位数字\n");
-                }
-            } while (!isPhoneNumberValid(temp_phone));
-            strcpy(phone_number, temp_phone);
-
-            printf("请输入密码 (8-20 个字符, 按q退出): \n");
-            do {
-                scanf("%s", password);
-                if (strcmp(password, "q") == 0) {
-                    printf("已退出重新输入操作。\n");
-                    return;
-                }
-                int length = strlen(password);
-                if (length < 8 || length > 20) {
-                    printf("密码长度必须在 8 到 20 个字符之间，请重新输入: \n");
+            case 1: { // 注册新用户
+                struct customer *newHead = addCustomer(head);
+                if (newHead == head) { // 如果返回的链表头未改变，说明用户取消了注册
+                    printf("注册已取消。\n");
+                    flag = 0; // 确保 flag 保持为 0
+                    system("pause");
+                    system("cls");
+                    break;
                 } else {
-                    break; // 密码长度合法，退出循环
+                    head = newHead; // 更新链表头
+                    saveCustomers(head); // 保存用户到文件
+                    printf("注册成功！\n");
+                    flag = 1; // 注册成功后退出循环
+                    system("pause");
+                    system("cls");
+                    break;
                 }
-            } while (1);
-
-            flag = userLanding(head, phone_number, password);
-            system("pause");
-            system("cls");
-            break;
+            }
+            case 2: { // 重新输入
+                printf("请重新输入电话号码和密码。\n");
+            
+                char temp_phone[MAX_LEN];
+                do {
+                    printf("请输入电话号码 (按q退出): \n");
+                    scanf("%s", temp_phone);
+                    if (strcmp(temp_phone, "q") == 0) {
+                        printf("已退出重新输入操作。\n");
+                        flag = 0;
+                        return;
+                    }
+                    if (!isPhoneNumberValid(temp_phone)) {
+                        printf("电话号码格式错误,必须为11位数字\n");
+                    }
+                } while (!isPhoneNumberValid(temp_phone));
+                strcpy(phone_number, temp_phone);
+            
+                printf("请输入密码 (8-20 个字符, 按q退出): \n");
+                do {
+                    scanf("%s", password);
+                    if (strcmp(password, "q") == 0) {
+                        printf("已退出重新输入操作。\n");
+                        flag = 0;
+                        return;
+                    }
+                    int length = strlen(password);
+                    if (length < 8 || length > 20) {
+                        printf("密码长度必须在 8 到 20 个字符之间，请重新输入: \n");
+                    } else {
+                        break; // 退出循环
+                    }
+                } while (1);
+            
+                flag = userLanding(head, phone_number, password);
+                system("pause");
+                system("cls");
+                break;
+            }
+            case 0: // 退出
+                printf("退出系统\n");
+                system("pause");
+                system("cls");
+                return; // 直接返回，退出函数
+            default:
+                printf("无效的选择，请重试。\n");
+                system("pause");
+                system("cls");
+                break;
+            }
         }
-        case 0: // 退出
-            printf("退出系统\n");
-            system("pause");
-            system("cls");
-            return; // 直接返回，退出函数
-        default:
-            printf("无效的选择，请重试。\n");
-            system("pause");
-            system("cls");
-        }
-    }
     userAction(head, phone_number);
 }
 
