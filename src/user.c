@@ -175,12 +175,52 @@ bool userLanding(struct customer *head, const char *phone_number, const char *pa
         {
             printf("登陆成功！\n");
             printf("您的用户信息如下:\n");
-            printf("用户信息:\n");
             printf("用户名: %s\n", current->username);
             printf("电话号码: %s\n", current->phone_number);
             printf("用户类型: %s\n", cstmType[current->customer_type - 1]); // 使用字符串数组
             printf("票数: %d\n", current->tickets);
-            return true;
+
+            // 自动查询包裹
+            printf("\n正在为您查询包裹信息...\n");
+            FILE *file = fopen(RECEIVED_FILE, "r");
+            if (!file)
+            {
+                perror("无法打开包裹文件");
+                return true; // 登录成功，但包裹查询失败
+            }
+
+            char package_id[MAX_LEN];
+            char package_phone[MAX_LEN];
+            double volume;
+            int package_type, ifCollection, package_status;
+            double shipping_fee;
+            int found = 0;
+
+            while (fscanf(file, "%s %lf %d %d %lf %d %s", package_phone, &volume, &package_type, &ifCollection, &shipping_fee, &package_status, package_id) != EOF)
+            {
+                if (strcmp(package_phone, phone_number) == 0)
+                {
+                    if (!found)
+                    {
+                        printf("\n您有以下包裹待领取:\n");
+                    }
+                    printf("包裹取件码: %s\n", package_id);
+                    found = 1;
+                }
+            }
+
+            fclose(file);
+
+            if (!found)
+            {
+                printf("您当前没有待领取的包裹。\n");
+            }
+            else
+            {
+                printf("请尽快领取您的包裹！\n");
+            }
+
+            return true; // 登录成功
         }
         current = current->next;
     }

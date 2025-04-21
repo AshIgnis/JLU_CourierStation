@@ -214,10 +214,12 @@ int main() {
                                     }
                                     delete_predicted_file(real_time_left,real_time_right);
                                     break;
-                                case 2:
-                                    const char* directory = "."; // 当前目录
+                                case 2: {
+                                    const char* directory; // 将变量声明移到代码块的开头
+                                    directory = ".";       // 赋值操作
                                     delete_all_predicted_files(directory);
                                     break;
+                                }
                                 case 0:
                                     printf("返回管理员菜单\n");
                                     break;
