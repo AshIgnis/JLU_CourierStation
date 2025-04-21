@@ -4,13 +4,13 @@
 #include "warehouse_explosion_warning.h"
 
 void warning(){
-    const char *filePath = "../output/receivedPackage.txt";
+    const char *filePath = "../output/received_packages.txt";
     const char *tempFilePath = "../output/temp.txt";
     FILE *file = fopen(filePath, "r");
     FILE *tempFile = fopen(tempFilePath, "w");
 
     if (!file) {
-        perror("无法打开 receivedPackage.txt");
+        perror("无法打开 received_packages.txt");
         return ;
     }
     if (!tempFile) {
