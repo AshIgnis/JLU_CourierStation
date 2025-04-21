@@ -211,6 +211,13 @@ bool userLanding(struct customer *head, const char *phone_number, const char *pa
                         printf("\n您有以下包裹待领取:\n");
                     }
                     printf("包裹取件码: %s\n", package_id);
+
+                    if (package_status == 2) {
+                        printf("注意：该包裹状态为 **损坏**，请取件后联系管理员处理。\n");
+                    } else if (package_status == 3) {
+                        printf("注意：该包裹状态为 **违禁品**，请直接联系管理员处理。\n");
+                    }
+
                     found = 1;
                 }
             }
@@ -236,7 +243,7 @@ void displayMenu_user()
 {
     printf("\n========== 用户操作系统 ==========\n");
     printf("1. 查看用户信息\n");
-    printf("2. 查询收件包裹信息\n");
+    printf("2. 取走包裹\n");
     printf("3. 邮寄包裹\n");
     printf("0. 返回主菜单\n");
     printf("=================================\n");
@@ -427,6 +434,15 @@ void userTakePackage(const char *phone_number) {
     while (fscanf(file, "%s %lf %d %d %lf %d %s %d", current_phone, &current_volume, &current_package_type, &current_ifCollection, &current_shipping_fee, &current_package_status, current_package_id, &current_day) != EOF) {
         if (strcmp(current_package_id, package_id) == 0 && strcmp(current_phone, phone_number) == 0) {
             found = 1; // 找到包裹，跳过写入
+
+            if (current_package_status == 3) { // 违禁品处理
+                printf("注意：该包裹状态为 **违禁品**，无法取出，请联系管理员处理。\n");
+                fclose(file);
+                fclose(temp);
+                remove("temp.txt");
+                return;
+            }
+
             return_num = convertStringToInt(current_package_id);
             fprintf(box, " %d", return_num);
 

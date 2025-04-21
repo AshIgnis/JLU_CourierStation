@@ -685,7 +685,7 @@ void package_r_original_start() {
     for (;;) {
         if (pan >= 4*MAX_PACKAGE_NUM/5)
         {
-            printf("WARNING!!!您的驿站包裹数已经积压超过80\%");
+            printf("WARNING!!!您的驿站包裹数已经积压超过80%%");
         }
         printf("\n========== 收件包裹管理系统 ==========\n");
         printf("1. 添加收件包裹\n");
