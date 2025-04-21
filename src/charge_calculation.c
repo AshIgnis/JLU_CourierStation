@@ -91,7 +91,7 @@ double calculate_send_package_fees(struct package_s *send_pkg, const char *phone
             if (tickets > 0 && send_pkg->day < 91) { // 判断优惠券是否有效
                 printf("检测到您有八折券，已自动使用\n");
                 shipping_fee *= 0.8; // 应用八折优惠
-                decrement_customer_tickets(phone_number); // 消耗一张优惠券
+                
             } else if (tickets > 0) {
                 printf("检测到您有八折券，但已过期，无法使用\n");
             } else {

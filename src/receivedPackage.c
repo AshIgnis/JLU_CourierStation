@@ -292,8 +292,9 @@ void save_package_r(struct package_r* head) {
     fclose(file);
 }
 
-void add_received_package(struct package_r *head,int *pan) {
+void add_received_package(struct package_r *head, int *pan) {
     struct package_r* now = (struct package_r*)malloc(sizeof(struct package_r));
+    memset(now, 0, sizeof(struct package_r)); // 初始化为 0
 
     // 输入手机号并验证合法性
     printf("1.请输入包裹所属用户电话 (11位数字): \n");
@@ -317,11 +318,11 @@ void add_received_package(struct package_r *head,int *pan) {
         while (getchar() != '\n'); // 清空输入缓冲区
         if (isValidFloat(temp)) {
             now->volume = atof(temp); // 将字符串转换为浮点数
-            if (now->volume > 0) {
+            if (now->volume > 0 && now->volume <= 1000000) {
                 break;
             }
         }
-        printf("输入无效，请输入一个正数: \n");
+        printf("输入无效，请输入一个正数 (1-1000000): \n");
     } while (1);
 
     // 输入包裹类型并验证合法性
@@ -376,13 +377,6 @@ void add_received_package(struct package_r *head,int *pan) {
         now->shipping_fee = 0.0; // 如果不需要到付，运费为0
     }
 
-    // 如果需要上门服务或到付上门，计算上门费用
-    if (now->ifCollection == 2 || now->ifCollection == 3) {
-        double door_fee = DoorToDoorFee_r(now->phone_number, now->volume, now->package_type);
-        printf("上门服务费用为：%.2lf\n", door_fee);
-        now->shipping_fee += door_fee; // 累加上门费用
-    }
-
     // 输入包裹状态并验证合法性
     printf("5.请输入包裹状态 (1-正常, 2-损坏, 3-违禁品): \n");
     do {
@@ -415,6 +409,7 @@ void add_received_package(struct package_r *head,int *pan) {
         printf("输入无效，请输入1~366之间的整数: \n");
     } while (1);
 
+    // 确认信息
     char jdg[22];
     for (;;) {
         printf("\n包裹信息展示如下: \n\n");
@@ -444,63 +439,121 @@ void add_received_package(struct package_r *head,int *pan) {
 
         if (strlen(jdg) == 1 && (*jdg) == 'Y') {
             break;
-        } else {
-            if (strlen(jdg) == 1 && (*jdg) == 'N') {
-                printf("请输入希望更改项的序号 (输入\"0\"以放弃本次修改):\n");
-                int lsl;
-                while (scanf("%d", &lsl) != 1 || lsl < 0 || lsl > 5) {
-                    printf("输入无效，请输入0-5之间的数字: ");
+        } else if (strlen(jdg) == 1 && (*jdg) == 'N') {
+            printf("请输入希望更改项的序号 (输入\"0\"以放弃本次修改):\n");
+            int lsl;
+            char temp[MAX_LEN];
+            do {
+                printf("> ");
+                scanf("%s", temp);
+                while (getchar() != '\n'); // 清空输入缓冲区
+                if (isValidNumber(temp)) {
+                    lsl = atoi(temp); // 将字符串转换为整数
+                    if (lsl >= 0 && lsl <= 6) {
+                        break;
+                    }
+                }
+                printf("输入无效，请输入0-6之间的数字: \n");
+            } while (1);
+
+            // 根据用户选择修改对应项
+            if (lsl == 1) {
+                printf("请重新输入包裹所属用户电话: \n");
+                do {
+                    printf("> ");
+                    scanf("%s", now->phone_number);
                     while (getchar() != '\n'); // 清空输入缓冲区
-                }
-                if (lsl == 1) {
-                    do {
-                        printf("请重新输入包裹所属用户电话: \n");
-                        scanf("%s", (*now).phone_number);
-                        if (!isPhoneNumberValid((*now).phone_number)) {
-                            printf("电话号码格式错误，必须为11位数字！\n");
-                        }
-                    } while (!isPhoneNumberValid((*now).phone_number));
-                }
-                if (lsl == 2) {
-                    printf("请重新输入包裹体积 (立方厘米): \n");
-                    while (scanf("%lf", &(*now).volume) != 1 || (*now).volume <= 0) {
-                        printf("输入无效，请输入一个正数: ");
-                        while (getchar() != '\n'); // 清空输入缓冲区
+                    if (isPhoneNumberValid(now->phone_number)) {
+                        break;
                     }
-                }
-                if (lsl == 3) {
-                    printf("请重新输入包裹类型 (1-文件, 2-生鲜, 3-易碎品, 4-家电, 5-危险品): \n");
-                    while (scanf("%d", &(*now).package_type) != 1 || (*now).package_type < 1 || (*now).package_type > 5) {
-                        printf("输入无效，请输入1-5之间的数字: ");
-                        while (getchar() != '\n'); // 清空输入缓冲区
-                    }
-                }
-                if (lsl == 4) {
-                    printf("请重新输入是否需要到付 (0-不需要, 1-需要): \n");
-                    while (scanf("%d", &(*now).ifCollection) != 1 || ((*now).ifCollection != 0 && (*now).ifCollection != 1)) {
-                        printf("输入无效，请输入0或1: ");
-                        while (getchar() != '\n'); // 清空输入缓冲区
-                    }
-                    if ((*now).ifCollection) {
-                        printf("请重新输入运输费用: \n");
-                        while (scanf("%lf", &(*now).shipping_fee) != 1 || (*now).shipping_fee < 0) {
-                            printf("输入无效，请输入一个非负数: ");
-                            while (getchar() != '\n'); // 清空输入缓冲区
-                        }
-                    }
-                }
-                if (lsl == 5) {
-                    printf("请重新输入包裹状态 (1-正常, 2-损坏, 3-违禁品): \n");
-                    while (scanf("%d", &(*now).package_status) != 1 || (*now).package_status < 1 || (*now).package_status > 3) {
-                        printf("输入无效，请输入1-3之间的数字: ");
-                        while (getchar() != '\n'); // 清空输入缓冲区
-                    }
-                }
-            } else {
-                printf("输入\"Y\"以表示确认, \"N\"以表示需要修改包裹信息.\n");
+                    printf("电话号码格式错误，必须为11位数字！\n");
+                } while (1);
             }
+            if (lsl == 2) {
+                printf("请重新输入包裹体积 (立方厘米): \n");
+                do {
+                    printf("> ");
+                    char temp[MAX_LEN];
+                    scanf("%s", temp);
+                    while (getchar() != '\n'); // 清空输入缓冲区
+                    if (isValidFloat(temp)) {
+                        now->volume = atof(temp); // 将字符串转换为浮点数
+                        if (now->volume > 0 && now->volume <= 1000000) {
+                            break;
+                        }
+                    }
+                    printf("输入无效，请输入一个正数 (1-1000000): \n");
+                } while (1);
+            }
+            if (lsl == 3) {
+                printf("请重新输入包裹类型 (1-文件, 2-生鲜, 3-易碎品, 4-家电, 5-危险品): \n");
+                do {
+                    printf("> ");
+                    char temp[MAX_LEN];
+                    scanf("%s", temp);
+                    while (getchar() != '\n'); // 清空输入缓冲区
+                    if (isValidNumber(temp)) {
+                        now->package_type = atoi(temp); // 将字符串转换为整数
+                        if (now->package_type >= 1 && now->package_type <= 5) {
+                            break;
+                        }
+                    }
+                    printf("输入无效，请输入1-5之间的数字: \n");
+                } while (1);
+            }
+            if (lsl == 4) {
+                printf("请重新输入服务类型 (0-不需费用, 1-需要到付, 2-需要上门, 3-到付上门): \n");
+                do {
+                    printf("> ");
+                    char temp[MAX_LEN];
+                    scanf("%s", temp);
+                    while (getchar() != '\n'); // 清空输入缓冲区
+                    if (isValidNumber(temp)) {
+                        now->ifCollection = atoi(temp); // 将字符串转换为整数
+                        if (now->ifCollection >= 0 && now->ifCollection <= 3) {
+                            break;
+                        }
+                    }
+                    printf("输入无效，请输入0-3之间的数字: \n");
+                } while (1);
+            }
+            if (lsl == 5) {
+                printf("请重新输入包裹状态 (1-正常, 2-损坏, 3-违禁品): \n");
+                do {
+                    printf("> ");
+                    char temp[MAX_LEN];
+                    scanf("%s", temp);
+                    while (getchar() != '\n'); // 清空输入缓冲区
+                    if (isValidNumber(temp)) {
+                        now->package_status = atoi(temp); // 将字符串转换为整数
+                        if (now->package_status >= 1 && now->package_status <= 3) {
+                            break;
+                        }
+                    }
+                    printf("输入无效，请输入1-3之间的数字: \n");
+                } while (1);
+            }
+            if (lsl == 6) {
+                printf("请重新输入包裹到达时间 (1~366): \n");
+                do {
+                    printf("> ");
+                    char temp[MAX_LEN];
+                    scanf("%s", temp);
+                    while (getchar() != '\n'); // 清空输入缓冲区
+                    if (isValidNumber(temp)) {
+                        now->day = atoi(temp); // 将字符串转换为整数
+                        if (now->day >= 1 && now->day <= 366) {
+                            break;
+                        }
+                    }
+                    printf("输入无效，请输入1~366之间的整数: \n");
+                } while (1);
+            }
+        } else {
+            printf("输入\"Y\"以表示确认, \"N\"以表示需要修改包裹信息.\n");
         }
     }
+
     // 将包裹添加到链表中
     now->next = head->next;
     head->next = now;
