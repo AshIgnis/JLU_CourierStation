@@ -103,11 +103,19 @@ void userOperating(struct customer *head) {
                 } else {
                     head = newHead; // 更新链表头
                     saveCustomers(head); // 保存用户到文件
+
+                    // 更新当前用户信息
+                    strcpy(phone_number, newHead->phone_number);
+                    strcpy(password, newHead->password);
+
                     printf("注册成功！\n");
                     flag = 1; // 注册成功后退出循环
                     system("pause");
                     system("cls");
-                    break;
+
+                    // 进入新用户的系统
+                    userAction(head, phone_number);
+                    return;
                 }
             }
             case 2: { // 重新输入
