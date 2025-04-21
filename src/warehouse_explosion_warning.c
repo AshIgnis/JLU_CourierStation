@@ -47,21 +47,21 @@ void warning() {
             fputs(line, tempFile);
         } else {
             // 删除的行提取包裹序列号并写入 id_box.txt
-            char packageID[13];
-            sscanf(line, "%*s %*s %*s %*s %*s %*s %12s", packageID); // 提取第7个字段
-            int tmp;
+            char packageID[9] = {0};
+            sscanf(line, "%*s %*s %*s %*s %*s %*s %8s %*s", packageID); // 提取第7个字段
+            int tmp = 0;
             tmp = packageID[1] - '0';
             tmp *= 10;
             tmp += packageID[2] - '0';
             tmp -= 1;
             tmp *= 10;
-            tmp += packageID[7] - '0';
-            tmp *= 10;
-            tmp += packageID[6] - '0';
+            tmp += packageID[4] - '0';
             tmp *= 10;
             tmp += packageID[5] - '0';
             tmp *= 10;
-            tmp += packageID[4] - '0';
+            tmp += packageID[6] - '0';
+            tmp *= 10;
+            tmp += packageID[7] - '0';
             fprintf(idBoxFile, " %d", tmp);
         }
     }

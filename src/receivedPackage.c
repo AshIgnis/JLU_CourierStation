@@ -126,13 +126,13 @@ void return_package_r_id(struct package_r *x) {
     tmp += (*x).package_id[2] - '0';
     tmp -= 1;
     tmp *= 10;
-    tmp += (*x).package_id[7] - '0';
-    tmp *= 10;
-    tmp += (*x).package_id[6] - '0';
+    tmp += (*x).package_id[4] - '0';
     tmp *= 10;
     tmp += (*x).package_id[5] - '0';
     tmp *= 10;
-    tmp += (*x).package_id[4] - '0';
+    tmp += (*x).package_id[6] - '0';
+    tmp *= 10;
+    tmp += (*x).package_id[7] - '0';
 
     fprintf(file, " %d", tmp);
     fclose(file);
