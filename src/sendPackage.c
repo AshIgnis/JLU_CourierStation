@@ -189,6 +189,8 @@ void add_package_s(struct package_s *head, const char *phone_number)
 
         if (strlen(jdg) == 1 && (*jdg) == 'Y')
         {
+            decrement_customer_tickets(phone_number); // 消耗一张优惠券
+            printf("优惠卷成功使用！\n");
             break;
         }
         else if (strlen(jdg) == 1 && (*jdg) == 'N')
@@ -354,7 +356,8 @@ void add_package_s(struct package_s *head, const char *phone_number)
             printf("输入\"Y\"以表示确认, \"N\"以表示需要修改包裹信息.\n");
         }
     }
-    decrement_customer_tickets(phone_number); // 消耗一张优惠券
+
+   
     now->next = head->next;
     head->next = now;
 
