@@ -166,13 +166,10 @@ void userOperating(struct customer *head) {
 }
 
 // 用户登录界面
-bool userLanding(struct customer *head, const char *phone_number, const char *password)
-{
+bool userLanding(struct customer *head, const char *phone_number, const char *password) {
     struct customer *current = head;
-    while (current)
-    {
-        if (strcmp(current->phone_number, phone_number) == 0 && strcmp(current->password, password) == 0)
-        {
+    while (current) {
+        if (strcmp(current->phone_number, phone_number) == 0 && strcmp(current->password, password) == 0) {
             printf("登陆成功！\n");
             printf("您的用户信息如下:\n");
             printf("用户名: %s\n", current->username);
@@ -183,8 +180,7 @@ bool userLanding(struct customer *head, const char *phone_number, const char *pa
             // 自动查询包裹
             printf("\n正在为您查询包裹信息...\n");
             FILE *file = fopen(RECEIVED_FILE, "r");
-            if (!file)
-            {
+            if (!file) {
                 perror("无法打开包裹文件");
                 return true; // 登录成功，但包裹查询失败
             }
@@ -192,16 +188,18 @@ bool userLanding(struct customer *head, const char *phone_number, const char *pa
             char package_id[MAX_LEN];
             char package_phone[MAX_LEN];
             double volume;
-            int package_type, ifCollection, package_status;
+            int package_type, ifCollection, package_status, day;
             double shipping_fee;
             int found = 0;
 
-            while (fscanf(file, "%s %lf %d %d %lf %d %s", package_phone, &volume, &package_type, &ifCollection, &shipping_fee, &package_status, package_id) != EOF)
-            {
-                if (strcmp(package_phone, phone_number) == 0)
-                {
-                    if (!found)
-                    {
+            while (fscanf(file, "%s %lf %d %d %lf %d %s %d", package_phone, &volume, &package_type, &ifCollection, &shipping_fee, &package_status, package_id, &day) == 8) {
+                // 跳过无效记录（如 SOS-SAVE）
+                if (strcmp(package_id, "SOS-SAVE") == 0) {
+                    continue;
+                }
+
+                if (strcmp(package_phone, phone_number) == 0) {
+                    if (!found) {
                         printf("\n您有以下包裹待领取:\n");
                     }
                     printf("包裹取件码: %s\n", package_id);
@@ -211,12 +209,9 @@ bool userLanding(struct customer *head, const char *phone_number, const char *pa
 
             fclose(file);
 
-            if (!found)
-            {
+            if (!found) {
                 printf("您当前没有待领取的包裹。\n");
-            }
-            else
-            {
+            } else {
                 printf("请尽快领取您的包裹！\n");
             }
 
@@ -340,8 +335,7 @@ void userAction(struct customer *head, const char *phone_number)
 void userReceivedPackagesSearching(const char *phone_number)
 {
     FILE *file = fopen(RECEIVED_FILE, "r");
-    if (!file)
-    {
+    if (!file) {
         perror("无法打开文件");
         return;
     }
@@ -349,21 +343,26 @@ void userReceivedPackagesSearching(const char *phone_number)
     char package_id[MAX_LEN];
     char package_phone[MAX_LEN];
     double volume;
-    int package_type, ifCollection, package_status;
+    int package_type, ifCollection, package_status, day;
     double shipping_fee;
     int found = 0;
 
-    while (fscanf(file, "%s %lf %d %d %lf %d %s", package_phone, &volume, &package_type, &ifCollection, &shipping_fee, &package_status, package_id) != EOF)
-    {
-        if (strcmp(package_phone, phone_number) == 0)
-        {
+    while (fscanf(file, "%s %lf %d %d %lf %d %s %d", package_phone, &volume, &package_type, &ifCollection, &shipping_fee, &package_status, package_id, &day) == 8) {
+        // 跳过无效记录（如 SOS-SAVE）
+        if (strcmp(package_id, "SOS-SAVE") == 0) {
+            continue;
+        }
+
+        if (strcmp(package_phone, phone_number) == 0) {
             printf("包裹取件码: %s\n", package_id);
+            printf("包裹体积: %.2lf cm³\n", volume);
+            printf("到付运费: %.2lf 元\n", shipping_fee);
+            printf("到达时间: 第 %d 天\n", day);
             found = 1;
         }
     }
 
-    if (!found)
-    {
+    if (!found) {
         printf("未找到与您相关的包裹。\n");
     }
 
@@ -371,44 +370,31 @@ void userReceivedPackagesSearching(const char *phone_number)
 }
 
 // 用户取走包裹
-void userTakePackage(const char *phone_number)
-{
+void userTakePackage(const char *phone_number) {
     char package_id[MAX_LEN];
     printf("请输入取件码('q'退出): ");
     scanf("%s", package_id);
 
-    if (strcmp(package_id, "q") == 0)
-    {
+    if (strcmp(package_id, "q") == 0) {
         printf("已退出取件操作。\n");
         return;
     }
 
-    int ifdoortodoor = 0;
-    printf("是否需要上门服务 (0-不需要, 1-需要): ");
-    while (scanf("%d", &ifdoortodoor) != 1 || (ifdoortodoor != 0 && ifdoortodoor != 1))
-    {
-        printf("输入无效，请输入0或1: ");
-        while (getchar() != '\n'); // 清空输入缓冲区
-    }
-
     FILE *file = fopen(RECEIVED_FILE, "r");
-    if (!file)
-    {
+    if (!file) {
         perror("无法打开 received_packages.txt 文件");
         return;
     }
 
     FILE *temp = fopen("temp.txt", "w");
-    if (!temp)
-    {
+    if (!temp) {
         perror("无法创建临时文件 temp.txt");
         fclose(file);
         return;
     }
 
     FILE *box = fopen("id_box.txt", "a");
-    if (!box)
-    {
+    if (!box) {
         perror("无法打开 id_box.txt 文件");
         fclose(file);
         fclose(temp);
@@ -422,6 +408,7 @@ void userTakePackage(const char *phone_number)
     int current_ifCollection;
     double current_shipping_fee;
     int current_package_status;
+    int current_day;
     int found = 0;
 
     int return_num = 0;
@@ -429,18 +416,28 @@ void userTakePackage(const char *phone_number)
     double total_fee = 0.0;        // 总费用
 
     // 遍历文件内容，找到并跳过目标包裹
-    while (fscanf(file, "%s %lf %d %d %lf %d %s", current_phone, &current_volume, &current_package_type, &current_ifCollection, &current_shipping_fee, &current_package_status, current_package_id) != EOF)
-    {
-        if (strcmp(current_package_id, package_id) == 0 && strcmp(current_phone, phone_number) == 0)
-        {
+    while (fscanf(file, "%s %lf %d %d %lf %d %s %d", current_phone, &current_volume, &current_package_type, &current_ifCollection, &current_shipping_fee, &current_package_status, current_package_id, &current_day) != EOF) {
+        if (strcmp(current_package_id, package_id) == 0 && strcmp(current_phone, phone_number) == 0) {
             found = 1; // 找到包裹，跳过写入
             return_num = convertStringToInt(current_package_id);
             fprintf(box, " %d", return_num);
 
+            // 显示包裹服务类型
+            printf("包裹服务类型: %s\n", ifcollection[current_ifCollection]);
+
+            // 再次询问是否需要上门服务
+            int ifdoortodoor = 0;
+            if (current_ifCollection == 2 || current_ifCollection == 3) {
+                printf("是否需要上门服务 (0-不需要, 1-需要): ");
+                while (scanf("%d", &ifdoortodoor) != 1 || (ifdoortodoor != 0 && ifdoortodoor != 1)) {
+                    printf("输入无效，请输入0或1: ");
+                    while (getchar() != '\n'); // 清空输入缓冲区
+                }
+            }
+
             // 计算上门服务费用
-            if (ifdoortodoor == 1)
-            {
-                door_to_door_fee = DoorToDoorFee_r(current_phone,current_volume,current_package_type); 
+            if (ifdoortodoor == 1) {
+                door_to_door_fee = DoorToDoorFee_r(current_phone, current_volume, current_package_type);
                 printf("上门服务费用: %.2lf 元\n", door_to_door_fee);
             }
 
@@ -450,10 +447,8 @@ void userTakePackage(const char *phone_number)
             // 输出费用信息
             printf("到付运费: %.2lf 元\n", current_shipping_fee);
             printf("总费用: %.2lf 元\n", total_fee);
-        }
-        else
-        {
-            fprintf(temp, "%s %lf %d %d %lf %d %s\n", current_phone, current_volume, current_package_type, current_ifCollection, current_shipping_fee, current_package_status, current_package_id);
+        } else {
+            fprintf(temp, "%s %.2lf %d %d %.2lf %d %s %d\n", current_phone, current_volume, current_package_type, current_ifCollection, current_shipping_fee, current_package_status, current_package_id, current_day);
         }
     }
 
@@ -462,24 +457,19 @@ void userTakePackage(const char *phone_number)
     fclose(box);
 
     // 删除原文件并重命名临时文件
-    if (remove(RECEIVED_FILE) != 0)
-    {
-        perror("删除 receivedPackage.txt 文件失败");
+    if (remove(RECEIVED_FILE) != 0) {
+        perror("删除 received_packages.txt 文件失败");
         return;
     }
 
-    if (rename("temp.txt", RECEIVED_FILE) != 0)
-    {
+    if (rename("temp.txt", RECEIVED_FILE) != 0) {
         perror("重命名 temp.txt 文件失败");
         return;
     }
 
-    if (found)
-    {
+    if (found) {
         printf("包裹取走成功！\n");
-    }
-    else
-    {
+    } else {
         printf("未找到对应的包裹。\n");
     }
 }
