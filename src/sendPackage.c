@@ -13,8 +13,6 @@ void add_package_s(struct package_s *head, const char *phone_number) {
 
     strncpy(now->phone_number, phone_number, MAX_LEN - 1);
 
-    int ifdoortodoor = 0; // 是否上门服务
-
     // 输入收件人姓名
     printf("1.请输入收件人姓名 (不超过10个字符): \n");
     do {
@@ -59,30 +57,19 @@ void add_package_s(struct package_s *head, const char *phone_number) {
         while (getchar() != '\n'); // 清空输入缓冲区
     } while (1);
 
-    // 输入包裹寄件时间
-    printf("5.请输入包裹寄件时间 (1~366): \n");
+    // 输入到付与上门服务类型
+    printf("5.请选择服务类型 (0-不需费用, 1-需要到付, 2-需要上门, 3-到付上门): \n");
     do {
         printf("> ");
-        if (scanf("%d", &now->day) == 1 && now->day >= 1 && now->day <= 366) {
+        if (scanf("%d", &now->ifCollection) == 1 && now->ifCollection >= 0 && now->ifCollection <= 3) {
             break;
         }
-        printf("输入无效，请输入1~366之间的整数: \n");
-        while (getchar() != '\n'); // 清空输入缓冲区
-    } while (1);
-
-    // 输入是否到付
-    printf("6.在此缴纳运费 (0-不, 1-是): \n");
-    do {
-        printf("> ");
-        if (scanf("%d", &now->ifCollection) == 1 && (now->ifCollection == 0 || now->ifCollection == 1)) {
-            break;
-        }
-        printf("输入无效，请输入0或1: \n");
+        printf("输入无效，请输入0-3之间的数字: \n");
         while (getchar() != '\n'); // 清空输入缓冲区
     } while (1);
 
     // 输入包裹状态
-    printf("7.请输入包裹状态 (1-正常, 2-损坏, 3-违禁品): \n");
+    printf("6.请输入包裹状态 (1-正常, 2-损坏, 3-违禁品): \n");
     do {
         printf("> ");
         if (scanf("%d", &now->package_status) == 1 && now->package_status >= 1 && now->package_status <= 3) {
@@ -92,18 +79,18 @@ void add_package_s(struct package_s *head, const char *phone_number) {
         while (getchar() != '\n'); // 清空输入缓冲区
     } while (1);
 
-    // 输入是否需要上门服务
-    printf("8.是否需要上门服务 (0-不, 1-是): \n");
+    // 输入寄件时间
+    printf("7.请输入包裹寄件时间 (1~366): \n");
     do {
         printf("> ");
-        if (scanf("%d", &ifdoortodoor) == 1 && (ifdoortodoor == 0 || ifdoortodoor == 1)) {
+        if (scanf("%d", &now->day) == 1 && now->day >= 1 && now->day <= 366) {
             break;
         }
-        printf("输入无效，请输入0或1: \n");
+        printf("输入无效，请输入1~366之间的整数: \n");
         while (getchar() != '\n'); // 清空输入缓冲区
     } while (1);
 
-    double shipping_fee = calculate_send_package_fees(now, ifdoortodoor, phone_number); // 计算运费
+    double shipping_fee = calculate_send_package_fees(now, phone_number); // 计算运费
     printf("包裹的总计算为：%.2lf\n", shipping_fee);
 
     now->next = head->next;
@@ -130,10 +117,10 @@ void query_and_show_packages(struct package_s *head, const char *phone_number) {
             count++;
             printf("序号: %-5d 发件电话：%-11s 收件人姓名: %-12s\n", count, current->phone_number, current->receiver_name);
             printf("收件地址: %-20s\n", current->receiver_address);
-            printf("体积(cm³): %-12.2lf 类型: %-10s 到付: %-10s 状态: %-10s 运费(元): %-7.2lf 寄件时间: %-5d\n\n",
+            printf("体积(cm³): %-12.2lf 类型: %-10s 服务类型: %-10s 状态: %-10s 费用(元): %-7.2lf 寄件时间: %-5d\n\n",
                    current->volume,
                    pkgType[current->package_type - 1], // 包裹类型中文
-                   ifcollection[current->ifCollection], // 是否到付中文
+                   ifcollection[current->ifCollection], // 服务类型中文
                    pkgStatus[current->package_status - 1], // 包裹状态中文
                    current->shipping_fee,
                    current->day);
@@ -165,10 +152,10 @@ void delete_package_s(struct package_s* head, const char* phone_number) {
             count++;
             printf("序号: %-5d 发件电话：%-11s 收件人姓名: %-12s\n", count, current->phone_number, current->receiver_name);
             printf("收件地址: %-20s\n", current->receiver_address);
-            printf("体积(cm³): %-12.2lf 类型: %-10s 到付: %-10s 状态: %-10s 运费(元): %-7.2lf 寄件时间: %-5d\n\n",
+            printf("体积(cm³): %-12.2lf 类型: %-10s 服务类型: %-10s 状态: %-10s 费用(元): %-7.2lf 寄件时间: %-5d\n\n",
                    current->volume,
                    pkgType[current->package_type - 1], // 包裹类型中文
-                   ifcollection[current->ifCollection], // 是否到付中文
+                   ifcollection[current->ifCollection], // 服务类型中文
                    pkgStatus[current->package_status - 1], // 包裹状态中文
                    current->shipping_fee,
                    current->day);
@@ -253,7 +240,7 @@ struct package_s* load_package_s() {
         // 校验数据合法性
         if (strlen(now->phone_number) != 11 || now->volume <= 0 || 
             now->package_type < 1 || now->package_type > 5 || 
-            now->ifCollection < 0 || now->ifCollection > 1 || 
+            now->ifCollection < 0 || now->ifCollection > 3 || 
             now->package_status < 1 || now->package_status > 3 ||
             now->day < 1 || now->day > 366) {
             free(now);

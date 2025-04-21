@@ -68,46 +68,48 @@ double round_to_two_decimals(double value) {
 }
 
 // 修改后的寄件包裹运费计算
-double calculate_send_package_fees(struct package_s *send_pkg, int ifdoortodoor, const char *phone_number) {
+double calculate_send_package_fees(struct package_s *send_pkg, const char *phone_number) {
     double shipping_fee = 0.0; // 初始化运费
+    if (send_pkg == NULL) {
+        printf("包裹信息无效，无法计算运费。\n");
+        return shipping_fee; // 返回 0.0 表示无效运费
+    }
+
     double Vbase = calculate_volume_fee(send_pkg->volume); // 使用分段计费规则
     double type_coeff = get_package_type_coefficient(send_pkg->package_type);
     printf("包裹类型系数为：%.2lf\n", type_coeff);
     double discount = get_customer_discount(get_customer_type(phone_number));
     printf("用户折扣系数为：%.2lf\n", discount);
 
-    // 获取用户票数
-    int tickets = 0;
-    if (get_customer_tickets(phone_number, &tickets)) {
-        if (send_pkg->ifCollection) {
-            shipping_fee = Vbase * type_coeff * discount;
+    // 计算基础运费
+    if (send_pkg->ifCollection == 1 || send_pkg->ifCollection == 3) { // 需要到付或到付上门
+        shipping_fee = Vbase * type_coeff * discount;
 
-            // 检测优惠券状态
-            if (tickets > 0) {
-                if (send_pkg->day < 91) { // 判断是否在有效期内
-                    printf("检测到您有八折券，已自动使用\n");
-                    shipping_fee *= 0.8; // 应用八折优惠
-                    decrement_customer_tickets(phone_number); // 消耗一张优惠券
-
-                } else {
-                    printf("检测到您有八折券，但已过期，无法使用");
-                }
+        // 检测优惠券状态
+        int tickets = 0;
+        if (get_customer_tickets(phone_number, &tickets)) {
+            if (tickets > 0 && send_pkg->day < 91) { // 判断优惠券是否有效
+                printf("检测到您有八折券，已自动使用\n");
+                shipping_fee *= 0.8; // 应用八折优惠
+                decrement_customer_tickets(phone_number); // 消耗一张优惠券
+            } else if (tickets > 0) {
+                printf("检测到您有八折券，但已过期，无法使用\n");
             } else {
                 printf("没有可用的八折券。\n");
             }
-
-            printf("包裹运费为：%.2lf\n", shipping_fee);
         }
-
-        if (ifdoortodoor) {
-            double doorfee = discount * Vbase * type_coeff * 0.7;
-            printf("上门服务费用为：%.2lf\n", doorfee);
-            shipping_fee += doorfee; // 上门服务费用
-        }
-
-        shipping_fee = round_to_two_decimals(shipping_fee); // 保留两位小数
-        send_pkg->shipping_fee = shipping_fee;
+        printf("基础运费为：%.2lf\n", shipping_fee);
     }
+
+    // 计算上门服务费用
+    if (send_pkg->ifCollection == 2 || send_pkg->ifCollection == 3) { // 需要上门或到付上门
+        double doorfee = discount * Vbase * type_coeff * 0.7;
+        printf("上门服务费用为：%.2lf\n", doorfee);
+        shipping_fee += doorfee; // 累加上门服务费用
+    }
+
+    shipping_fee = round_to_two_decimals(shipping_fee); // 保留两位小数
+    send_pkg->shipping_fee = shipping_fee;
     return shipping_fee;
 }
 

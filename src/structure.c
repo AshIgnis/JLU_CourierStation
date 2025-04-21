@@ -26,7 +26,9 @@ const char *pkgStatus[3] = {
 };
 
 // 是否到付字符串数组
-const char *ifcollection[2] = {
-    "不用到付", 
-    "需要到付"
+const char *ifcollection[4] = {
+    "不需费用", 
+    "需要到付",
+    "需要上门",
+    "到付上门"
 };
