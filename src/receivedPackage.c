@@ -144,27 +144,14 @@ void show_package_r(struct package_r* now, int if_id) {
     printf("%s\n", now->phone_number);
     printf("2.包裹体积 (立方厘米): \n");
     printf("%.2lf\n", now->volume);
-    printf("3.包裹类型 (1-文件, 2-生鲜, 3-易碎品, 4-家电, 5-危险品): \n");
-    printf("%d\n", now->package_type);
-    printf("4.服务类型 (0-不需费用, 1-需要到付, 2-需要上门, 3-到付上门): \n");
-    printf("%d\n", now->ifCollection);
-
-    // 显示运输费用
-    if (now->ifCollection == 1 || now->ifCollection == 3) {
-        printf("运输费用: \n");
-        printf("%.2lf\n", now->shipping_fee);
-    }
-
-    // 显示上门服务费用
-    if (now->ifCollection == 2 || now->ifCollection == 3) {
-        double door_fee = DoorToDoorFee_r(now->phone_number, now->volume, now->package_type);
-        printf("上门服务费用: \n");
-        printf("%.2lf\n", door_fee);
-    }
-
-    printf("5.包裹状态 (1-正常, 2-损坏, 3-违禁品): \n");
-    printf("%d\n", now->package_status);
-    printf("6.包裹到达时间: \n");
+    printf("3.包裹类型: \n");
+    printf("%s\n", pkgType[now->package_type - 1]); // 显示包裹类型的中文描述
+    printf("4.服务类型: \n");
+    printf("%s\n", ifcollection[now->ifCollection]); // 显示服务类型的中文描述
+    printf("5.运费: %.2lf\n", now->shipping_fee);
+    printf("6.包裹状态: \n");
+    printf("%s\n", pkgStatus[now->package_status - 1]); // 显示包裹状态的中文描述
+    printf("7.包裹到达时间: \n");
     printf("%d\n", now->day);
 
     if (if_id == 1) {
