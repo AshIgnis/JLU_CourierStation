@@ -520,7 +520,30 @@ void add_received_package(struct package_r *head,int *pan) {
 	if(*pan>=MAX_PACKAGE_NUM){
 		printf("包裹超出上限, 已自动为您将多余包裹分配至其他驿站. \n");
 	    warning();
-		*pan=*pan/2+1;
+
+        *pan=*pan/2+1;
+
+        int lsl=0;
+        struct package_r* cox,* xoc;
+        cox=head;
+
+        for(; ;){
+            lsl+=1;
+            cox=(*cox).next;
+
+            if(lsl==(*pan)-1){
+                for(; ;){
+                    xoc=(*cox).next;
+                    (*cox).next=(*xoc).next;
+                    free(xoc);
+                    if((*(*cox).next).package_id[0]=='S'){
+                        break;
+                    }
+                }break;
+            }
+
+        }
+		
 	}
 	
 	return;
