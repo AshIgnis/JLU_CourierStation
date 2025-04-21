@@ -231,6 +231,7 @@ int main() {
                             break;
                         }
                         case 0:
+                            system("taskkill /F /IM python.exe >nul 2>nul");
                             printf("返回管理员菜单\n");
                             break;
                         default:
