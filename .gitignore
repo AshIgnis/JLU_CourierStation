@@ -2,6 +2,7 @@
 *.o
 *.log
 *.exe
+*.doc
 
 !*.c
 .vscode/
