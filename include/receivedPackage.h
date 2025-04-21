@@ -8,7 +8,7 @@
 void package_r_original_start(); // 初始化界面
 
 void save_package_r(struct package_r* head); // 包裹文件保存
-struct package_r* load_package_r(); // 包裹文件读取
+struct package_r* load_package_r(int * pan); // 包裹文件读取
 void get_package_r_id(struct package_r* x); // 获取取件码
 //参数 x 为包裹所对应的指针
 void return_package_r_id(struct package_r* x); // 返回取件码
@@ -19,7 +19,7 @@ void find_package_r(struct package_r **lstfin,struct package_r **fin,char* x,str
 //x 为查询包裹对应 id 字符串的首指针
 //head 为包裹链表的 head 指针
 //使用传参示例 find_package_r(&p1,&p2,cp,head);
-void add_received_package(struct package_r *head);
+void add_received_package(struct package_r *head,int * pan);
 void query_received_package(struct package_r *head);
 void delete_received_package(struct package_r *head);
 void show_package_r(struct package_r* x,int if_id); // 展示包裹信息
