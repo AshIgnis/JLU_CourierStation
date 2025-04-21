@@ -42,8 +42,10 @@ struct package_s {
     char receiver_address[MAX_LEN]; // 收件人地址
     double volume; // 体积
     int package_type; // 包裹类型
+    int day;
     int ifCollection; // 是否到付
     int package_status; // 包裹状态   
+
     double shipping_fee; // 运费    
     struct package_s *next; // 下一个包裹
     

@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include <math.h>
-// 定义一个全局数组用于存储每天的包裹数量
-int count_day[400] = {0};// 预计存储365个数据
-int count_week[60] = {0};//预计存储53个数据
-int count_month[15] = {0};//预计存储12个数据
-// 函数声明
+#include <stdlib.h>
+#include <string.h>
+#include <dirent.h>
+#include <unistd.h>
+
 void load_data_from_file();
 void set_count_week(int real_time);
 void set_count_month(int real_time);
@@ -19,6 +19,10 @@ int* get_array();
 size_t get_array_length();
 void load();
 
+// 定义一个全局数组用于存储每天的包裹数量
+int count_day[400] = {0};// 预计存储365个数据
+int count_week[60] = {0};//预计存储53个数据
+int count_month[15] = {0};//预计存储12个数据
 // 暴露的接口
 #ifdef __cplusplus
 extern "C" {
@@ -99,6 +103,62 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+
+//指定删除生成的huise_real_time_？？_(%d_to_%d).txt
+void delete_predicted_file(int real_time_left,int real_time_right){
+	// 动态生成文件名
+	char filename[50];
+	sprintf(filename, "huise_real_time_day_(%d_to_%d).txt", real_time_left,real_time_right);
+	// 删除文件
+	if (remove(filename) == 0) {
+		printf("文件 %s 删除成功\n", filename);
+	} else {
+		printf("不存在文件 %s\n", filename);
+	}
+	//指定删除生成的huise_real_time_week_(%d_to_%d).txt
+	sprintf(filename, "huise_real_time_week_(%d_to_%d).txt", real_time_left,real_time_right);
+	if (remove(filename) == 0) {
+		printf("文件 %s 删除成功\n", filename);
+	} else {
+		printf("不存在文件 %s\n", filename);
+	}
+	//指定删除生成的huise_real_time_month_(%d_to_%d).txt
+	sprintf(filename, "huise_real_time_month_(%d_to_%d).txt", real_time_left,real_time_right);
+	if (remove(filename) == 0) {
+		printf("文件 %s 删除成功\n", filename);
+	} else {
+		printf("不存在文件 %s\n", filename);
+	}
+}
+
+//删除所有生成的huise_real_time前缀txt文件
+void delete_all_predicted_files(const char* directory) {
+    struct dirent* entry;
+    DIR* dir = opendir(directory);
+
+    if (dir == NULL) {
+        printf("无法打开目录: %s\n", directory);
+        return;
+    }
+
+    while ((entry = readdir(dir)) != NULL) {
+        // 检查文件名是否以 "huise_real_time" 开头
+        if (strncmp(entry->d_name, "huise_real_time", strlen("huise_real_time")) == 0) {
+            // 动态生成文件路径
+            char filepath[512];
+            snprintf(filepath, sizeof(filepath), "%s/%s", directory, entry->d_name);
+
+            // 删除文件
+            if (remove(filepath) == 0) {
+                printf("文件 %s 删除成功\n", filepath);
+            } else {
+                printf("无法删除文件 %s\n", filepath);
+            }
+        }
+    }
+
+    closedir(dir);
+}
 
 // 从文件 "huise.txt" 中读取数据并初始化 count_day 数组
 void load_data_from_file(int real_time_left,int real_time_right) {

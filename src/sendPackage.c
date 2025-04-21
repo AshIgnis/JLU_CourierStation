@@ -18,85 +18,89 @@ void add_package_s(struct package_s *head, const char *phone_number) {
     // 输入收件人姓名
     printf("1.请输入收件人姓名 (不超过10个字符): \n");
     do {
-        
-        fgets(now->receiver_name, 11, stdin); // 读取最多10个字符
-        now->receiver_name[strcspn(now->receiver_name, "\n")] = '\0'; // 去掉换行符
-        if (strlen(now->receiver_name) > 0 && strlen(now->receiver_name) <= 10) {
+        printf("> ");
+        if (scanf("%10s", now->receiver_name) == 1 && strlen(now->receiver_name) > 0) {
             break;
         }
         printf("输入无效，请输入不超过10个字符的姓名: \n");
+        while (getchar() != '\n'); // 清空输入缓冲区
     } while (1);
 
     // 输入收件人地址
     printf("2.请输入收件人地址 (不超过20个字符): \n");
     do {
-        
-        fgets(now->receiver_address, 21, stdin); // 读取最多20个字符
-        now->receiver_address[strcspn(now->receiver_address, "\n")] = '\0'; // 去掉换行符
-        if (strlen(now->receiver_address) > 0 && strlen(now->receiver_address) <= 20) {
+        printf("> ");
+        if (scanf("%20s", now->receiver_address) == 1 && strlen(now->receiver_address) > 0) {
             break;
         }
         printf("输入无效，请输入不超过20个字符的地址: \n");
+        while (getchar() != '\n'); // 清空输入缓冲区
     } while (1);
 
     // 输入包裹体积
     printf("3.请输入包裹体积 (立方厘米): \n");
     do {
-        char buffer[50];
         printf("> ");
-        fgets(buffer, sizeof(buffer), stdin);
-        if (sscanf(buffer, "%lf", &now->volume) == 1 && now->volume > 0 && now->volume <= 1000000) {
+        if (scanf("%lf", &now->volume) == 1 && now->volume > 0 && now->volume <= 1000000) {
             break;
         }
         printf("输入无效，请输入一个正数 (1-1000000): \n");
+        while (getchar() != '\n'); // 清空输入缓冲区
     } while (1);
 
     // 输入包裹类型
     printf("4.请输入包裹类型 (1-文件, 2-生鲜, 3-易碎品, 4-家电, 5-危险品): \n");
     do {
-        char buffer[50];
         printf("> ");
-        fgets(buffer, sizeof(buffer), stdin);
-        if (sscanf(buffer, "%d", &now->package_type) == 1 && now->package_type >= 1 && now->package_type <= 5) {
+        if (scanf("%d", &now->package_type) == 1 && now->package_type >= 1 && now->package_type <= 5) {
             break;
         }
         printf("输入无效，请输入1-5之间的数字: \n");
+        while (getchar() != '\n'); // 清空输入缓冲区
+    } while (1);
+
+    // 输入包裹寄件时间
+    printf("5.请输入包裹寄件时间 (1~366): \n");
+    do {
+        printf("> ");
+        if (scanf("%d", &now->day) == 1 && now->day >= 1 && now->day <= 366) {
+            break;
+        }
+        printf("输入无效，请输入1~366之间的整数: \n");
+        while (getchar() != '\n'); // 清空输入缓冲区
     } while (1);
 
     // 输入是否到付
-    printf("5.在此缴纳运费 (0-不, 1-是): \n");
+    printf("6.在此缴纳运费 (0-不, 1-是): \n");
     do {
-        char buffer[50];
         printf("> ");
-        fgets(buffer, sizeof(buffer), stdin);
-        if (sscanf(buffer, "%d", &now->ifCollection) == 1 && (now->ifCollection == 0 || now->ifCollection == 1)) {
+        if (scanf("%d", &now->ifCollection) == 1 && (now->ifCollection == 0 || now->ifCollection == 1)) {
             break;
         }
         printf("输入无效，请输入0或1: \n");
+        while (getchar() != '\n'); // 清空输入缓冲区
     } while (1);
 
     // 输入包裹状态
-    printf("6.请输入包裹状态 (1-正常, 2-损坏, 3-违禁品): \n");
+    printf("7.请输入包裹状态 (1-正常, 2-损坏, 3-违禁品): \n");
     do {
-        char buffer[50];
         printf("> ");
-        fgets(buffer, sizeof(buffer), stdin);
-        if (sscanf(buffer, "%d", &now->package_status) == 1 && now->package_status >= 1 && now->package_status <= 3) {
+        if (scanf("%d", &now->package_status) == 1 && now->package_status >= 1 && now->package_status <= 3) {
             break;
         }
         printf("输入无效，请输入1-3之间的数字: \n");
+        while (getchar() != '\n'); // 清空输入缓冲区
     } while (1);
 
     // 输入是否需要上门服务
-    printf("7.是否需要上门服务 (0-不, 1-是): \n");
+    printf("8.是否需要上门服务 (0-不, 1-是): \n");
     do {
-        char buffer[50];
         printf("> ");
-        fgets(buffer, sizeof(buffer), stdin);
-        if (sscanf(buffer, "%d", &ifdoortodoor) == 1 && (ifdoortodoor == 0 || ifdoortodoor == 1)) {
+        if (scanf("%d", &ifdoortodoor) == 1 && (ifdoortodoor == 0 || ifdoortodoor == 1)) {
             break;
         }
         printf("输入无效，请输入0或1: \n");
+        while (getchar() != '\n'); // 清空输入缓冲区
     } while (1);
 
     double shipping_fee = calculate_send_package_fees(now, ifdoortodoor, phone_number); // 计算运费
@@ -126,12 +130,13 @@ void query_and_show_packages(struct package_s *head, const char *phone_number) {
             count++;
             printf("序号: %-5d 发件电话：%-11s 收件人姓名: %-12s\n", count, current->phone_number, current->receiver_name);
             printf("收件地址: %-20s\n", current->receiver_address);
-            printf("体积(cm³): %-12.2lf 类型: %-10s 到付: %-10s 状态: %-10s 运费(元): %-7.2lf\n\n",
+            printf("体积(cm³): %-12.2lf 类型: %-10s 到付: %-10s 状态: %-10s 运费(元): %-7.2lf 寄件时间: %-5d\n\n",
                    current->volume,
                    pkgType[current->package_type - 1], // 包裹类型中文
                    ifcollection[current->ifCollection], // 是否到付中文
                    pkgStatus[current->package_status - 1], // 包裹状态中文
-                   current->shipping_fee);
+                   current->shipping_fee,
+                   current->day);
         }
         current = current->next;
     }
@@ -160,12 +165,13 @@ void delete_package_s(struct package_s* head, const char* phone_number) {
             count++;
             printf("序号: %-5d 发件电话：%-11s 收件人姓名: %-12s\n", count, current->phone_number, current->receiver_name);
             printf("收件地址: %-20s\n", current->receiver_address);
-            printf("体积(cm³): %-12.2lf 类型: %-10s 到付: %-10s 状态: %-10s 运费(元): %-7.2lf\n\n",
+            printf("体积(cm³): %-12.2lf 类型: %-10s 到付: %-10s 状态: %-10s 运费(元): %-7.2lf 寄件时间: %-5d\n\n",
                    current->volume,
                    pkgType[current->package_type - 1], // 包裹类型中文
                    ifcollection[current->ifCollection], // 是否到付中文
                    pkgStatus[current->package_status - 1], // 包裹状态中文
-                   current->shipping_fee);
+                   current->shipping_fee,
+                   current->day);
         }
         current = current->next;
     }
@@ -230,7 +236,7 @@ struct package_s* load_package_s() {
 
     while (1) {
         struct package_s* now = (struct package_s*)malloc(sizeof(struct package_s));
-        if (fscanf(file, "%s %s %s %lf %d %d %d %lf",
+        if (fscanf(file, "%s %s %s %lf %d %d %d %lf %d",
                    now->phone_number,
                    now->receiver_name,
                    now->receiver_address,
@@ -238,7 +244,8 @@ struct package_s* load_package_s() {
                    &now->package_type,
                    &now->ifCollection,
                    &now->package_status,
-                   &now->shipping_fee) != 8) {
+                   &now->shipping_fee,
+                   &now->day) != 9) {
             free(now);
             break;
         }
@@ -247,7 +254,8 @@ struct package_s* load_package_s() {
         if (strlen(now->phone_number) != 11 || now->volume <= 0 || 
             now->package_type < 1 || now->package_type > 5 || 
             now->ifCollection < 0 || now->ifCollection > 1 || 
-            now->package_status < 1 || now->package_status > 3) {
+            now->package_status < 1 || now->package_status > 3 ||
+            now->day < 1 || now->day > 366) {
             free(now);
             continue; // 跳过无效数据
         }
@@ -275,7 +283,7 @@ void save_package_s(struct package_s* head) {
             continue; // 跳过无效节点
         }
 
-        fprintf(file, "%s %s %s %.2lf %d %d %d %.2lf\n",
+        fprintf(file, "%s %s %s %.2lf %d %d %d %.2lf %d\n",
                 lst->phone_number,
                 lst->receiver_name,
                 lst->receiver_address,
@@ -283,7 +291,8 @@ void save_package_s(struct package_s* head) {
                 lst->package_type,
                 lst->ifCollection,
                 lst->package_status,
-                lst->shipping_fee);
+                lst->shipping_fee,
+                lst->day);
         lst = lst->next;
     }
 
