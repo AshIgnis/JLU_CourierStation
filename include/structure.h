@@ -19,7 +19,7 @@ extern const char *pkgType[5];
 extern const char *pkgStatus[3];
 
 // 是否到付字符串数组
-extern const char *ifcollection[2];
+extern const char *ifcollection[4];
 
 // 收件包裹结构体
 struct package_r {

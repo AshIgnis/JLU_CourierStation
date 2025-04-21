@@ -4,6 +4,7 @@
 #include "receivedPackage.h"
 #include "structure.h"
 #include "user.h"
+#include "charge_calculation.h"
 
 int countd[400] = {0}; // 预计存储365个数据
 //每录入一个包裹，就重写huise.txt文件，第i+1行的内容为第i天到达驿站的包裹数
@@ -140,27 +141,36 @@ void return_package_r_id(struct package_r *x) {
 
 void show_package_r(struct package_r* now, int if_id) {
     printf("1.包裹所属用户电话: \n");
-    printf("%s\n", (*now).phone_number);
+    printf("%s\n", now->phone_number);
     printf("2.包裹体积 (立方厘米): \n");
-    printf("%lf\n", (*now).volume);
+    printf("%.2lf\n", now->volume);
     printf("3.包裹类型 (1-文件, 2-生鲜, 3-易碎品, 4-家电, 5-危险品): \n");
-    printf("%d\n", (*now).package_type);
-    printf("4.是否需要到付 (0-不需要, 1-需要): \n");
-    printf("%d\n", (*now).ifCollection);
-    if ((*now).ifCollection) {
+    printf("%d\n", now->package_type);
+    printf("4.服务类型 (0-不需费用, 1-需要到付, 2-需要上门, 3-到付上门): \n");
+    printf("%d\n", now->ifCollection);
+
+    // 显示运输费用
+    if (now->ifCollection == 1 || now->ifCollection == 3) {
         printf("运输费用: \n");
-        printf("%lf\n", (*now).shipping_fee);
+        printf("%.2lf\n", now->shipping_fee);
     }
+
+    // 显示上门服务费用
+    if (now->ifCollection == 2 || now->ifCollection == 3) {
+        double door_fee = DoorToDoorFee_r(now->phone_number, now->volume, now->package_type);
+        printf("上门服务费用: \n");
+        printf("%.2lf\n", door_fee);
+    }
+
     printf("5.包裹状态 (1-正常, 2-损坏, 3-违禁品): \n");
-    printf("%d\n", (*now).package_status);
+    printf("%d\n", now->package_status);
     printf("6.包裹到达时间: \n");
-    printf("%d\n", (*now).day);
+    printf("%d\n", now->day);
 
     if (if_id == 1) {
         printf("7.包裹序列号: \n");
-        printf("%s\n", (*now).package_id);
+        printf("%s\n", now->package_id);
     }
-    return;
 }
 
 void find_package_r(struct package_r **lstfind, struct package_r **find, char* p, struct package_r* head) {
@@ -194,24 +204,52 @@ struct package_r* load_package_r() {
 
     struct package_r *head, *lst;
     head = (struct package_r*)malloc(sizeof(struct package_r));
+    if (!head) {
+        perror("Memory allocation failed for head");
+        fclose(file);
+        return NULL;
+    }
     (*head).next = NULL;
     lst = head;
 
     while (!feof(file)) {
         struct package_r* now = (struct package_r*)malloc(sizeof(struct package_r));
-        fscanf(file, "%s%lf%d%d", (*now).phone_number, &(*now).volume, &(*now).package_type, &(*now).ifCollection);
-        fscanf(file, "%lf", &(*now).shipping_fee);
-        fscanf(file, "%d", &(*now).package_status);
-        fscanf(file, "%s", (*now).package_id);
-        fscanf(file, "%d", &(*now).day);
+        if (!now) {
+            perror("Memory allocation failed for package_r node");
+            fclose(file);
+            free_package_r(head); // 释放已分配的链表节点
+            return NULL;
+        }
 
+        // 尝试读取一行数据
+        int result = fscanf(file, "%s %lf %d %d %lf %d %s %d",
+                            now->phone_number,
+                            &now->volume,
+                            &now->package_type,
+                            &now->ifCollection,
+                            &now->shipping_fee,
+                            &now->package_status,
+                            now->package_id,
+                            &now->day);
+
+        // 检查是否成功读取所有字段
+        if (result != 8) {
+            if (feof(file)) {
+                free(now); // 如果是文件结束，释放当前节点并退出循环
+                break;
+            }
+            fprintf(stderr, "Warning: Skipping invalid line in received_packages.txt\n");
+            free(now); // 释放当前节点
+            continue;  // 跳过当前行，继续读取下一行
+        }
+
+        // 将节点添加到链表中
         (*lst).next = now;
         lst = now;
         (*lst).next = NULL;
     }
 
     fclose(file);
-
     return head;
 }
 
@@ -230,19 +268,32 @@ void save_package_r(struct package_r* head) {
         if (now == NULL) {
             break;
         }
-        fprintf(file, "%s %lf %d %d", (*now).phone_number, (*now).volume, (*now).package_type, (*now).ifCollection);
-        if ((*now).ifCollection == 1) {
-            fprintf(file, " %lf", (*now).shipping_fee);
+
+        if (fprintf(file, "%s %lf %d %d", (*now).phone_number, (*now).volume, (*now).package_type, (*now).ifCollection) < 0) {
+            perror("Failed to write package data to file");
+            fclose(file);
+            return;
+        }
+
+        if ((*now).ifCollection == 1 || (*now).ifCollection == 3) {
+            if (fprintf(file, " %lf", (*now).shipping_fee) < 0) {
+                perror("Failed to write shipping fee to file");
+                fclose(file);
+                return;
+            }
         } else {
-            fprintf(file, " 0");
+            if (fprintf(file, " 0") < 0) {
+                perror("Failed to write default shipping fee to file");
+                fclose(file);
+                return;
+            }
         }
-        fprintf(file, " %d", (*now).package_status);
-        fprintf(file, " %s", (*now).package_id);
-        fprintf(file, " %d", (*now).day);
-        if ((*now).package_id[0] == 'S') {
-            break;
+
+        if (fprintf(file, " %d %s %d\n", (*now).package_status, (*now).package_id, (*now).day) < 0) {
+            perror("Failed to write package status, ID, or day to file");
+            fclose(file);
+            return;
         }
-        fprintf(file, "\n");
 
         lst = now;
     }
@@ -288,19 +339,19 @@ void add_received_package(struct package_r *head) {
         while (getchar() != '\n'); // 清空输入缓冲区
     } while (1);
 
-    // 输入是否到付并验证合法性
-    printf("4.是否需要到付 (0-不需要, 1-需要): \n");
+    // 输入服务类型并验证合法性
+    printf("4.请选择服务类型 (0-不需费用, 1-需要到付, 2-需要上门, 3-到付上门): \n");
     do {
         printf("> ");
-        if (scanf("%d", &now->ifCollection) == 1 && (now->ifCollection == 0 || now->ifCollection == 1)) {
+        if (scanf("%d", &now->ifCollection) == 1 && now->ifCollection >= 0 && now->ifCollection <= 3) {
             break;
         }
-        printf("输入无效，请输入0或1: \n");
+        printf("输入无效，请输入0-3之间的数字: \n");
         while (getchar() != '\n'); // 清空输入缓冲区
     } while (1);
 
-    // 如果需要到付，输入运费并验证合法性
-    if (now->ifCollection) {
+    // 如果需要到付或到付上门，输入运费并验证合法性
+    if (now->ifCollection == 1 || now->ifCollection == 3) {
         printf("请输入运输费用 (非负数): \n");
         do {
             printf("> ");
@@ -312,6 +363,13 @@ void add_received_package(struct package_r *head) {
         } while (1);
     } else {
         now->shipping_fee = 0.0; // 如果不需要到付，运费为0
+    }
+
+    // 如果需要上门服务或到付上门，计算上门费用
+    if (now->ifCollection == 2 || now->ifCollection == 3) {
+        double door_fee = DoorToDoorFee_r(now->phone_number, now->volume, now->package_type);
+        printf("上门服务费用为：%.2lf\n", door_fee);
+        now->shipping_fee += door_fee; // 累加上门费用
     }
 
     // 输入包裹状态并验证合法性
@@ -478,19 +536,18 @@ void show_all_packages_r(struct package_r* head) {
     int count = 0;
 
     printf("\n======================= 所有收件包裹信息 ============================\n");
-    printf("%-5s   %s      %s  %s    %s   %s  %s    %s    %s\n", 
-           "序号", "用户电话", "体积(cm³)", "类型", "到付", "费用(元)", "状态", "序列号", "到达时间");
+    printf("%-5s   %s      %s  %s  %s %s  %s    %s    %s\n", 
+           "序号", "用户电话", "体积(cm³)", "类型", "服务类型", "费用(元)", "状态", "序列号", "到达时间");
     printf("---------------------------------------------------------------------\n");
 
-    while (current != NULL&&strcmp(current->package_id,"SOS-SAVE")!=0) { // 略去 SOS-SAVE
-        if (strcmp(current->phone_number, "1") == 0) break;
+    while (current != NULL && strcmp(current->package_id, "SOS-SAVE") != 0) { // 略去 SOS-SAVE
         count++;
         printf("%-5d %-15s %-9.2lf %-8s %-10s %-8.2lf %-8s %-10s %5d\n", 
                count, 
                current->phone_number, 
                current->volume, 
                pkgType[current->package_type - 1], // 显示包裹类型的中文描述
-               ifcollection[current->ifCollection], // 显示是否到付的中文描述
+               ifcollection[current->ifCollection], // 显示服务类型的中文描述
                current->shipping_fee, // 显示费用
                pkgStatus[current->package_status - 1], // 显示包裹状态的中文描述
                current->package_id,
