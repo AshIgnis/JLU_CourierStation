@@ -116,10 +116,11 @@ void add_package_s(struct package_s *head, const char *phone_number) {
         }
         printf("输入无效，请输入1~366之间的整数: \n");
     } while (1);
-
+    
     // 确认信息
     char jdg[22];
     for (;;) {
+        now->shipping_fee = calculate_send_package_fees(now, phone_number);
         printf("\n包裹信息展示如下: \n\n");
         printf("1. 收件人姓名: %s\n", now->receiver_name);
         printf("2. 收件人地址: %s\n", now->receiver_address);
@@ -128,7 +129,7 @@ void add_package_s(struct package_s *head, const char *phone_number) {
         printf("5. 服务类型: %s\n", ifcollection[now->ifCollection]);
         printf("6. 包裹状态: %s\n", pkgStatus[now->package_status - 1]);
         printf("7. 寄件时间: %d\n", now->day);
-
+        printf("8. 运费: %.2lf 元\n", now->shipping_fee);
         printf("\n请仔细核对包裹信息录入是否正确 Y/N\n");
         for (int i = 0;;) {
             scanf("%c", &jdg[i]);
