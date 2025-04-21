@@ -478,19 +478,20 @@ void show_all_packages_r(struct package_r* head) {
     int count = 0;
 
     printf("\n======================= 所有收件包裹信息 ============================\n");
-    printf("%-5s %-18s %-15s %-10s %-10s %-10s %-15s %-5s\n", 
-           "序号", "用户电话", "体积(cm³)", "类型", "到付", "状态", "序列号", "到达时间");
+    printf("%-5s   %s      %s  %s    %s   %s  %s    %s    %s\n", 
+           "序号", "用户电话", "体积(cm³)", "类型", "到付", "费用(元)", "状态", "序列号", "到达时间");
     printf("---------------------------------------------------------------------\n");
 
-    while (current->next != NULL) {//略去SOS-SAVE
+    while (current != NULL&&strcmp(current->package_id,"SOS-SAVE")!=0) { // 略去 SOS-SAVE
         if (strcmp(current->phone_number, "1") == 0) break;
         count++;
-        printf("%-5d %-15s %-9.2lf %-8s %-14s %-10s %-15s %5d\n", 
+        printf("%-5d %-15s %-9.2lf %-8s %-10s %-8.2lf %-8s %-10s %5d\n", 
                count, 
                current->phone_number, 
                current->volume, 
                pkgType[current->package_type - 1], // 显示包裹类型的中文描述
                ifcollection[current->ifCollection], // 显示是否到付的中文描述
+               current->shipping_fee, // 显示费用
                pkgStatus[current->package_status - 1], // 显示包裹状态的中文描述
                current->package_id,
                current->day);
