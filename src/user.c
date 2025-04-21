@@ -365,7 +365,7 @@ void userReceivedPackagesSearching(const char *phone_number)
             printf("包裹取件码: %s\n", package_id);
             printf("包裹体积: %.2lf cm³\n", volume);
             printf("到付运费: %.2lf 元\n", shipping_fee);
-            printf("到达时间: 第 %d 天\n", day);
+            printf("到达时间: 第 %d 天\n\n", day);
             found = 1;
         }
     }

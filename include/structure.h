@@ -66,5 +66,6 @@ struct admin{
     char password[MAX_LEN]; // 管理员密码
     struct admin *next; // 下一个管理员
 };
-
+int isValidFloat(const char *str);
+int isValidNumber(const char *str);
 #endif // STRUCTURE_H
