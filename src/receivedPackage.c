@@ -482,7 +482,7 @@ void show_all_packages_r(struct package_r* head) {
            "序号", "用户电话", "体积(cm³)", "类型", "到付", "状态", "序列号", "到达时间");
     printf("---------------------------------------------------------------------\n");
 
-    while (current != NULL) {
+    while (current->next != NULL) {//略去SOS-SAVE
         if (strcmp(current->phone_number, "1") == 0) break;
         count++;
         printf("%-5d %-15s %-9.2lf %-8s %-14s %-10s %-15s %5d\n", 
