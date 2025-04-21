@@ -565,17 +565,41 @@ void add_received_package(struct package_r *head, int *pan) {
     save_data();
     printf("收件包裹添加成功！\n");
     printf("已自动为您分配包裹序列号：%s\n", now->package_id);
+	// 保存包裹信息
+	save_package_r(head);
+	
+	*pan+=1;
+	
+	if(*pan>=MAX_PACKAGE_NUM){
+		printf("包裹超出上限, 已自动为您将多余包裹分配至其他驿站. \n");
+	    warning();
 
-    // 保存包裹信息
-    save_package_r(head);
+        *pan=*pan/2+1;
 
-    // 更新包裹计数
-    (*pan)++;
-    if (*pan >= MAX_PACKAGE_NUM) {
-        printf("包裹超出上限, 已自动为您将多余包裹分配至其他驿站.\n");
-        warning();
-        *pan = *pan / 2 + 1;
-    }
+        int lsl=0;
+        struct package_r* cox,* xoc;
+        cox=head;
+
+        for(; ;){
+            lsl+=1;
+            cox=(*cox).next;
+
+            if(lsl==(*pan)-1){
+                for(; ;){
+                    xoc=(*cox).next;
+                    (*cox).next=(*xoc).next;
+                    free(xoc);
+                    if((*(*cox).next).package_id[0]=='S'){
+                        break;
+                    }
+                }break;
+            }
+
+        }
+		
+	}
+	
+	return;
 }
 
 void query_received_package(struct package_r *head) {
