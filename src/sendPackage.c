@@ -397,8 +397,6 @@ void query_and_show_packages(struct package_s *head, const char *phone_number) {
     while (1) {
         system("cls"); // 清屏
         printf("\n========================== 寄件包裹信息 (第 %d/%d 页) ===========================\n", current_page, total_pages);
-        printf("%-5s %-15s       %-12s       %-20s %-12s %-10s %-10s %-10s %-7s %-5s\n",
-               "序号", "发件电话", "收件人姓名", "收件地址", "体积(cm³)", "类型", "服务类型", "状态", "费用(元)", "寄件时间");
         printf("----------------------------------------------------------------------------------------------------\n");
 
         // 定位到当前页的起始包裹
@@ -412,11 +410,9 @@ void query_and_show_packages(struct package_s *head, const char *phone_number) {
                 break;
             if (phone_number == NULL || strcmp(temp->phone_number, phone_number) == 0) {
                 if (count >= start_index && count < end_index) {
-                    printf("%-5d %-15s %-12s %-20s %-12.2lf %-10s %-10s %-10s %-7.2lf 第%d天\n",
-                           count + 1,
-                           temp->phone_number,
-                           temp->receiver_name,
-                           temp->receiver_address,
+                    printf("序号: %-5d 发件电话：%-11s 收件人姓名: %-12s\t", count + 1, temp->phone_number, temp->receiver_name);
+                    printf("收件地址: %-20s\n", temp->receiver_address);
+                    printf("  体积(cm³): %-12.2lf 类型: %-10s 服务类型: %-10s 状态: %-10s 费用(元): %-7.2lf 寄件时间: %-5d\n",
                            temp->volume,
                            pkgType[temp->package_type - 1],     // 包裹类型中文
                            ifcollection[temp->ifCollection],    // 服务类型中文
@@ -484,7 +480,7 @@ void delete_package_s(struct package_s *head, const char *phone_number)
             count++;
             printf("序号: %-5d 发件电话：%-11s 收件人姓名: %-12s\t", count, current->phone_number, current->receiver_name);
             printf("收件地址: %-20s\n", current->receiver_address);
-            printf("体积(cm³): %-12.2lf 类型: %-10s 服务类型: %-10s 状态: %-10s 费用(元): %-7.2lf 寄件时间: %-5d\n\n",
+            printf("  体积(cm³): %-12.2lf 类型: %-10s 服务类型: %-10s 状态: %-10s 费用(元): %-7.2lf 寄件时间: %-5d\n",
                    current->volume,
                    pkgType[current->package_type - 1],     // 包裹类型中文
                    ifcollection[current->ifCollection],    // 服务类型中文
