@@ -777,6 +777,7 @@ void show_all_packages_r(struct package_r* head) {
         }
 
         printf("------------------------------------------------------------------------------------\n");
+        printf("总计 %d 个收件包裹。\n", total_count);
         printf("操作提示: N-下一页, B-上一页, Q-退出\n");
         printf("请输入操作: ");
 
