@@ -365,47 +365,102 @@ void add_package_s(struct package_s *head, const char *phone_number)
     save_package_s(head); // 保存包裹信息
 }
 
-void query_and_show_packages(struct package_s *head, const char *phone_number)
-{
-    if (head == NULL)
-    {
+void query_and_show_packages(struct package_s *head, const char *phone_number) {
+    if (head == NULL) {
         printf("当前没有任何包裹信息。\n");
         return;
     }
 
     struct package_s *current = head->next; // 跳过头节点
-    int count = 0;
+    int total_count = 0;
 
-    printf("\n========================== 寄件包裹信息 ===========================\n");
-    while (current != NULL)
-    {
-        if (strcmp(current->phone_number, "1") == 0)
+    // 计算符合条件的包裹总数
+    struct package_s *temp = current;
+    while (temp != NULL) {
+        if (strcmp(temp->phone_number, "1") == 0)
             break;
-        // 如果是管理员，显示所有包裹；如果是普通用户，只显示与其电话号码匹配的包裹
-        if (phone_number == NULL || strcmp(current->phone_number, phone_number) == 0)
-        {
-            count++;
-            printf("序号: %-5d 发件电话：%-11s 收件人姓名: %-12s\n", count, current->phone_number, current->receiver_name);
-            printf("收件地址: %-20s\n", current->receiver_address);
-            printf("体积(cm³): %-12.2lf 类型: %-10s 服务类型: %-10s 状态: %-10s 费用(元): %-7.2lf 寄件时间: %-5d\n\n",
-                   current->volume,
-                   pkgType[current->package_type - 1],     // 包裹类型中文
-                   ifcollection[current->ifCollection],    // 服务类型中文
-                   pkgStatus[current->package_status - 1], // 包裹状态中文
-                   current->shipping_fee,
-                   current->day);
+        if (phone_number == NULL || strcmp(temp->phone_number, phone_number) == 0) {
+            total_count++;
         }
-        current = current->next;
+        temp = temp->next;
     }
 
-    if (count == 0)
-    {
+    if (total_count == 0) {
         printf("没有找到符合条件的包裹。\n");
+        return;
     }
-    else
-    {
-        printf("---------------------------------------------------------------------\n");
-        printf("总计 %d 个寄件包裹。\n", count);
+
+    const int PAGE_SIZE = 15; // 每页最多显示 15 个包裹
+    int total_pages = (total_count + PAGE_SIZE - 1) / PAGE_SIZE; // 计算总页数
+    int current_page = 1;
+
+    while (1) {
+        system("cls"); // 清屏
+        printf("\n========================== 寄件包裹信息 (第 %d/%d 页) ===========================\n", current_page, total_pages);
+        printf("%-5s %-15s       %-12s       %-20s %-12s %-10s %-10s %-10s %-7s %-5s\n",
+               "序号", "发件电话", "收件人姓名", "收件地址", "体积(cm³)", "类型", "服务类型", "状态", "费用(元)", "寄件时间");
+        printf("----------------------------------------------------------------------------------------------------\n");
+
+        // 定位到当前页的起始包裹
+        temp = current;
+        int start_index = (current_page - 1) * PAGE_SIZE;
+        int end_index = start_index + PAGE_SIZE;
+        int count = 0;
+
+        while (temp != NULL) {
+            if (strcmp(temp->phone_number, "1") == 0)
+                break;
+            if (phone_number == NULL || strcmp(temp->phone_number, phone_number) == 0) {
+                if (count >= start_index && count < end_index) {
+                    printf("%-5d %-15s %-12s %-20s %-12.2lf %-10s %-10s %-10s %-7.2lf 第%d天\n",
+                           count + 1,
+                           temp->phone_number,
+                           temp->receiver_name,
+                           temp->receiver_address,
+                           temp->volume,
+                           pkgType[temp->package_type - 1],     // 包裹类型中文
+                           ifcollection[temp->ifCollection],    // 服务类型中文
+                           pkgStatus[temp->package_status - 1], // 包裹状态中文
+                           temp->shipping_fee,
+                           temp->day);
+                }
+                count++;
+                if (count >= end_index) {
+                    break;
+                }
+            }
+            temp = temp->next;
+        }
+
+        printf("----------------------------------------------------------------------------------------------------\n");
+        printf("操作提示: N-下一页, B-上一页, Q-退出\n");
+        printf("请输入操作: ");
+
+        char choice;
+        scanf(" %c", &choice);
+        choice = toupper(choice); // 转换为大写
+
+        if (choice == 'N') {
+            if (current_page < total_pages) {
+                current_page++;
+            } else {
+                printf("已经是最后一页！\n");
+                system("pause");
+            }
+        } else if (choice == 'B') {
+            if (current_page > 1) {
+                current_page--;
+            } else {
+                printf("已经是第一页！\n");
+                system("pause");
+            }
+        } else if (choice == 'Q') {
+            printf("退出包裹信息显示。\n");
+            break;
+        } else {
+            printf("无效的操作，请重新输入。\n");
+            system("pause");
+        }
     }
 }
 
@@ -427,7 +482,7 @@ void delete_package_s(struct package_s *head, const char *phone_number)
         if (phone_number == NULL || strcmp(current->phone_number, phone_number) == 0)
         {
             count++;
-            printf("序号: %-5d 发件电话：%-11s 收件人姓名: %-12s\n", count, current->phone_number, current->receiver_name);
+            printf("序号: %-5d 发件电话：%-11s 收件人姓名: %-12s\t", count, current->phone_number, current->receiver_name);
             printf("收件地址: %-20s\n", current->receiver_address);
             printf("体积(cm³): %-12.2lf 类型: %-10s 服务类型: %-10s 状态: %-10s 费用(元): %-7.2lf 寄件时间: %-5d\n\n",
                    current->volume,
