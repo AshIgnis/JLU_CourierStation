@@ -156,25 +156,84 @@ void displayAllCustomers(struct customer *head) {
         return;
     }
 
-    printf("\n===================== 所有用户信息 =======================\n");
-    printf("%-5s %-18s %-15s %-10s %-5s\n", "序号", "电话号码", "用户名", "用户类型","票数");
-    printf("----------------------------------------------------------\n");
+    const int PAGE_SIZE = 30; // 每页最多显示 30 个用户
+    int total_count = 0;
 
-    struct customer *current = head;
-    int count = 0;
-
-    while (current) {
-        if (strcmp(current->phone_number, "1") == 0) continue; // 跳过空用户
-        count++;
-        const char *customer_type = (current->customer_type >= 1 && current->customer_type <= 5)
-                                        ? cstmType[current->customer_type - 1]
-                                        : "非法用户"; // 使用字符串数组
-        printf("%-5d %-15s %-10s %-10s %-5d\n", count, current->phone_number, current->username, customer_type,current->tickets);
-        current = current->next;
+    // 计算总用户数
+    struct customer *temp = head;
+    while (temp) {
+        if (strcmp(temp->phone_number, "1") != 0) { // 跳过空用户
+            total_count++;
+        }
+        temp = temp->next;
     }
 
-    printf("----------------------------------------------------------\n");
-    printf("总计 %d 个用户。\n", count);
+    int total_pages = (total_count + PAGE_SIZE - 1) / PAGE_SIZE; // 计算总页数
+    int current_page = 1;
+
+    while (1) {
+        system("cls"); // 清屏
+        printf("\n===================== 所有用户信息 (第 %d/%d 页) =======================\n", current_page, total_pages);
+        printf("%-5s %-18s %-15s %-10s %-5s\n", "序号", "电话号码", "用户名", "用户类型", "票数");
+        printf("-----------------------------------------------------------------------\n");
+
+        int count = 0;
+        int start_index = (current_page - 1) * PAGE_SIZE;
+        int end_index = start_index + PAGE_SIZE;
+
+        // 显示当前页的用户信息
+        temp = head;
+        while (temp) {
+            if (strcmp(temp->phone_number, "1") == 0) { // 跳过空用户
+                temp = temp->next;
+                continue;
+            }
+
+            if (count >= start_index && count < end_index) {
+                const char *customer_type = (temp->customer_type >= 1 && temp->customer_type <= 5)
+                                                ? cstmType[temp->customer_type - 1]
+                                                : "非法用户"; // 使用字符串数组
+                printf("%-5d %-15s %-10s %-10s %-5d\n", count + 1, temp->phone_number, temp->username, customer_type, temp->tickets);
+            }
+
+            count++;
+            temp = temp->next;
+
+            if (count >= end_index) {
+                break;
+            }
+        }
+
+        printf("-----------------------------------------------------------------------\n");
+        printf("操作提示: N-下一页, B-上一页, Q-退出\n");
+        printf("请输入操作: ");
+
+        char choice;
+        scanf(" %c", &choice);
+        choice = toupper(choice); // 转换为大写
+
+        if (choice == 'N') {
+            if (current_page < total_pages) {
+                current_page++;
+            } else {
+                printf("已经是最后一页！\n");
+                system("pause");
+            }
+        } else if (choice == 'B') {
+            if (current_page > 1) {
+                current_page--;
+            } else {
+                printf("已经是第一页！\n");
+                system("pause");
+            }
+        } else if (choice == 'Q') {
+            printf("退出用户信息显示。\n");
+            break;
+        } else {
+            printf("无效的操作，请重新输入。\n");
+            system("pause");
+        }
+    }
 }
 
 // 修改用户信息
