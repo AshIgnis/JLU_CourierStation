@@ -408,7 +408,8 @@ void add_received_package(struct package_r *head, int *pan) {
         }
         printf("输入无效，请输入1~366之间的整数: \n");
     } while (1);
-
+    system("pause");
+    system("cls");
     // 确认信息
     char jdg[22];
     for (;;) {
@@ -834,7 +835,8 @@ void package_r_original_start() {
             printf("输入无效，请输入0-5之间的数字: ");
             while (getchar() != '\n'); // 清空输入缓冲区
         }
-
+        system("pause");
+        system("cls");
         if (op == 0) {
             free_package_r(head);
             break;
@@ -855,5 +857,7 @@ void package_r_original_start() {
         if (op == 4) {
             show_all_packages_r(head);
         }
+        system("pause");
+        system("cls");
     }
 }
