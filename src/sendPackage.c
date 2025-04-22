@@ -434,6 +434,7 @@ void query_and_show_packages(struct package_s *head, const char *phone_number) {
 
         char choice;
         scanf(" %c", &choice);
+        while (getchar() != '\n'); 
         choice = toupper(choice); // 转换为大写
 
         if (choice == 'N') {
@@ -516,6 +517,7 @@ void delete_package_s(struct package_s *head, const char *phone_number)
     while (1)
     {
         scanf(" %c", &confirm);
+        while (getchar() != '\n'); 
         if (confirm == 'Y' || confirm == 'y')
         {
             break; // 确认删除
