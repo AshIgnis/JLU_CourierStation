@@ -207,26 +207,44 @@ void displayAllCustomers(struct customer *head) {
         printf("-----------------------------------------------------------------------\n");
         printf("操作提示: N-下一页, B-上一页, Q-退出\n");
         printf("请输入操作: ");
+        char choice[3];
+        int cjd=0;
 
-        char choice;
-        scanf(" %c", &choice);
-        choice = toupper(choice); // 转换为大写
+        for(int i=0; ;i++){
+            scanf("%c",&choice[i]);
+            if (i==1){
+                while (1){
+                    if(choice[i]=='\n'){
+                        break;
+                    }scanf("%c",&choice[i]);
+                    cjd=1;
+                }break;
+            }
+        }
 
-        if (choice == 'N') {
+        choice[0] = toupper(choice[0]); // 转换为大写
+
+        if(cjd!=0) {
+            printf("无效的操作，请重新输入。\n");
+            system("pause");
+            continue;
+        }
+
+        if (choice[0] == 'N') {
             if (current_page < total_pages) {
                 current_page++;
             } else {
                 printf("已经是最后一页！\n");
                 system("pause");
             }
-        } else if (choice == 'B') {
+        } else if (choice[0] == 'B') {
             if (current_page > 1) {
                 current_page--;
             } else {
                 printf("已经是第一页！\n");
                 system("pause");
             }
-        } else if (choice == 'Q') {
+        } else if (choice[0] == 'Q') {
             printf("退出用户信息显示。\n");
             break;
         } else {
