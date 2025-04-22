@@ -724,31 +724,88 @@ void show_all_packages_r(struct package_r* head) {
         return;
     }
 
+    const int PAGE_SIZE = 30; // 每页最多显示 30 个包裹
     struct package_r* current = head->next; // 跳过头节点
-    int count = 0;
+    int total_count = 0;
 
-    printf("\n================================ 所有收件包裹信息 ==================================\n");
-    printf("%-5s   %s      %s  %s  %s %s  %s    %s    %s\n", 
-           "序号", "用户电话", "体积(cm3)", "类型", "服务类型", "费用(元)", "状态", "序列号", "到达时间");
-    printf("---------------------------------------------------------------------------------\n");
-
-    while (current != NULL && strcmp(current->package_id, "SOS-SAVE") != 0) { // 略去 SOS-SAVE
-        count++;
-        printf("%-5d %-15s %-9.2lf %-8s %-10s %-8.2lf %-8s %-10s %5d\n", 
-               count, 
-               current->phone_number, 
-               current->volume, 
-               pkgType[current->package_type - 1], // 显示包裹类型的中文描述
-               ifcollection[current->ifCollection], // 显示服务类型的中文描述
-               current->shipping_fee, // 显示费用
-               pkgStatus[current->package_status - 1], // 显示包裹状态的中文描述
-               current->package_id,
-               current->day);
-        current = current->next;
+    // 计算总包裹数
+    struct package_r* temp = current;
+    while (temp != NULL && strcmp(temp->package_id, "SOS-SAVE") != 0) {
+        total_count++;
+        temp = temp->next;
     }
 
-    printf("------------------------------------------------------------------------------------\n");
-    printf("总计 %d 个收件包裹。\n", count);
+    if (total_count == 0) {
+        printf("当前没有收件包裹记录。\n");
+        return;
+    }
+
+    int total_pages = (total_count + PAGE_SIZE - 1) / PAGE_SIZE; // 计算总页数
+    int current_page = 1;
+
+    while (1) {
+        system("cls"); // 清屏
+        printf("\n================================ 所有收件包裹信息 (第 %d/%d 页) ==================================\n", current_page, total_pages);
+        printf("%-5s   %s      %s  %s  %s %s  %s    %s    %s\n", 
+               "序号", "用户电话", "体积(cm3)", "类型", "服务类型", "费用(元)", "状态", "序列号", "到达时间");
+        printf("---------------------------------------------------------------------------------\n");
+
+        // 定位到当前页的起始包裹
+        temp = current;
+        int start_index = (current_page - 1) * PAGE_SIZE;
+        int end_index = start_index + PAGE_SIZE;
+        int count = 0;
+
+        while (temp != NULL && strcmp(temp->package_id, "SOS-SAVE") != 0) {
+            if (count >= start_index && count < end_index) {
+                printf("%-5d %-15s %-9.2lf %-8s %-10s %-8.2lf %-8s %-10s %5d\n", 
+                       count + 1, 
+                       temp->phone_number, 
+                       temp->volume, 
+                       pkgType[temp->package_type - 1], // 显示包裹类型的中文描述
+                       ifcollection[temp->ifCollection], // 显示服务类型的中文描述
+                       temp->shipping_fee, // 显示费用
+                       pkgStatus[temp->package_status - 1], // 显示包裹状态的中文描述
+                       temp->package_id,
+                       temp->day);
+            }
+            count++;
+            if (count >= end_index) {
+                break;
+            }
+            temp = temp->next;
+        }
+
+        printf("------------------------------------------------------------------------------------\n");
+        printf("操作提示: N-下一页, B-上一页, Q-退出\n");
+        printf("请输入操作: ");
+
+        char choice;
+        scanf(" %c", &choice);
+        choice = toupper(choice); // 转换为大写
+
+        if (choice == 'N') {
+            if (current_page < total_pages) {
+                current_page++;
+            } else {
+                printf("已经是最后一页！\n");
+                system("pause");
+            }
+        } else if (choice == 'B') {
+            if (current_page > 1) {
+                current_page--;
+            } else {
+                printf("已经是第一页！\n");
+                system("pause");
+            }
+        } else if (choice == 'Q') {
+            printf("退出包裹信息显示。\n");
+            break;
+        } else {
+            printf("无效的操作，请重新输入。\n");
+            system("pause");
+        }
+    }
 }
 
 // 收件管理的主函数
