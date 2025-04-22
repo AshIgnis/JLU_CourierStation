@@ -784,6 +784,7 @@ void show_all_packages_r(struct package_r* head) {
 
         char choice;
         scanf(" %c", &choice);
+        while (getchar() != '\n'); 
         choice = toupper(choice); // 转换为大写
 
         if (choice == 'N') {

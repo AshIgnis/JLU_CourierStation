@@ -210,6 +210,7 @@ void displayAllCustomers(struct customer *head) {
 
         char choice;
         scanf(" %c", &choice);
+        while (getchar() != '\n'); 
         choice = toupper(choice); // 转换为大写
 
         if (choice == 'N') {
