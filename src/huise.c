@@ -129,6 +129,7 @@ void delete_predicted_file(int real_time_left,int real_time_right){
 	} else {
 		printf("不存在文件 %s\n", filename);
 	}
+	printf("本次应用启动时生成的预测文件缓存");
 }
 
 //删除所有生成的huise_real_time前缀txt文件
@@ -156,7 +157,7 @@ void delete_all_predicted_files(const char* directory) {
             }
         }
     }
-
+	printf("本次应用启动时生成的预测文件缓存");
     closedir(dir);
 }
 
