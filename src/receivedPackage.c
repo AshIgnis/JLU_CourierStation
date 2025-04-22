@@ -670,7 +670,7 @@ void delete_received_package(struct package_r *head) {
     struct package_r *lstfin, *fin;
     find_package_r(&lstfin, &fin, p, head);
 
-    if (fin == NULL) {
+    if (fin == NULL||!(p[1]>='0'&&p[1]<='9')) {
         printf("未查询到相应包裹, 请检查序列号拼写是否正确.\n");
         return;
     }
@@ -782,25 +782,44 @@ void show_all_packages_r(struct package_r* head) {
         printf("操作提示: N-下一页, B-上一页, Q-退出\n");
         printf("请输入操作: ");
 
-        char choice;
-        scanf(" %c", &choice);
-        choice = toupper(choice); // 转换为大写
+        char choice[3];
+        int cjd=0;
 
-        if (choice == 'N') {
+        for(int i=0; ;i++){
+            scanf("%c",&choice[i]);
+            if (i==1){
+                while (1){
+                    if(choice[i]=='\n'){
+                        break;
+                    }scanf("%c",&choice[i]);
+                    cjd=1;
+                }break;
+            }
+        }
+
+        choice[0] = toupper(choice[0]); // 转换为大写
+
+        if(cjd!=0) {
+            printf("无效的操作，请重新输入。\n");
+            system("pause");
+            continue;
+        }
+
+        if (choice[0] == 'N') {
             if (current_page < total_pages) {
                 current_page++;
             } else {
                 printf("已经是最后一页！\n");
                 system("pause");
             }
-        } else if (choice == 'B') {
+        } else if (choice[0] == 'B') {
             if (current_page > 1) {
                 current_page--;
             } else {
                 printf("已经是第一页！\n");
                 system("pause");
             }
-        } else if (choice == 'Q') {
+        } else if (choice[0] == 'Q') {
             printf("退出包裹信息显示。\n");
             break;
         } else {
