@@ -82,3 +82,68 @@ void warning() {
 
     printf("已成功删除最早的一半库存，并将包裹序列号归还到 id_box.txt。\n");
 }
+
+
+void load_and_initialize_huise() {
+    const char *receivedFilePath = "received_packages.txt";
+    const char *huiseFilePath = "huise.txt";
+
+    // 打开 received_packages.txt 文件
+    FILE *receivedFile = fopen(receivedFilePath, "r");
+    if (!receivedFile) {
+        perror("无法打开 received_packages.txt");
+        return;
+    }
+
+    // 打开 huise.txt 文件以写入模式
+    FILE *huiseFile = fopen(huiseFilePath, "w");
+    if (!huiseFile) {
+        perror("无法创建 huise.txt");
+        fclose(receivedFile);
+        return;
+    }
+
+    // 初始化 countbegin 数组
+    int countbegin[367] = {0}; // 用于统计到达时间，假设最大到达时间为 366 天
+
+    char line[256];
+    int lineCount = 0;
+
+    // 统计行数
+    while (fgets(line, sizeof(line), receivedFile)) {
+        lineCount++;
+    }
+
+    // 重置文件指针
+    rewind(receivedFile);
+
+    int currentLine = 0;
+    while (fgets(line, sizeof(line), receivedFile)) {
+        currentLine++;
+
+        // 跳过最后一行
+        if (currentLine == lineCount) {
+            break;
+        }
+
+        // 解析第八个字段（到达时间）
+        int arrivalDay = 0;
+        sscanf(line, "%*s %*s %*s %*s %*s %*s %*s %d", &arrivalDay);
+
+        // 更新 countbegin 数组
+        if (arrivalDay >= 1 && arrivalDay <= 366) {
+            countbegin[arrivalDay]++;
+        }
+    }
+
+    fclose(receivedFile);
+
+    // 将 countbegin 数组写入 huise.txt
+    for (int i = 0; i <= 366; i++) {
+        fprintf(huiseFile, "%d\n", countbegin[i]);
+    }
+
+    fclose(huiseFile);
+
+    printf("已根据 received_packages.txt 初始化 huise.txt。\n");
+}

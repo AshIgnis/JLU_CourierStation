@@ -68,10 +68,10 @@ extern "C" {
         	return real_time + 1; // 返回数组长度
 			break;
 		case 2:
-			return day_to_week(real_time) + 1;
+			return day_to_week(real_time) ;
 			break;
 		case 3:
-			return day_to_month(real_time) + 1;
+			return day_to_month(real_time) ;
 			break;
 		default:
 			return 0;

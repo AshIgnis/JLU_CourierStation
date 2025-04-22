@@ -133,7 +133,7 @@ class Dashboard:
             lib1.load(real_time_left,real_time_right,choice_son4)  # 加载数据
             arr = lib1.get_array(real_time_left,real_time_right,choice_son4)  # 获取数组
             length = lib1.get_array_length(real_time_left,real_time_right,choice_son4)  # 获取数组长度
-            valid_indices = [i for i in range(length - 1) if arr[i+1] >= 0]
+            valid_indices = [i for i in range(length) if arr[i+1] >= 0]
             self.x = [i+1 for i in valid_indices]
             self.y = [arr[i+1] for i in valid_indices]
             

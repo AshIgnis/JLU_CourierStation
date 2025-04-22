@@ -74,6 +74,7 @@ int main() {
                             break;
                         }
                         case 4:{ // 数据预测与统计
+                            load_and_initialize_huise();
                             int real_time_left = 0;
                             int real_time_right = 0;// 真实时间范围
                             printf("请输入起始时间天数1~365\n");
