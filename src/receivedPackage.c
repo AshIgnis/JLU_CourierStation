@@ -781,7 +781,7 @@ void show_all_packages_r(struct package_r* head) {
         printf("总计 %d 个收件包裹。\n", total_count);
         printf("操作提示: N-下一页, B-上一页, Q-退出\n");
         printf("请输入操作: ");
-
+        fflush(stdin); // 清空输入缓冲区
         char choice[3];
         int cjd=0;
 
@@ -800,7 +800,7 @@ void show_all_packages_r(struct package_r* head) {
         choice[0] = toupper(choice[0]); // 转换为大写
 
         if(cjd!=0) {
-            printf("无效的操作，请重新输入。\n");
+            printf("无效的操作1，请重新输入。\n");
             system("pause");
             continue;
         }
@@ -823,7 +823,7 @@ void show_all_packages_r(struct package_r* head) {
             printf("退出包裹信息显示。\n");
             break;
         } else {
-            printf("无效的操作，请重新输入。\n");
+            printf("无效的操作2，请重新输入。\n");
             system("pause");
         }
     }
