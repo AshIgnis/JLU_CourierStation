@@ -153,7 +153,7 @@ int main() {
                             nextpage:
                             // 构建命令字符串，将 real_time 作为参数传递给 Python 脚本
                             snprintf(command, sizeof(command),
-                                    "start /B D:/Tools/python/.venv/Scripts/python.exe C:/Users/25531/Desktop/programe2025.4/JLU_CourierStation/src/Data_prediction_and_statistics.py %d %d %d >nul 2>nul",
+                                    "start /B ~/.conda/envs/env3_13_5/python.exe  C:/Users/25531/Desktop/programe2025.4/JLU_CourierStation/src/Data_prediction_and_statistics.py %d %d %d >nul 2>nul",
                                      real_time_left,real_time_right,choice_son4);
 
                             // 执行命令
